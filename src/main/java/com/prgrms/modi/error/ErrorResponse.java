@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 public class ErrorResponse {
 
     private final String errorMessage;
+
     private final String requestUri;
+
     private final HttpStatus status;
 
     public ErrorResponse(String errorMessage, String requestUri, HttpStatus status) {
@@ -23,4 +25,5 @@ public class ErrorResponse {
         sb.append('}');
         return sb.toString();
     }
+
 }

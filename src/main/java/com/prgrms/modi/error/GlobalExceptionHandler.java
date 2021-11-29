@@ -35,4 +35,5 @@ public class GlobalExceptionHandler {
             .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
     }
+
 }
