@@ -14,9 +14,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * created : Rosa
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> internalServerErrorHandler(Exception e) {
         return ResponseEntity
@@ -24,9 +21,6 @@ public class GlobalExceptionHandler {
             .body(new ErrorResponse(e.getMessage(), "", HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
-    /**
-     * created : Rosa
-     */
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> notFoundExceptionHandler(Exception e) {
         return ResponseEntity
@@ -34,9 +28,6 @@ public class GlobalExceptionHandler {
             .body(new ErrorResponse(e.getMessage(), "", HttpStatus.NOT_FOUND));
     }
 
-    /**
-     * created : Rosa
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> invalidRequestHandler(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();

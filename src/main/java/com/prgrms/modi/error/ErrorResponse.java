@@ -2,9 +2,6 @@ package com.prgrms.modi.error;
 
 import org.springframework.http.HttpStatus;
 
-/**
- * Created : Rosa
- */
 public class ErrorResponse {
 
     private final String errorMessage;
