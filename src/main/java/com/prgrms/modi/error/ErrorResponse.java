@@ -1,5 +1,6 @@
 package com.prgrms.modi.error;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.http.HttpStatus;
 
 public class ErrorResponse {
@@ -18,12 +19,11 @@ public class ErrorResponse {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ErrorResponse{");
-        sb.append("errorMessage='").append(errorMessage).append('\'');
-        sb.append(", requestUri='").append(requestUri).append('\'');
-        sb.append(", status=").append(status);
-        sb.append('}');
-        return sb.toString();
+        return new ToStringBuilder(this)
+            .append("errorMessage", errorMessage)
+            .append("requestUri", requestUri)
+            .append("status", status)
+            .toString();
     }
 
 }
