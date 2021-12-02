@@ -7,7 +7,7 @@ import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "parties_rules")
+@Table(name = "party_rule")
 public class PartyRule {
 
     @EmbeddedId

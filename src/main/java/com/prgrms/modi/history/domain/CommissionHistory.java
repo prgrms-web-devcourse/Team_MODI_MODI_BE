@@ -2,7 +2,6 @@ package com.prgrms.modi.history.domain;
 
 import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.user.domain.User;
-
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,7 +14,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.PositiveOrZero;
 
 @Entity
-@Table(name = "commision_history")
+@Table(name = "commission_history")
 public class CommissionHistory extends BaseEntity {
 
     @Id
