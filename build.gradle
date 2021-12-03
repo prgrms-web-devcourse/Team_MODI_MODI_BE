@@ -1,7 +1,8 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.0'
+    id 'org.springframework.boot' version '2.5.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'jacoco'
 }
 
 group = 'com.prgrms'
@@ -26,9 +27,47 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    implementation("io.springfox:springfox-boot-starter:3.0.0")
+    implementation("io.springfox:springfox-swagger-ui:3.0.0")
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
 
 test {
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
+}
+jacocoTestReport {
+    reports {
+        html.enabled true
+        html.destination file("$buildDir/jacocoHtml")
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    excludes: [
+                            '**/com/prgrms/modi/error/**',
+                            '**/com/prgrms/modi/common/**',
+                    ]
+            )
+        }))
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'BUNDLE'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+
+            excludes = []
+        }
+    }
 }
