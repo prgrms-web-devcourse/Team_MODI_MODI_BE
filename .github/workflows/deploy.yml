@@ -1,60 +1,66 @@
-# This is a basic workflow to help you get started with Actions
+  # This is a basic workflow to help you get started with Actions
 
-name: CI
+  name: CI
 
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the develop branch
-  push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
+  # Controls when the workflow will run
+  on:
+    # Triggers the workflow on push or pull request events but only for the develop branch
+    push:
+      branches: [ develop ]
+    pull_request:
+      branches: [ develop ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
 
-env:
-  S3_BUCKET_NAME: modi-deploy
+  env:
+    S3_BUCKET_NAME: modi-deploy
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+  # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  jobs:
+    # This workflow contains a single job called "build"
+    build:
+      # The type of runner that the job will run on
+      runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      
-      - name: Set up JDK 1.11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.11
+      env:
+        NAVER_CLIENT_ID : ${{ secrets.NAVER_CLIENT_ID }}
+        NAVER_CLIENT_SECRET : ${{ secrets.NAVER_CLIENT_SECRET }}
+        KAKAO_CLIENT_ID : ${{ secrets.KAKAO_CLIENT_ID }}
+        KAKAO_CLIENT_SECRET : ${{ secrets.KAKAO_CLIENT_SECRET }}
+        JWT_SECRET : ${{ secrets.JWT_SECRET }}
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-        shell: bash
+      # Steps represent a sequence of tasks that will be executed as part of the job
+      steps:
+        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+        - uses: actions/checkout@v2
 
-      - name: Build with Gradle
-        run: ./gradlew build
-        shell: bash
-        
-      - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
-        shell: bash
+        - name: Set up JDK 1.11
+          uses: actions/setup-java@v1
+          with:
+            java-version: 1.11
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+        - name: Grant execute permission for gradlew
+          run: chmod +x ./gradlew
+          shell: bash
 
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
-        
-      - name: Code Deploy
-        run: aws deploy create-deployment --application-name modi-github-actions-deploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name modi-codeDeploy-s3-group --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
-    
+        - name: Build with Gradle
+          run: ./gradlew build
+          shell: bash
+
+        - name: Make zip file
+          run: zip -r ./$GITHUB_SHA.zip .
+          shell: bash
+
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ secrets.AWS_REGION }}
+
+        - name: Upload to S3
+          run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+
+        - name: Code Deploy
+          run: aws deploy create-deployment --application-name modi-github-actions-deploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name modi-codeDeploy-s3-group --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
