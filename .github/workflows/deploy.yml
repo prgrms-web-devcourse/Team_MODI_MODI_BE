@@ -1,3 +1,14 @@
+NAVER
+client-id: qSsYFIaCEhs13YrLnfRL
+client-secret: yIwW2Q00MT
+
+KAKAO
+client-id: 56d48595217b21a82c2258e51c9c05f6
+client-secret: wMiYxJZgahKi15SymKtGTP1V5ScRwO8O
+
+JWT
+client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
+
 # This is a basic workflow to help you get started with Actions
 
 name: CI
@@ -22,12 +33,19 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    
+    env: 
+        NAVER_CLIENT_ID : ${{ secrets.NAVER_CLIENT_ID }}
+        NAVER_CLIENT_SECRET : ${{ secrets.NAVER_CLIENT_SECRET }}
+        KAKAO_CLIENT_ID : ${{ secrets.KAKAO_CLIENT_ID }}
+        KAKAO_CLIENT_SECRET : ${{ secrets.KAKAO_CLIENT_SECRET }}
+        JWT_SECRET : ${{ secrets.JWT_SECRET }}
+    
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
+    
       - name: Set up JDK 1.11
         uses: actions/setup-java@v1
         with:
