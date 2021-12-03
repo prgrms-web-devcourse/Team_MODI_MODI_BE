@@ -55,4 +55,8 @@ public class User extends BaseEntity {
         this.dateOfBirth = dateOfBirth;
     }
 
+    public Long getId() {
+        return id;
+    }
+
 }
