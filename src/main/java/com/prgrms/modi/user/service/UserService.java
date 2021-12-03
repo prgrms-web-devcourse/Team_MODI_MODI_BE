@@ -70,6 +70,7 @@ public class UserService {
     }
 
     private LocalDate getDateOfBirth(String birthyear, String birthday) {
+        log.info("birthyear : {}, birthday : {}", birthyear, birthday);
         String dateOfBirth = birthyear + birthday.replaceAll("[^0-9]", "");
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
     }

@@ -4,16 +4,17 @@ spring:
       client:
         registration:
           naver:
-            client-id: qSsYFIaCEhs13YrLnfRL
-            client-secret: yIwW2Q00MT
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
             redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
             scope: birthyear, birthday
             client-name: Naver
           kakao:
             client-name: kakao
-            client-id: 56d48595217b21a82c2258e51c9c05f6
-            client-secret: wMiYxJZgahKi15SymKtGTP1V5ScRwO8O
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+
             scope: age_range, birthday
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
@@ -52,7 +53,7 @@ spring:
 jwt:
   header: token
   issuer: modi
-  client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
+  client-secret: ${JWT_SECRET}
   expiry-seconds: 60
 
 server:

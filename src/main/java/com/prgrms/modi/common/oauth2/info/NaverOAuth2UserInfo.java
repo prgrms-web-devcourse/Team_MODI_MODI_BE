@@ -1,8 +1,13 @@
 package com.prgrms.modi.common.oauth2.info;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 
 public class NaverOAuth2UserInfo extends OAuth2UserInfo {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public NaverOAuth2UserInfo(Map<String, Object> attributes) {
         super(attributes);
