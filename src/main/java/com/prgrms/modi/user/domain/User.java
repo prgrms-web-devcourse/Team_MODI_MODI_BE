@@ -44,4 +44,19 @@ public class User extends BaseEntity {
     @PastOrPresent
     private LocalDateTime deletedAt;
 
+    protected User(){}
+
+    public User(String username, Role role, Long points, String provider, String providerId, LocalDate dateOfBirth) {
+        this.username = username;
+        this.role = role;
+        this.points = points;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
 }
