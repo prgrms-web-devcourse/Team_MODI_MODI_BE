@@ -34,6 +34,18 @@ public class OTT extends BaseEntity {
     @NotBlank
     private String grade;
 
+    protected OTT() {
+    }
+
+    public OTT(Long id, String name, Integer subscriptionFee, Integer monthlyFee, Integer maxMemberCapacity, String grade) {
+        this.id = id;
+        this.name = name;
+        this.subscriptionFee = subscriptionFee;
+        this.monthlyFee = monthlyFee;
+        this.maxMemberCapacity = maxMemberCapacity;
+        this.grade = grade;
+    }
+
     public Long getId() {
         return id;
     }

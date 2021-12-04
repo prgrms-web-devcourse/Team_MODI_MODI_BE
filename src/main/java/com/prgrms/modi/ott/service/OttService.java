@@ -1,7 +1,7 @@
 package com.prgrms.modi.ott.service;
 
-import com.prgrms.modi.ott.converter.OttConverter;
 import com.prgrms.modi.ott.dto.AllOttListResponse;
+import com.prgrms.modi.ott.dto.OttResponse;
 import com.prgrms.modi.ott.repository.OttRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +17,8 @@ public class OttService {
     }
 
     public AllOttListResponse getAllOtts() {
-
         return new AllOttListResponse(ottRepository.findAll().stream()
-            .map(OttConverter::toOttResponse)
+            .map(OttResponse::new)
             .collect(Collectors.toList()));
     }
 
