@@ -1,23 +1,23 @@
 package com.prgrms.modi.user.service;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.prgrms.modi.common.oauth2.info.ProviderType;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
+import com.prgrms.modi.utils.UsernameGenerator;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Service
 public class UserService {
@@ -59,9 +59,10 @@ public class UserService {
             })
             .orElseGet(() -> {
                 ProviderType providerType = ProviderType.valueOf(provider.toUpperCase());
-                OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
+                OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(
+                    providerType, oAuth2User.getAttributes());
                 LocalDate dateOfBirth = getDateOfBirth(userInfo.getBirthyear(), userInfo.getBirthDay());
-                String username = getRandomUserName();
+                String username = UsernameGenerator.createRandomName();
 
                 return userRepository.save(
                     new User(username, Role.USER, 0L, provider, providerId, dateOfBirth)
@@ -73,10 +74,6 @@ public class UserService {
         log.info("birthyear : {}, birthday : {}", birthyear, birthday);
         String dateOfBirth = birthyear + birthday.replaceAll("[^0-9]", "");
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
-    }
-
-    private String getRandomUserName() {
-        return "default";
     }
 
 }
