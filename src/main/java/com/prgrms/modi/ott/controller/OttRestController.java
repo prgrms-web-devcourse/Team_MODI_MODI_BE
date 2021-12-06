@@ -1,6 +1,6 @@
 package com.prgrms.modi.ott.controller;
 
-import com.prgrms.modi.ott.dto.AllOttListResponse;
+import com.prgrms.modi.ott.dto.OttListResponse;
 import com.prgrms.modi.ott.service.OttService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +17,9 @@ public class OttRestController {
         this.ottService = ottService;
     }
 
-    @GetMapping()
-    public ResponseEntity<AllOttListResponse> getAllOtts() {
-        return ResponseEntity.ok(ottService.getAllOtts());
+    @GetMapping
+    public ResponseEntity<OttListResponse> getAllOtts() {
+        return ResponseEntity.ok(ottService.getAll());
     }
 
 }
