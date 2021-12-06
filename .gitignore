@@ -270,7 +270,8 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
-
+# envFile
 .env
-
+# logFile
+log/
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij,windows,macos,linux,java
