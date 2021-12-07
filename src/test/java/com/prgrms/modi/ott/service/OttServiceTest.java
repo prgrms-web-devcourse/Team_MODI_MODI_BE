@@ -5,7 +5,6 @@ import com.prgrms.modi.ott.dto.OttListResponse;
 import com.prgrms.modi.ott.dto.OttResponse;
 import com.prgrms.modi.ott.repository.OttRepository;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -50,7 +49,6 @@ class OttServiceTest {
 
     @Test
     @DisplayName("OTT 전체 조회 테스트")
-    @Order(1)
     void getAllTest() {
         List<OTT> otts = Arrays.asList(getOttFixture(1L), getOttFixture(2L));
         given(ottRepository.findAll()).willReturn(otts);
@@ -64,7 +62,6 @@ class OttServiceTest {
 
     @Test
     @DisplayName("OTT 단건 조회 테스트")
-    @Order(2)
     void getOttTest() {
         OTT ott = getOttFixture();
         given(ottRepository.findById(anyLong())).willReturn(Optional.of(ott));
