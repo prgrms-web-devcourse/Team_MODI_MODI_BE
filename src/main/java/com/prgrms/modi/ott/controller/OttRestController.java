@@ -1,9 +1,11 @@
 package com.prgrms.modi.ott.controller;
 
 import com.prgrms.modi.ott.dto.OttListResponse;
+import com.prgrms.modi.ott.dto.OttResponse;
 import com.prgrms.modi.ott.service.OttService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,8 +20,13 @@ public class OttRestController {
     }
 
     @GetMapping
-    public ResponseEntity<OttListResponse> getAllOtts() {
+    public ResponseEntity<OttListResponse> getAll() {
         return ResponseEntity.ok(ottService.getAll());
+    }
+
+    @GetMapping("/{ottId}")
+    public ResponseEntity<OttResponse> getOtt(@PathVariable Long ottId) {
+        return ResponseEntity.ok(ottService.getOtt(ottId));
     }
 
 }

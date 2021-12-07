@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> notFoundExceptionHandler(Exception e) {
+    public ResponseEntity<ErrorResponse> notFoundExceptionHandler(NotFoundException e) {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(new ErrorResponse(e.getMessage(), "", HttpStatus.NOT_FOUND));

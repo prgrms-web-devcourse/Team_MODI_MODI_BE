@@ -37,8 +37,7 @@ public class OTT extends BaseEntity {
     protected OTT() {
     }
 
-    public OTT(Long id, String name, Integer subscriptionFee, Integer monthlyFee, Integer maxMemberCapacity, String grade) {
-        this.id = id;
+    public OTT(String name, Integer subscriptionFee, Integer monthlyFee, Integer maxMemberCapacity, String grade) {
         this.name = name;
         this.subscriptionFee = subscriptionFee;
         this.monthlyFee = monthlyFee;
