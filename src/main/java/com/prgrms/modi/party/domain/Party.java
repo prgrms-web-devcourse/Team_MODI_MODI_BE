@@ -68,7 +68,7 @@ public class Party extends BaseEntity {
 
     protected Party() {
     }
-    
+
     private Party(Builder builder) {
         id = builder.id;
         maxMemberCapacity = builder.maxMemberCapacity;
@@ -179,73 +179,73 @@ public class Party extends BaseEntity {
         public Builder() {
         }
 
-        public Builder id(Long val) {
-            id = val;
+        public Builder id(Long id) {
+            this.id = id;
             return this;
         }
 
-        public Builder maxMemberCapacity(Integer val) {
-            maxMemberCapacity = val;
+        public Builder maxMemberCapacity(Integer maxMemberCapacity) {
+            this.maxMemberCapacity = maxMemberCapacity;
             return this;
         }
 
-        public Builder currentMemberCapacity(Integer val) {
-            currentMemberCapacity = val;
+        public Builder currentMemberCapacity(Integer currentMemberCapacity) {
+            this.currentMemberCapacity = currentMemberCapacity;
             return this;
         }
 
-        public Builder totalFee(Integer val) {
-            totalFee = val;
+        public Builder totalFee(Integer totalFee) {
+            this.totalFee = totalFee;
             return this;
         }
 
-        public Builder monthlyReimbursement(Integer val) {
-            monthlyReimbursement = val;
+        public Builder monthlyReimbursement(Integer monthlyReimbursement) {
+            this.monthlyReimbursement = monthlyReimbursement;
             return this;
         }
 
-        public Builder remainingReimbursement(Integer val) {
-            remainingReimbursement = val;
+        public Builder remainingReimbursement(Integer remainingReimbursement) {
+            this.remainingReimbursement = remainingReimbursement;
             return this;
         }
 
-        public Builder startDate(LocalDate val) {
-            startDate = val;
+        public Builder startDate(LocalDate startDate) {
+            this.startDate = startDate;
             return this;
         }
 
-        public Builder endDate(LocalDate val) {
-            endDate = val;
+        public Builder endDate(LocalDate endDate) {
+            this.endDate = endDate;
             return this;
         }
 
-        public Builder mustFilled(boolean val) {
-            mustFilled = val;
+        public Builder mustFilled(boolean mustFilled) {
+            this.mustFilled = mustFilled;
             return this;
         }
 
-        public Builder sharedId(String val) {
-            sharedId = val;
+        public Builder sharedId(String sharedId) {
+            this.sharedId = sharedId;
             return this;
         }
 
-        public Builder sharedPasswordEncrypted(String val) {
-            sharedPasswordEncrypted = val;
+        public Builder sharedPasswordEncrypted(String sharedPasswordEncrypted) {
+            this.sharedPasswordEncrypted = sharedPasswordEncrypted;
             return this;
         }
 
-        public Builder status(PartyStatus val) {
-            status = val;
+        public Builder status(PartyStatus status) {
+            this.status = status;
             return this;
         }
 
-        public Builder deletedAt(LocalDateTime val) {
-            deletedAt = val;
+        public Builder deletedAt(LocalDateTime deletedAt) {
+            this.deletedAt = deletedAt;
             return this;
         }
 
-        public Builder ott(OTT val) {
-            ott = val;
+        public Builder ott(OTT ott) {
+            this.ott = ott;
             return this;
         }
 
