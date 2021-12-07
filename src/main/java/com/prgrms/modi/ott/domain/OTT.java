@@ -1,7 +1,6 @@
 package com.prgrms.modi.ott.domain;
 
 import com.prgrms.modi.common.domain.BaseEntity;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
