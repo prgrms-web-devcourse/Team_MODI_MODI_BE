@@ -10,7 +10,7 @@ import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.service.OttService;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
-import com.prgrms.modi.party.dto.PartyListResponse;
+import com.prgrms.modi.party.dto.response.PartyListResponse;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;

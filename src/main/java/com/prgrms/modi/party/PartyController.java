@@ -1,6 +1,6 @@
 package com.prgrms.modi.party;
 
-import com.prgrms.modi.party.dto.PartyListResponse;
+import com.prgrms.modi.party.dto.response.PartyListResponse;
 import javax.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
