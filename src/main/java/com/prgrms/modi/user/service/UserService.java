@@ -51,15 +51,7 @@ public class UserService {
     public User join(OAuth2User oAuth2User, String provider) {
         checkArgument(oAuth2User != null, "OAuth2User must be provided");
         checkArgument(isNotEmpty(provider), "provider must be provided");
-        String suggestedId = "";
-        if (provider.equals("naver")) {
-            String text = oAuth2User.getName().substring(4);
-            int index = text.indexOf(",");
-            suggestedId = text.substring(0, index);
-        } else {
-            suggestedId = oAuth2User.getName();
-        }
-        String providerId = suggestedId;
+        String providerId = extractProviderId(oAuth2User, provider);
 
         return findByProviderAndProviderId(provider, providerId)
             .map(user -> {
@@ -82,6 +74,18 @@ public class UserService {
                     new User(username, Role.USER, 0L, provider, providerId, dateOfBirth)
                 );
             });
+    }
+
+    private String extractProviderId(OAuth2User oAuth2User, String provider) {
+        String providerId;
+        if (provider.equals("naver")) {
+            String attributes = oAuth2User.getName().substring(4);
+            int index = attributes.indexOf(",");
+            providerId = attributes.substring(0, index);
+        } else {
+            providerId = oAuth2User.getName();
+        }
+        return providerId;
     }
 
     private LocalDate getDateOfBirth(String birthyear, String birthday) {
