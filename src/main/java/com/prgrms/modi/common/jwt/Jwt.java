@@ -37,7 +37,7 @@ public class Jwt {
         JWTCreator.Builder builder = com.auth0.jwt.JWT.create();
         builder.withIssuer(issuer);
         builder.withIssuedAt(now);
-        if (expirySeconds < 0) {
+        if (expirySeconds > 0) {
             builder.withExpiresAt(new Date(now.getTime() + expirySeconds * 1_000L));
         }
         builder.withClaim("userId", claims.userId);
@@ -76,29 +76,11 @@ public class Jwt {
             this.exp = decodedJWT.getExpiresAt();
         }
 
-        public static Claims from(Long userId, String[] roles) {
+        public static Claims of(Long userId, String[] roles) {
             Claims claims = new Claims();
             claims.userId = userId;
             claims.roles = roles;
             return claims;
-        }
-
-        public Map<String, Object> asMap() {
-            Map<String, Object> map = new HashMap<>();
-            map.put("userId", userId);
-            map.put("roles", roles);
-            map.put("iat", iat());
-            map.put("exp", exp());
-
-            return map;
-        }
-
-        private long iat() {
-            return iat != null ? iat.getTime() : -1;
-        }
-
-        private long exp() {
-            return exp != null ? exp.getTime() : -1;
         }
 
         @Override

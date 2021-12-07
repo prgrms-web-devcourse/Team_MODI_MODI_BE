@@ -1,29 +1,24 @@
 package com.prgrms.modi.common.oauth2;
 
+import static com.prgrms.modi.common.oauth2.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+
 import com.prgrms.modi.common.jwt.Jwt;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.service.UserService;
 import com.prgrms.modi.utils.CookieUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.Optional;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Optional;
-
-import static com.prgrms.modi.common.oauth2.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
-
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Jwt jwt;
 
@@ -64,7 +59,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
     }
 
-    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
+        Authentication authentication) {
         Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
             .map(Cookie::getValue);
 
@@ -80,14 +76,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         return userService.join(oAuth2User, provider);
     }
 
-    private String generateLoginSuccessJson(User user) {
-        String token = generateToken(user);
-        log.debug("Jwt({}) created for oauth2 login user {}", token, user.getId());
-        return "{\"token\":\"" + token + "\", \"userId\": \"" + user.getId() + "\"}";
-    }
-
     private String generateToken(User user) {
-        return jwt.sign(Jwt.Claims.from(user.getId(), new String[]{"ROLE_USER"}));
+        return jwt.sign(Jwt.Claims.of(user.getId(), new String[]{"ROLE_USER"}));
     }
 
 }

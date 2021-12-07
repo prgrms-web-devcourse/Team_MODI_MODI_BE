@@ -88,7 +88,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtConfigure.getHeader(), jwt());
+        return new JwtAuthenticationFilter(jwt());
     }
 
     @Bean
