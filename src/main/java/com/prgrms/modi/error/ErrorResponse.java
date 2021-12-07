@@ -17,6 +17,18 @@ public class ErrorResponse {
         this.status = status;
     }
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public String getRequestUri() {
+        return requestUri;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

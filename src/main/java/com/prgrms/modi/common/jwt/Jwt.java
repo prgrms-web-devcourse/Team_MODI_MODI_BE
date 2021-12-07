@@ -37,7 +37,7 @@ public class Jwt {
         JWTCreator.Builder builder = com.auth0.jwt.JWT.create();
         builder.withIssuer(issuer);
         builder.withIssuedAt(now);
-        if (expirySeconds < 0) {
+        if (expirySeconds > 0) {
             builder.withExpiresAt(new Date(now.getTime() + expirySeconds * 1_000L));
         }
         builder.withClaim("userId", claims.userId);
