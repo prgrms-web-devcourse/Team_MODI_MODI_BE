@@ -48,7 +48,13 @@ class OttRestControllerTest {
     @Test
     @DisplayName("OTT 단건 조회 테스트 - 성공")
     void getOttTest() throws Exception {
-        OTT ott = new OTT("멜론", 12000, 3000, 4, "프리미엄");
+        OTT ott = new OTT.Builder()
+            .name("넷플릭스")
+            .subscriptionFee(16000)
+            .monthlyFee(4000)
+            .maxMemberCapacity(4)
+            .grade("프리미엄")
+            .build();
         ott = ottRepository.save(ott);
 
         mockMvc.perform(get(BASE_URL + "/{id}", ott.getId())

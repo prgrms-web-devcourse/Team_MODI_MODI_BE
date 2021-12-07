@@ -37,12 +37,12 @@ public class OTT extends BaseEntity {
     protected OTT() {
     }
 
-    public OTT(String name, Integer subscriptionFee, Integer monthlyFee, Integer maxMemberCapacity, String grade) {
-        this.name = name;
-        this.subscriptionFee = subscriptionFee;
-        this.monthlyFee = monthlyFee;
-        this.maxMemberCapacity = maxMemberCapacity;
-        this.grade = grade;
+    private OTT(Builder builder) {
+        name = builder.name;
+        subscriptionFee = builder.subscriptionFee;
+        monthlyFee = builder.monthlyFee;
+        maxMemberCapacity = builder.maxMemberCapacity;
+        grade = builder.grade;
     }
 
     public Long getId() {
@@ -67,6 +67,52 @@ public class OTT extends BaseEntity {
 
     public String getGrade() {
         return grade;
+    }
+
+    public static final class Builder {
+
+        private String name;
+
+        private Integer subscriptionFee;
+
+        private Integer monthlyFee;
+
+        private Integer maxMemberCapacity;
+
+        private String grade;
+
+        public Builder() {
+        }
+
+        public Builder name(String val) {
+            name = val;
+            return this;
+        }
+
+        public Builder subscriptionFee(Integer val) {
+            subscriptionFee = val;
+            return this;
+        }
+
+        public Builder monthlyFee(Integer val) {
+            monthlyFee = val;
+            return this;
+        }
+
+        public Builder maxMemberCapacity(Integer val) {
+            maxMemberCapacity = val;
+            return this;
+        }
+
+        public Builder grade(String val) {
+            grade = val;
+            return this;
+        }
+
+        public OTT build() {
+            return new OTT(this);
+        }
+
     }
 
 }

@@ -26,9 +26,9 @@ public class OttService {
     }
 
     public OttResponse getOtt(Long ottId) {
-        OTT ott = ottRepository.findById(ottId)
-            .orElseThrow(() -> new NotFoundException("요청하신 Ott를 찾지 못했습니다."));
-        return OttResponse.from(ott);
+        return OttResponse.from(
+            ottRepository.findById(ottId)
+                .orElseThrow(() -> new NotFoundException("요청하신 Ott를 찾지 못했습니다.")));
     }
 
 }
