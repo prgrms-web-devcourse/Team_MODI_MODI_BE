@@ -1,10 +1,8 @@
 package com.prgrms.modi.party.dto;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.prgrms.modi.ott.domain.OTT;
 import java.util.List;
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PartyListResponse {
 
     private Long ottId;
