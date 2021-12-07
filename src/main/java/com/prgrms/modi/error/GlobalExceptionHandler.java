@@ -1,5 +1,6 @@
 package com.prgrms.modi.error;
 
+import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> notFoundExceptionHandler(Exception e) {
+    public ResponseEntity<ErrorResponse> notFoundExceptionHandler(NotFoundException e) {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(new ErrorResponse(e.getMessage(), "", HttpStatus.NOT_FOUND));
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> forbiddenExceptionHandler(ForbiddenException e) {
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(new ErrorResponse(e.getMessage(), "", HttpStatus.FORBIDDEN));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
