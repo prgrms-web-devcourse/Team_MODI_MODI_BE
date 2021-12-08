@@ -5,8 +5,9 @@ import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
+import com.prgrms.modi.party.dto.response.RuleListResponse;
 import com.prgrms.modi.party.service.PartyService;
-import com.prgrms.modi.user.service.UserService;
+import com.prgrms.modi.party.service.RuleService;
 import javax.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,11 +27,11 @@ public class PartyController {
 
     private final PartyService partyService;
 
-    private final UserService userService;
+    private final RuleService ruleService;
 
-    public PartyController(PartyService partyService, UserService userService) {
+    public PartyController(PartyService partyService, RuleService ruleService) {
         this.partyService = partyService;
-        this.userService = userService;
+        this.ruleService = ruleService;
     }
 
     @GetMapping("/otts/{ottId}/parties")
@@ -55,6 +56,11 @@ public class PartyController {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
         return ResponseEntity.ok(partyService.createParty(request, authentication.userId));
+    }
+
+    @GetMapping("/rules")
+    public ResponseEntity<RuleListResponse> getRuleList() {
+        return ResponseEntity.ok(ruleService.getAllRule());
     }
 
 }
