@@ -1,6 +1,8 @@
 package com.prgrms.modi.ott.service;
 
 import com.prgrms.modi.ott.domain.OTT;
+import com.prgrms.modi.ott.dto.CarouselInfo;
+import com.prgrms.modi.ott.dto.CarouselListResponse;
 import com.prgrms.modi.ott.dto.OttListResponse;
 import com.prgrms.modi.ott.dto.OttResponse;
 import com.prgrms.modi.ott.repository.OttRepository;
@@ -47,6 +49,15 @@ class OttServiceTest {
         return getOttFixture(1L);
     }
 
+    public static CarouselInfo getCarouselInfoFixture(Long id) {
+        CarouselInfo carouselInfo = Mockito.mock(CarouselInfo.class);
+        given(carouselInfo.getOttId()).willReturn(id);
+        given(carouselInfo.getOttName()).willReturn("testOttName");
+        given(carouselInfo.getTotalRecruitingPartyCount()).willReturn(5L);
+        given(carouselInfo.getMonthlyFee()).willReturn(2500);
+        return carouselInfo;
+    }
+
     @Test
     @DisplayName("OTT 전체 조회 테스트")
     void getAllTest() {
@@ -74,6 +85,19 @@ class OttServiceTest {
             .hasFieldOrPropertyWithValue("monthlyFee", ottResponse.getMonthlyFee())
             .hasFieldOrPropertyWithValue("maxMemberCapacity", ottResponse.getMaxMemberCapacity())
             .hasFieldOrPropertyWithValue("grade", ottResponse.getGrade());
+    }
+
+    @Test
+    @DisplayName("캐루셀 전체 조회 테스트")
+    void getCarouselList() {
+        List<CarouselInfo> carouselInfoList = Arrays.asList(getCarouselInfoFixture(1L), getCarouselInfoFixture(2L));
+        given(ottRepository.getCarouselList()).willReturn(carouselInfoList);
+
+        CarouselListResponse response = ottService.getCarouselList();
+        then(response.getWaitingOtts())
+            .hasSize(2)
+            .extracting("ottId")
+            .contains(1L, 2L);
     }
 
 }
