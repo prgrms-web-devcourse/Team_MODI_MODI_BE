@@ -2,15 +2,26 @@ package com.prgrms.modi.party;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.service.OttService;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
+import com.prgrms.modi.party.dto.request.CreatePartyRequest;
+import com.prgrms.modi.party.dto.request.RuleRequest;
+import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
+import com.prgrms.modi.party.repository.PartyRepository;
+import com.prgrms.modi.party.service.PartyRuleService;
+import com.prgrms.modi.party.service.PartyService;
+import com.prgrms.modi.user.service.MemberService;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -20,9 +31,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class PartyServiceTest {
 
     @InjectMocks
@@ -33,6 +47,12 @@ class PartyServiceTest {
 
     @Mock
     private OttService ottService;
+
+    @Mock
+    private PartyRuleService partyRuleService;
+
+    @Mock
+    private MemberService memberService;
 
     public OTT getOttFixture(Long id) {
         OTT ott = Mockito.mock(OTT.class);
@@ -51,7 +71,7 @@ class PartyServiceTest {
         OTT ott = getOttFixture(ottId);
         Party party1 = new Party.Builder()
             .id(1L)
-            .maxMemberCapacity(4)
+            .partyMemberCapacity(4)
             .currentMemberCapacity(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
@@ -63,7 +83,7 @@ class PartyServiceTest {
             .build();
         Party party2 = new Party.Builder()
             .id(2L)
-            .maxMemberCapacity(4)
+            .partyMemberCapacity(4)
             .currentMemberCapacity(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
@@ -99,7 +119,7 @@ class PartyServiceTest {
         OTT ott = getOttFixture(ottId);
         Party party1 = new Party.Builder()
             .id(1L)
-            .maxMemberCapacity(4)
+            .partyMemberCapacity(4)
             .currentMemberCapacity(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
@@ -111,7 +131,7 @@ class PartyServiceTest {
             .build();
         Party party2 = new Party.Builder()
             .id(2L)
-            .maxMemberCapacity(4)
+            .partyMemberCapacity(4)
             .currentMemberCapacity(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
@@ -134,6 +154,54 @@ class PartyServiceTest {
 
         // Then
         assertThat(response.getPartyList().size(), equalTo(1));
+    }
+
+    @Test
+    @DisplayName("파티를 생성할 수 있다")
+    public void createParty() {
+        // Given
+        Long ottId = 1L;
+        Long userId = 1L;
+        RuleRequest ruleRequest1 = new RuleRequest(1L, "1인 1회선");
+        RuleRequest ruleRequest2 = new RuleRequest(2L, "양도 금지");
+        List<RuleRequest> ruleRequests = List.of(ruleRequest1, ruleRequest2);
+        CreatePartyRequest createPartyRequest = new CreatePartyRequest.Builder()
+            .ottId(ottId)
+            .ottName("넷플릭스")
+            .grade("프리미엄")
+            .partyMemberCapacity(4)
+            .startDate(LocalDate.now())
+            .endDate(LocalDate.now().plusMonths(6))
+            .mustFilled(true)
+            .rules(ruleRequests)
+            .sharedId("modi@gmail.com")
+            .sharedPassword("modimodi123")
+            .build();
+
+        Party party = new Party.Builder()
+            .id(1L)
+            .partyMemberCapacity(createPartyRequest.getPartyMemberCapacity())
+            .currentMemberCapacity(1)
+            .totalFee(1000)
+            .monthlyReimbursement(2000)
+            .remainingReimbursement(8000)
+            .startDate(createPartyRequest.getStartDate())
+            .endDate(createPartyRequest.getEndDate())
+            .mustFilled(createPartyRequest.isMustFilled())
+            .ott(getOttFixture(ottId))
+            .build();
+
+        when(partyRepository.save(any(Party.class))).thenReturn(party);
+        doNothing().when(partyRuleService).savePartyRule(any(Party.class), any(Long.class));
+        doNothing().when(memberService).saveLeaderMember(any(Party.class), any(Long.class));
+
+        // When
+        PartyIdResponse response = partyService.createParty(createPartyRequest, userId);
+
+        // Then
+        verify(partyRepository, times(1)).save(any(Party.class));
+        verify(partyRuleService, times(ruleRequests.size())).savePartyRule(any(Party.class), any(Long.class));
+        verify(memberService, times(1)).saveLeaderMember(any(Party.class), any(Long.class));
     }
 
 }
