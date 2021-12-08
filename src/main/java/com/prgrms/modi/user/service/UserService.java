@@ -12,9 +12,11 @@ import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -52,6 +54,12 @@ public class UserService {
         checkArgument(isNotEmpty(providerId), "providerId must be provided");
 
         return userRepository.findByProviderAndProviderId(provider, providerId);
+    }
+
+    @Transactional
+    public User findUserWithPointHistory(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
     }
 
     @Transactional

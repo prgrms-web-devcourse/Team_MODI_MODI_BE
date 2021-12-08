@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Objects;
 
 @Entity
 @Table(name = "point_history")
@@ -31,5 +32,20 @@ public class PointHistory extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    protected PointHistory() {
+    }
+
+    public PointHistory(PointDetail pointDetail, Integer amount) {
+        this.pointDetail = pointDetail;
+        this.amount = amount;
+    }
+
+    public void setUser(User user) {
+        if (Objects.nonNull(this.user)) {
+            this.user.getPointHistorys().remove(this);
+        }
+        this.user = user;
+    }
 
 }

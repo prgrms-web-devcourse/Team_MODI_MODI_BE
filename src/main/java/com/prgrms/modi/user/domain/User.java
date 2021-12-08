@@ -1,23 +1,29 @@
 package com.prgrms.modi.user.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
 import com.prgrms.modi.common.domain.BaseEntity;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import com.prgrms.modi.error.exception.NotEnoughPointException;
+import com.prgrms.modi.history.domain.PointHistory;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Entity
 @Table(name = "users")
@@ -48,6 +54,9 @@ public class User extends BaseEntity {
     @PastOrPresent
     private LocalDateTime deletedAt;
 
+    @OneToMany(mappedBy = "user")
+    private List<PointHistory> pointHistorys = new ArrayList<>();
+
     protected User() {
     }
 
@@ -73,6 +82,15 @@ public class User extends BaseEntity {
         return points;
     }
 
+    public List<PointHistory> getPointHistorys() {
+        return pointHistorys;
+    }
+
+    public void addHistory(PointHistory pointHistory) {
+        this.pointHistorys.add(pointHistory);
+        pointHistory.setUser(this);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -85,6 +103,11 @@ public class User extends BaseEntity {
             .append("dateOfBirth", dateOfBirth)
             .append("deletedAt", deletedAt)
             .toString();
+    }
+
+    public void deductPoint(Long points) {
+        checkArgument(this.points >= points, new NotEnoughPointException("포인트가 부족합니다."));
+        this.points -= points;
     }
 
 }

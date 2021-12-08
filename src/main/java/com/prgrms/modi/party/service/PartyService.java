@@ -1,5 +1,10 @@
 package com.prgrms.modi.party.service;
 
+import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
+import com.prgrms.modi.error.exception.NotEnoughPointException;
+import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.history.domain.PointDetail;
+import com.prgrms.modi.history.domain.PointHistory;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.service.OttService;
 import com.prgrms.modi.party.domain.Party;
@@ -10,15 +15,17 @@ import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.dto.response.PartyResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
+import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.service.MemberService;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PartyService {
@@ -34,11 +41,16 @@ public class PartyService {
     private final MemberService memberService;
 
     public PartyService(PartyRepository partyRepository, OttService ottService, PartyRuleService partyRuleService,
-        MemberService memberService) {
+                        MemberService memberService) {
         this.partyRepository = partyRepository;
         this.ottService = ottService;
         this.partyRuleService = partyRuleService;
         this.memberService = memberService;
+    }
+
+    public Party findPartyWithOtt(Long id) {
+        return partyRepository.findPartyWithOtt(id)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다."));
     }
 
     @Transactional(readOnly = true)
@@ -81,6 +93,28 @@ public class PartyService {
 
         logger.info("created party {}", newParty);
         return PartyIdResponse.from(newParty);
+    }
+
+    @Transactional
+    public Long joinParty(Long userId, Long partyId) {
+        User user = memberService.findUserWithHistory(userId);
+        Party party = findPartyWithOtt(partyId);
+
+        if (user.getPoints() < party.getTotalFee()) {
+            throw new NotEnoughPointException("포인트가 부족합니다.");
+        }
+
+        if (party.getCurrentMemberCapacity() >= party.getMaxMemberCapacity()) {
+            throw new NotEnoughPartyCapacityException("파티 정원이 다 찼습니다.");
+        }
+
+        user.deductPoint(Long.valueOf(party.getTotalFee()));
+        user.getPointHistorys().add(new PointHistory(PointDetail.PARTICIPATE, party.getTotalFee()));
+        party.increaseCurrentMemberCapacity();
+        party.increaseMonthlyReimbursement(party.getOtt().getMonthlyFee());
+        party.increaseRemainingReimbursement(party.getTotalFee());
+        memberService.save(party, user);
+        return partyId;
     }
 
     private Party saveParty(CreatePartyRequest request) {
