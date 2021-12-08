@@ -1,5 +1,6 @@
 package com.prgrms.modi.error;
 
+import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.NotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(new ErrorResponse(e.getMessage(), "", HttpStatus.NOT_FOUND));
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> forbiddenExceptionHandler(ForbiddenException e) {
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(new ErrorResponse(e.getMessage(), "", HttpStatus.FORBIDDEN));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

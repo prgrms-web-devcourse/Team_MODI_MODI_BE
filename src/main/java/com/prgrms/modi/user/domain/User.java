@@ -14,6 +14,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "users")
@@ -23,19 +25,20 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "이름은 최대 8자로 필수입니다")
+    @Length(min = 1, max = 8)
     private String username;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @PositiveOrZero
+    @PositiveOrZero(message = "포인트는 0이상의 값만 가능합니다")
     private Long points;
 
-    @NotBlank
+    @NotBlank(message = "로그인은 naver나 kakao만 가능합니다")
     private String provider;
 
-    @NotBlank
+    @NotBlank(message = "providerId는 필수입니다")
     private String providerId;
 
     @Past
@@ -44,7 +47,8 @@ public class User extends BaseEntity {
     @PastOrPresent
     private LocalDateTime deletedAt;
 
-    protected User(){}
+    protected User() {
+    }
 
     public User(String username, Role role, Long points, String provider, String providerId, LocalDate dateOfBirth) {
         this.username = username;
@@ -57,6 +61,28 @@ public class User extends BaseEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Long getPoints() {
+        return points;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("id", id)
+            .append("username", username)
+            .append("role", role)
+            .append("points", points)
+            .append("provider", provider)
+            .append("providerId", providerId)
+            .append("dateOfBirth", dateOfBirth)
+            .append("deletedAt", deletedAt)
+            .toString();
     }
 
 }

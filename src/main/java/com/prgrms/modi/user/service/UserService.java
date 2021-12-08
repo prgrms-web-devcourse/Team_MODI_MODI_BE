@@ -6,6 +6,8 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.prgrms.modi.common.oauth2.info.ProviderType;
+import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
@@ -31,9 +33,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> findById(Long id) {
+    public UserResponse getUserDetail(Long id) {
         checkArgument(id != null, "userId must be provided");
-        return userRepository.findById(id);
+        return userRepository.findById(id)
+            .map(UserResponse::from)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
     }
 
     @Transactional(readOnly = true)
@@ -48,9 +52,7 @@ public class UserService {
     public User join(OAuth2User oAuth2User, String provider) {
         checkArgument(oAuth2User != null, "OAuth2User must be provided");
         checkArgument(isNotEmpty(provider), "provider must be provided");
-
-        // getName() : 고유 식별자
-        String providerId = oAuth2User.getName();
+        String providerId = extractProviderId(oAuth2User, provider);
 
         return findByProviderAndProviderId(provider, providerId)
             .map(user -> {
@@ -59,15 +61,32 @@ public class UserService {
             })
             .orElseGet(() -> {
                 ProviderType providerType = ProviderType.valueOf(provider.toUpperCase());
-                OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(
-                    providerType, oAuth2User.getAttributes());
-                LocalDate dateOfBirth = getDateOfBirth(userInfo.getBirthyear(), userInfo.getBirthDay());
-                String username = UsernameGenerator.createRandomName();
+                OAuth2UserInfo userInfo = OAuth2UserInfoFactory
+                    .getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
+                LocalDate dateOfBirth;
+                if (userInfo.getBirthyear() == null) {
+                    dateOfBirth = getDateOfBirth("1995", userInfo.getBirthDay());
+                } else {
+                    dateOfBirth = getDateOfBirth(userInfo.getBirthyear(), userInfo.getBirthDay());
+                }
+                String username = getRandomUserName();
 
                 return userRepository.save(
                     new User(username, Role.USER, 0L, provider, providerId, dateOfBirth)
                 );
             });
+    }
+
+    private String extractProviderId(OAuth2User oAuth2User, String provider) {
+        String providerId;
+        if (provider.equals("naver")) {
+            String attributes = oAuth2User.getName().substring(4);
+            int index = attributes.indexOf(",");
+            providerId = attributes.substring(0, index);
+        } else {
+            providerId = oAuth2User.getName();
+        }
+        return providerId;
     }
 
     private LocalDate getDateOfBirth(String birthyear, String birthday) {
