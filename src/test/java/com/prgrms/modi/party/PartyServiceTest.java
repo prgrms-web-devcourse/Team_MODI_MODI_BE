@@ -58,6 +58,7 @@ class PartyServiceTest {
         OTT ott = Mockito.mock(OTT.class);
         given(ott.getId()).willReturn(id);
         given(ott.getName()).willReturn("testOttName");
+        given(ott.getMonthlyFee()).willReturn(10000);
         return ott;
     }
 
@@ -165,9 +166,12 @@ class PartyServiceTest {
         // Given
         Long ottId = 1L;
         Long userId = 1L;
+        OTT ott = getOttFixture(ottId);
+
         RuleRequest ruleRequest1 = new RuleRequest(1L, "1인 1회선");
         RuleRequest ruleRequest2 = new RuleRequest(2L, "양도 금지");
         List<RuleRequest> ruleRequests = List.of(ruleRequest1, ruleRequest2);
+
         CreatePartyRequest createPartyRequest = new CreatePartyRequest.Builder()
             .ottId(ottId)
             .ottName("넷플릭스")
@@ -191,12 +195,13 @@ class PartyServiceTest {
             .startDate(createPartyRequest.getStartDate())
             .endDate(createPartyRequest.getEndDate())
             .mustFilled(createPartyRequest.isMustFilled())
-            .ott(getOttFixture(ottId))
+            .ott(ott)
             .build();
 
         when(partyRepository.save(any(Party.class))).thenReturn(party);
         doNothing().when(partyRuleService).savePartyRule(any(Party.class), any(Long.class));
         doNothing().when(memberService).saveLeaderMember(any(Party.class), any(Long.class));
+        when(ottService.findOtt(1L)).thenReturn(ott);
 
         // When
         PartyIdResponse response = partyService.createParty(createPartyRequest, userId);
@@ -205,6 +210,7 @@ class PartyServiceTest {
         verify(partyRepository, times(1)).save(any(Party.class));
         verify(partyRuleService, times(ruleRequests.size())).savePartyRule(any(Party.class), any(Long.class));
         verify(memberService, times(1)).saveLeaderMember(any(Party.class), any(Long.class));
+        verify(ottService, times(1)).findOtt(any(Long.class));
     }
 
 }
