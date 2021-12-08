@@ -6,9 +6,8 @@ import com.prgrms.modi.ott.dto.OttListResponse;
 import com.prgrms.modi.ott.dto.OttNameResponse;
 import com.prgrms.modi.ott.dto.OttResponse;
 import com.prgrms.modi.ott.repository.OttRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 @Service
 public class OttService {
@@ -29,6 +28,10 @@ public class OttService {
         return OttResponse.from(
             ottRepository.findById(ottId)
                 .orElseThrow(() -> new NotFoundException("요청하신 Ott를 찾지 못했습니다.")));
+    }
+
+    public OTT findOtt(Long id) {
+        return ottRepository.findById(id).orElseThrow(() -> new NotFoundException("존재하지 않는 OTT 입니다"));
     }
 
 }
