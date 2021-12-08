@@ -1,5 +1,7 @@
 package com.prgrms.modi.party.service;
 
+import static java.time.temporal.ChronoUnit.MONTHS;
+
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.service.OttService;
 import com.prgrms.modi.party.domain.Party;
@@ -84,17 +86,33 @@ public class PartyService {
     }
 
     private Party saveParty(CreatePartyRequest request) {
+        OTT ott = ottService.findOtt(request.getOttId());
         Party newParty = new Party.Builder()
-            .ott(ottService.findOtt(request.getOttId()))
+            .ott(ott)
             .partyMemberCapacity(request.getPartyMemberCapacity())
+            .currentMember(1)
             .startDate(request.getStartDate())
             .endDate(request.getEndDate())
             .mustFilled(request.isMustFilled())
+            .totalFee(
+                getTotalPartyFee(
+                    ott.getMonthlyFee(),
+                    request.getPartyMemberCapacity(),
+                    (int) MONTHS.between(request.getStartDate(), request.getEndDate())
+                )
+            )
+            .monthlyReimbursement(0)
+            .remainingReimbursement(0)
+            .status(PartyStatus.RECRUITING)
             .sharedId(request.getSharedId())
             .sharedPasswordEncrypted(request.getSharedPassword())
             .build();
         partyRepository.save(newParty);
         return newParty;
+    }
+
+    private int getTotalPartyFee(int ottMonthlyFee, int partyMemberCapacity, int period) {
+        return (ottMonthlyFee / partyMemberCapacity - 1) * period;
     }
 
     private void savePartyRule(Party newParty, List<RuleRequest> ruleRequests) {
