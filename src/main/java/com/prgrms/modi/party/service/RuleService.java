@@ -29,8 +29,6 @@ public class RuleService {
                 .map(RuleResponse::from)
                 .collect(Collectors.toList())
         );
-
-
     }
 
 }

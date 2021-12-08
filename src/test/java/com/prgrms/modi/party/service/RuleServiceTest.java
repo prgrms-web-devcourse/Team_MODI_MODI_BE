@@ -51,6 +51,5 @@ class RuleServiceTest {
         verify(ruleRepository, times(1)).findAll();
         assertThat(ruleList.getRules().size(), equalTo(ruleSize));
     }
-
-
+    
 }
