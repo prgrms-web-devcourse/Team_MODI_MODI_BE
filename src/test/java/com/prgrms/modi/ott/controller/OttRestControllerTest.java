@@ -83,4 +83,25 @@ class OttRestControllerTest {
             );
     }
 
+    @Test
+    @DisplayName("캐루셀 전체 조회 테스트")
+    void getAllCarousels() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/waitings")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$.waitingOtts[0].ottName").value("넷플릭스"),
+                jsonPath("$.waitingOtts[1].ottName").value("디즈니+"),
+                jsonPath("$.waitingOtts[2].ottName").value("웨이브"),
+                jsonPath("$.waitingOtts[3].ottName").value("와챠"),
+                jsonPath("$.waitingOtts[4].ottName").value("티빙"),
+                jsonPath("$.waitingOtts[0].waitingForMatch").value(2L),
+                jsonPath("$.waitingOtts[1].waitingForMatch").value(1L),
+                jsonPath("$.waitingOtts[2].waitingForMatch").value(0L),
+                jsonPath("$.waitingOtts[3].waitingForMatch").value(0L),
+                jsonPath("$.waitingOtts[4].waitingForMatch").value(0L)
+            )
+            .andDo(print());
+    }
+
 }
