@@ -149,4 +149,18 @@ class PartyControllerTest {
         assertThat(maybeParty.getSharedId(), equalTo("modi@gmail.com"));
     }
 
+    @Test
+    @DisplayName("모든 규칙 태그를 조회할 수 있다")
+    public void getAllRule() throws Exception {
+        // When
+        mockMvc
+            .perform(get("/api/rules"))
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$.rules[0].ruleId").value(1),
+                jsonPath("$.rules[0].ruleName").value("1인 1회선")
+            )
+            .andDo(print());
+    }
+
 }
