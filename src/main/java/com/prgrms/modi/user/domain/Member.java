@@ -2,7 +2,7 @@ package com.prgrms.modi.user.domain;
 
 import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.party.domain.Party;
-
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.PastOrPresent;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "members")
@@ -33,5 +32,11 @@ public class Member extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Member(Party party, User user, boolean isLeader) {
+        this.party = party;
+        this.user = user;
+        this.isLeader = isLeader;
+    }
 
 }

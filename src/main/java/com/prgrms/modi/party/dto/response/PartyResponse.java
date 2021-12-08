@@ -1,4 +1,4 @@
-package com.prgrms.modi.party.dto;
+package com.prgrms.modi.party.dto.response;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 

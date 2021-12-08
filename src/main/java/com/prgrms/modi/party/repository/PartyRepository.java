@@ -1,4 +1,4 @@
-package com.prgrms.modi.party;
+package com.prgrms.modi.party.repository;
 
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.party.domain.Party;

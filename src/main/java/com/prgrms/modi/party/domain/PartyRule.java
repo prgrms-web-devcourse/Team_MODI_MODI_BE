@@ -11,7 +11,7 @@ import javax.persistence.Table;
 public class PartyRule {
 
     @EmbeddedId
-    private PartyRulePK id;
+    private PartyRulePK id = new PartyRulePK();
 
     @MapsId(value = "partyId")
     @ManyToOne
@@ -20,5 +20,13 @@ public class PartyRule {
     @MapsId(value = "ruleId")
     @ManyToOne
     private Rule rule;
+
+    protected PartyRule() {
+    }
+
+    public PartyRule(Party party, Rule rule) {
+        this.party = party;
+        this.rule = rule;
+    }
 
 }

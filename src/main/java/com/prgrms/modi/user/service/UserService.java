@@ -8,9 +8,9 @@ import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.prgrms.modi.common.oauth2.info.ProviderType;
 import com.prgrms.modi.error.exception.NotFoundException;
-import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +37,12 @@ public class UserService {
         checkArgument(id != null, "userId must be provided");
         return userRepository.findById(id)
             .map(UserResponse::from)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
+    }
+
+    @Transactional(readOnly = true)
+    public User findUser(Long id) {
+        return userRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
     }
 

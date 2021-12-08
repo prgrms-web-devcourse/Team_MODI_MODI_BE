@@ -1,4 +1,4 @@
-package com.prgrms.modi.party.dto;
+package com.prgrms.modi.party.dto.response;
 
 import com.prgrms.modi.ott.domain.OTT;
 import java.util.List;
