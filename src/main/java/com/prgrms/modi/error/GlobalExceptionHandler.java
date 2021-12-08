@@ -1,6 +1,7 @@
 package com.prgrms.modi.error;
 
 import com.prgrms.modi.error.exception.ForbiddenException;
+import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.error.exception.NotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(new ErrorResponse(e.getMessage(), "", HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(InvalidAuthenticationException.class)
+    public ResponseEntity<ErrorResponse> invalidAuthenticationHandler(InvalidAuthenticationException e) {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(new ErrorResponse(e.getMessage(), "", HttpStatus.UNAUTHORIZED));
     }
 
 }

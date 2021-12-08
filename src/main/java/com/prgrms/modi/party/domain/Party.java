@@ -18,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "parties")
@@ -184,8 +185,8 @@ public class Party extends BaseEntity {
             return this;
         }
 
-        public Builder maxMemberCapacity(Integer maxMemberCapacity) {
-            this.maxMemberCapacity = maxMemberCapacity;
+        public Builder partyMemberCapacity(Integer partyMemberCapacity) {
+            this.maxMemberCapacity = partyMemberCapacity;
             return this;
         }
 
@@ -253,6 +254,15 @@ public class Party extends BaseEntity {
             return new Party(this);
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("id", id)
+            .append("startDate", startDate)
+            .append("endDate", endDate)
+            .toString();
     }
 
 }
