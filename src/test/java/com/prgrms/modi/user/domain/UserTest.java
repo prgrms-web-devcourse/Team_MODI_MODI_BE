@@ -16,7 +16,7 @@ public class UserTest {
         User user = Mockito.mock(User.class);
         given(user.getId()).willReturn(id);
         given(user.getUsername()).willReturn("default");
-        given(user.getPoints()).willReturn(0L);
+        given(user.getPoints()).willReturn(0);
         return user;
     }
 
@@ -29,7 +29,7 @@ public class UserTest {
     void createUserTest() {
         User user = new User(
             "행복한 모디",
-            Role.USER, 10L,
+            Role.USER, 10,
             "kakao",
             "1234",
             LocalDate.of(1995, 6, 13)
@@ -37,7 +37,7 @@ public class UserTest {
         assertAll(
             () -> assertThat(user).isNotNull(),
             () -> assertThat(user.getUsername()).isEqualTo("행복한 모디"),
-            () -> assertThat(user.getPoints()).isEqualTo(10L)
+            () -> assertThat(user.getPoints()).isEqualTo(10)
         );
     }
 
@@ -47,7 +47,7 @@ public class UserTest {
         assertThatIllegalArgumentException()
             .isThrownBy(() -> new User(
                 "",
-                Role.USER, 10L,
+                Role.USER, 10,
                 "",
                 "",
                 LocalDate.of(1995, 6, 13)
