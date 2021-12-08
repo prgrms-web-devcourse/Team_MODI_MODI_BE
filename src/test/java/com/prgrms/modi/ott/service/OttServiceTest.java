@@ -53,7 +53,7 @@ class OttServiceTest {
         CarouselInfo carouselInfo = Mockito.mock(CarouselInfo.class);
         given(carouselInfo.getOttId()).willReturn(id);
         given(carouselInfo.getOttName()).willReturn("testOttName");
-        given(carouselInfo.getTotalRecruitingPartyCount()).willReturn(5L);
+        given(carouselInfo.getWaitingForMatch()).willReturn(5L);
         given(carouselInfo.getMonthlyFee()).willReturn(2500);
         return carouselInfo;
     }

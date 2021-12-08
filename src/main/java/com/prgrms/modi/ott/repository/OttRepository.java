@@ -14,7 +14,7 @@ public interface OttRepository extends JpaRepository<OTT, Long> {
     @Query("select "
         + "     o.id as ottId, "
         + "     o.name as ottName, "
-        + "     (select count(p) from Party p where o.id = p.ott.id and p.status = 'RECRUITING') as totalRecruitingPartyCount, "
+        + "     (select count(p) from Party p where o.id = p.ott.id and p.status = 'RECRUITING') as waitingForMatch, "
         + "     o.monthlyFee as monthlyFee "
         + " from "
         + "     OTT o")

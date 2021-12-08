@@ -6,7 +6,7 @@ public interface CarouselInfo {
 
     String getOttName();
 
-    Long getTotalRecruitingPartyCount();
+    Long getWaitingForMatch();
 
     Integer getMonthlyFee();
 
