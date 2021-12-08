@@ -1,5 +1,8 @@
 package com.prgrms.modi.user.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 import com.prgrms.modi.common.domain.BaseEntity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +18,6 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "users")
@@ -25,8 +27,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "이름은 최대 8자로 필수입니다")
-    @Length(min = 1, max = 8)
+    @NotBlank(message = "이름은 필수입니다")
     private String username;
 
     @Enumerated(EnumType.STRING)
@@ -51,6 +52,7 @@ public class User extends BaseEntity {
     }
 
     public User(String username, Role role, Long points, String provider, String providerId, LocalDate dateOfBirth) {
+        checkArgument(isNotEmpty(username));
         this.username = username;
         this.role = role;
         this.points = points;

@@ -1,6 +1,7 @@
 package com.prgrms.modi.user.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.prgrms.modi.utils.UsernameGenerator.createRandomName;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
@@ -11,7 +12,6 @@ import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
-import com.prgrms.modi.utils.UsernameGenerator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -69,7 +69,7 @@ public class UserService {
                 } else {
                     dateOfBirth = getDateOfBirth(userInfo.getBirthyear(), userInfo.getBirthDay());
                 }
-                String username = getRandomUserName();
+                String username = createRandomName();
 
                 return userRepository.save(
                     new User(username, Role.USER, 0L, provider, providerId, dateOfBirth)
