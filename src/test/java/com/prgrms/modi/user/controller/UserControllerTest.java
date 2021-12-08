@@ -1,4 +1,4 @@
-package com.prgrms.modi.user;
+package com.prgrms.modi.user.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -34,7 +34,7 @@ class UserControllerTest {
         int userId = 1;
         mockMvc
             .perform(
-                get(BASE_URL + "/{id}", userId)
+                get(BASE_URL + "/me")
                     .accept(MediaType.APPLICATION_JSON)
             )
             .andExpectAll(
