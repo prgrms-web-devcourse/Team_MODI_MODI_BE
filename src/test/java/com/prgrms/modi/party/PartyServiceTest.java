@@ -69,27 +69,29 @@ class PartyServiceTest {
         int size = 5;
 
         OTT ott = getOttFixture(ottId);
+        int period = 12;
+
         Party party1 = new Party.Builder()
             .id(1L)
             .partyMemberCapacity(4)
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(12))
+            .endDate(LocalDate.now().plusMonths(period))
             .mustFilled(true)
             .ott(ott)
             .build();
         Party party2 = new Party.Builder()
             .id(2L)
             .partyMemberCapacity(4)
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(12))
+            .endDate(LocalDate.now().plusMonths(period))
             .mustFilled(true)
             .ott(ott)
             .build();
@@ -106,6 +108,7 @@ class PartyServiceTest {
 
         // Then
         assertThat(response.getPartyList().size(), equalTo(2));
+        assertThat(response.getPartyList().get(0).getPeriod(), equalTo(period));
     }
 
     @Test
@@ -120,7 +123,7 @@ class PartyServiceTest {
         Party party1 = new Party.Builder()
             .id(1L)
             .partyMemberCapacity(4)
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
@@ -132,7 +135,7 @@ class PartyServiceTest {
         Party party2 = new Party.Builder()
             .id(2L)
             .partyMemberCapacity(4)
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
@@ -181,7 +184,7 @@ class PartyServiceTest {
         Party party = new Party.Builder()
             .id(1L)
             .partyMemberCapacity(createPartyRequest.getPartyMemberCapacity())
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
