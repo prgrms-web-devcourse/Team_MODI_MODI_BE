@@ -30,10 +30,10 @@ public class Party extends BaseEntity {
     private Long id;
 
     @Positive
-    private Integer maxMemberCapacity;
+    private Integer partyMemberCapacity;
 
     @Positive
-    private Integer currentMemberCapacity;
+    private Integer currentMember;
 
     @PositiveOrZero
     private Integer totalFee;
@@ -73,8 +73,8 @@ public class Party extends BaseEntity {
 
     private Party(Builder builder) {
         id = builder.id;
-        maxMemberCapacity = builder.maxMemberCapacity;
-        currentMemberCapacity = builder.currentMemberCapacity;
+        partyMemberCapacity = builder.partyMemberCapacity;
+        currentMember = builder.currentMember;
         totalFee = builder.totalFee;
         monthlyReimbursement = builder.monthlyReimbursement;
         remainingReimbursement = builder.remainingReimbursement;
@@ -92,12 +92,12 @@ public class Party extends BaseEntity {
         return id;
     }
 
-    public Integer getMaxMemberCapacity() {
-        return maxMemberCapacity;
+    public Integer getPartyMemberCapacity() {
+        return partyMemberCapacity;
     }
 
-    public Integer getCurrentMemberCapacity() {
-        return currentMemberCapacity;
+    public Integer getCurrentMember() {
+        return currentMember;
     }
 
     public Integer getTotalFee() {
@@ -152,9 +152,9 @@ public class Party extends BaseEntity {
 
         private Long id;
 
-        private Integer maxMemberCapacity;
+        private Integer partyMemberCapacity;
 
-        private Integer currentMemberCapacity;
+        private Integer currentMember;
 
         private Integer totalFee;
 
@@ -187,12 +187,12 @@ public class Party extends BaseEntity {
         }
 
         public Builder partyMemberCapacity(Integer partyMemberCapacity) {
-            this.maxMemberCapacity = partyMemberCapacity;
+            this.partyMemberCapacity = partyMemberCapacity;
             return this;
         }
 
-        public Builder currentMemberCapacity(Integer currentMemberCapacity) {
-            this.currentMemberCapacity = currentMemberCapacity;
+        public Builder currentMember(Integer currentMember) {
+            this.currentMember = currentMember;
             return this;
         }
 
