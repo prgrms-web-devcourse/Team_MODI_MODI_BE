@@ -10,6 +10,7 @@ import com.prgrms.modi.common.oauth2.info.ProviderType;
 import com.prgrms.modi.error.exception.NotFoundException;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.dto.PointAmountDto;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
 import java.time.LocalDate;
@@ -78,7 +79,7 @@ public class UserService {
                 String username = createRandomName();
 
                 return userRepository.save(
-                    new User(username, Role.USER, 0L, provider, providerId, dateOfBirth)
+                    new User(username, Role.USER, 0, provider, providerId, dateOfBirth)
                 );
             });
     }
@@ -99,6 +100,13 @@ public class UserService {
         log.info("birthyear : {}, birthday : {}", birthyear, birthday);
         String dateOfBirth = birthyear + birthday.replaceAll("[^0-9]", "");
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
+    }
+
+    @Transactional
+    public PointAmountDto getUserPoints(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException("유저가 없습니다."));
+        return new PointAmountDto(user.getPoints());
     }
 
 }

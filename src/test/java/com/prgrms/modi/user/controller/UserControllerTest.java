@@ -1,4 +1,4 @@
-package com.prgrms.modi.user;
+package com.prgrms.modi.user.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.prgrms.modi.user.controller.UserController;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,11 +29,11 @@ class UserControllerTest {
     @Test
     @WithMockJwtAuthentication
     @DisplayName("유저 정보 조회 성공 테스트")
-    void findUserSuccessTest() throws Exception {
+    void getUserSuccessTest() throws Exception {
         int userId = 1;
         mockMvc
             .perform(
-                get(BASE_URL + "/{id}", userId)
+                get(BASE_URL + "/me")
                     .accept(MediaType.APPLICATION_JSON)
             )
             .andExpectAll(
@@ -43,6 +42,24 @@ class UserControllerTest {
                 handler().methodName("getUserDetail"),
                 jsonPath("$.userId").value(userId),
                 jsonPath("$.username").value("테스트 유저1"),
+                jsonPath("$.points").value(0)
+            )
+            .andDo(print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("유저 포인트 조회 테스트")
+    void getUserPointsSuccessTest() throws Exception {
+        mockMvc
+            .perform(
+                get(BASE_URL + "/me/points")
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpectAll(
+                status().isOk(),
+                handler().handlerType(UserController.class),
+                handler().methodName("getUserPoints"),
                 jsonPath("$.points").value(0)
             )
             .andDo(print());
