@@ -67,6 +67,7 @@ class PartyServiceTest {
         OTT ott = Mockito.mock(OTT.class);
         given(ott.getId()).willReturn(id);
         given(ott.getName()).willReturn("testOttName");
+        given(ott.getMonthlyFee()).willReturn(10000);
         return ott;
     }
 
@@ -78,27 +79,29 @@ class PartyServiceTest {
         int size = 5;
 
         OTT ott = getOttFixture(ottId);
+        int period = 12;
+
         Party party1 = new Party.Builder()
             .id(1L)
             .partyMemberCapacity(4)
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(12))
+            .endDate(LocalDate.now().plusMonths(period))
             .mustFilled(true)
             .ott(ott)
             .build();
         Party party2 = new Party.Builder()
             .id(2L)
             .partyMemberCapacity(4)
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(12))
+            .endDate(LocalDate.now().plusMonths(period))
             .mustFilled(true)
             .ott(ott)
             .build();
@@ -115,6 +118,7 @@ class PartyServiceTest {
 
         // Then
         assertThat(response.getPartyList().size(), equalTo(2));
+        assertThat(response.getPartyList().get(0).getPeriod(), equalTo(period));
     }
 
     @Test
@@ -129,7 +133,7 @@ class PartyServiceTest {
         Party party1 = new Party.Builder()
             .id(1L)
             .partyMemberCapacity(4)
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
@@ -141,7 +145,7 @@ class PartyServiceTest {
         Party party2 = new Party.Builder()
             .id(2L)
             .partyMemberCapacity(4)
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
@@ -171,9 +175,12 @@ class PartyServiceTest {
         // Given
         Long ottId = 1L;
         Long userId = 1L;
+        OTT ott = getOttFixture(ottId);
+
         RuleRequest ruleRequest1 = new RuleRequest(1L, "1인 1회선");
         RuleRequest ruleRequest2 = new RuleRequest(2L, "양도 금지");
         List<RuleRequest> ruleRequests = List.of(ruleRequest1, ruleRequest2);
+
         CreatePartyRequest createPartyRequest = new CreatePartyRequest.Builder()
             .ottId(ottId)
             .ottName("넷플릭스")
@@ -190,19 +197,20 @@ class PartyServiceTest {
         Party party = new Party.Builder()
             .id(1L)
             .partyMemberCapacity(createPartyRequest.getPartyMemberCapacity())
-            .currentMemberCapacity(1)
+            .currentMember(1)
             .totalFee(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(createPartyRequest.getStartDate())
             .endDate(createPartyRequest.getEndDate())
             .mustFilled(createPartyRequest.isMustFilled())
-            .ott(getOttFixture(ottId))
+            .ott(ott)
             .build();
 
         when(partyRepository.save(any(Party.class))).thenReturn(party);
         doNothing().when(partyRuleService).savePartyRule(any(Party.class), any(Long.class));
         doNothing().when(memberService).saveLeaderMember(any(Party.class), any(Long.class));
+        when(ottService.findOtt(1L)).thenReturn(ott);
 
         // When
         PartyIdResponse response = partyService.createParty(createPartyRequest, userId);
@@ -211,6 +219,7 @@ class PartyServiceTest {
         verify(partyRepository, times(1)).save(any(Party.class));
         verify(partyRuleService, times(ruleRequests.size())).savePartyRule(any(Party.class), any(Long.class));
         verify(memberService, times(1)).saveLeaderMember(any(Party.class), any(Long.class));
+        verify(ottService, times(1)).findOtt(any(Long.class));
     }
 
     @Test

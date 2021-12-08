@@ -13,12 +13,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class User extends BaseEntity {
     private Role role;
 
     @PositiveOrZero(message = "포인트는 0이상의 값만 가능합니다")
-    private Long points;
+    private Integer points;
 
     @NotBlank(message = "로그인은 naver나 kakao만 가능합니다")
     private String provider;
@@ -59,7 +60,7 @@ public class User extends BaseEntity {
     protected User() {
     }
 
-    public User(String username, Role role, Long points, String provider, String providerId, LocalDate dateOfBirth) {
+    public User(String username, Role role, Integer points, String provider, String providerId, LocalDate dateOfBirth) {
         checkArgument(isNotEmpty(username));
         this.username = username;
         this.role = role;
@@ -77,13 +78,13 @@ public class User extends BaseEntity {
         return username;
     }
 
-    public Long getPoints() {
+    public Integer getPoints() {
         return points;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .append("id", id)
             .append("username", username)
             .append("role", role)
@@ -95,7 +96,7 @@ public class User extends BaseEntity {
             .toString();
     }
 
-    public void deductPoint(Long points) {
+    public void deductPoint(Integer points) {
         if (this.points < points) {
             throw new NotEnoughPointException("포인트가 부족합니다.");
         }

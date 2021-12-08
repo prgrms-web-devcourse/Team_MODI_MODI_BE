@@ -1,5 +1,6 @@
 package com.prgrms.modi.ott.controller;
 
+import com.prgrms.modi.ott.dto.CarouselListResponse;
 import com.prgrms.modi.ott.dto.OttListResponse;
 import com.prgrms.modi.ott.dto.OttResponse;
 import com.prgrms.modi.ott.service.OttService;
@@ -27,6 +28,11 @@ public class OttRestController {
     @GetMapping("/{ottId}")
     public ResponseEntity<OttResponse> getOtt(@PathVariable Long ottId) {
         return ResponseEntity.ok(ottService.getOtt(ottId));
+    }
+
+    @GetMapping(path = "/waitings")
+    public ResponseEntity<CarouselListResponse> getAllCarousels() {
+        return ResponseEntity.ok(ottService.getCarouselList());
     }
 
 }

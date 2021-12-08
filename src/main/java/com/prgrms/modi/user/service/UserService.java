@@ -13,6 +13,7 @@ import com.prgrms.modi.history.service.PointHistoryService;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.dto.PointAmountDto;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
 
@@ -93,7 +94,7 @@ public class UserService {
                 String username = createRandomName();
 
                 return userRepository.save(
-                    new User(username, Role.USER, 0L, provider, providerId, dateOfBirth)
+                    new User(username, Role.USER, 0, provider, providerId, dateOfBirth)
                 );
             });
     }
@@ -122,6 +123,13 @@ public class UserService {
 
     public void savePointHistory(Party party, User user) {
         pointHistoryService.save(party, user);
+    }
+
+    @Transactional
+    public PointAmountDto getUserPoints(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException("유저가 없습니다."));
+        return new PointAmountDto(user.getPoints());
     }
 
 }
