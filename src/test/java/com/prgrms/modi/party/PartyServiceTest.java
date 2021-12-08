@@ -13,7 +13,6 @@ import com.prgrms.modi.party.service.PartyRuleService;
 import com.prgrms.modi.party.service.PartyService;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.service.MemberService;
-import com.prgrms.modi.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +30,6 @@ import java.util.Optional;
 
 import static com.prgrms.modi.utils.MockCreator.getPartyFixture;
 import static com.prgrms.modi.utils.MockCreator.getUserFixture;
-import static org.assertj.core.api.BDDAssertions.then;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -225,7 +223,7 @@ class PartyServiceTest {
     @Test
     @DisplayName("유저 파티 가입 테스트")
     void joinParty() {
-        User user = getUserFixture(1L, 50000L);
+        User user = getUserFixture(1L, 50000);
         Party party = getPartyFixture(1L);
 
         given(memberService.findUser(anyLong())).willReturn(user);
@@ -235,7 +233,7 @@ class PartyServiceTest {
 
         verify(memberService).findUser(anyLong());
         verify(partyRepository).findPartyWithOtt(anyLong());
-        verify(user).deductPoint(anyLong());
+        verify(user).deductPoint(anyInt());
         verify(party).increaseCurrentMemberCapacity();
         verify(party).increaseMonthlyReimbursement(anyInt());
         verify(party).increaseRemainingReimbursement(anyInt());

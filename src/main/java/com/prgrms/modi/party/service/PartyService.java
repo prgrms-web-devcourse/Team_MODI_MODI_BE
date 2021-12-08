@@ -1,14 +1,6 @@
 package com.prgrms.modi.party.service;
 
-import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
-import com.prgrms.modi.error.exception.NotEnoughPointException;
 import com.prgrms.modi.error.exception.NotFoundException;
-import com.prgrms.modi.history.domain.CommissionDetail;
-import com.prgrms.modi.history.domain.CommissionHistory;
-import com.prgrms.modi.history.domain.PointDetail;
-import com.prgrms.modi.history.domain.PointHistory;
-import static java.time.temporal.ChronoUnit.MONTHS;
-
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.service.OttService;
 import com.prgrms.modi.party.domain.Party;
@@ -30,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.time.temporal.ChronoUnit.MONTHS;
 
 @Service
 public class PartyService {
@@ -97,16 +91,21 @@ public class PartyService {
     @Transactional
     public Long joinParty(Long userId, Long partyId) {
         User user = memberService.findUser(userId);
-        Party party = findPartyWithOtt(partyId);
+        Party party = this.findPartyWithOtt(partyId);
 
-        user.deductPoint(Long.valueOf(party.getTotalFee()));
-        memberService.saveCommissionHistory(party, user);
-        memberService.savePointHistory(party, user);
+        user.deductPoint(party.getTotalFee());
         party.increaseCurrentMemberCapacity();
         party.increaseMonthlyReimbursement(party.getOtt().getMonthlyFee());
         party.increaseRemainingReimbursement(party.getTotalFee());
+        memberService.saveCommissionHistory(party, user);
+        memberService.savePointHistory(party, user);
         memberService.save(party, user);
         return partyId;
+    }
+
+    private Party findPartyWithOtt(Long partyId) {
+        return partyRepository.findPartyWithOtt(partyId)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다."));
     }
 
     private Party saveParty(CreatePartyRequest request) {

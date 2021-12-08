@@ -161,10 +161,10 @@ public class Party extends BaseEntity {
     }
 
     public void increaseCurrentMemberCapacity() {
-        if (this.currentMemberCapacity >= this.maxMemberCapacity) {
+        if (this.currentMember >= this.partyMemberCapacity) {
             throw new NotEnoughPartyCapacityException("파티 정원이 다 찼습니다.");
         }
-        this.currentMemberCapacity++;
+        this.currentMember++;
     }
 
     public static final class Builder {

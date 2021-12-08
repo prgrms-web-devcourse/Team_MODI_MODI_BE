@@ -42,7 +42,7 @@ class UserControllerTest {
                 handler().methodName("getUserDetail"),
                 jsonPath("$.userId").value(userId),
                 jsonPath("$.username").value("테스트 유저1"),
-                jsonPath("$.points").value(0)
+                jsonPath("$.points").value(50000)
             )
             .andDo(print());
     }
@@ -60,7 +60,7 @@ class UserControllerTest {
                 status().isOk(),
                 handler().handlerType(UserController.class),
                 handler().methodName("getUserPoints"),
-                jsonPath("$.points").value(0)
+                jsonPath("$.points").value(50000)
             )
             .andDo(print());
     }

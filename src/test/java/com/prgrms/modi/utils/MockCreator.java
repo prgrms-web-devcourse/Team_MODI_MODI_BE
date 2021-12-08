@@ -12,7 +12,7 @@ import static org.mockito.BDDMockito.given;
 
 public class MockCreator {
 
-    public static User getUserFixture(Long id, Long points) {
+    public static User getUserFixture(Long id, Integer points) {
         User user = Mockito.mock(User.class);
         given(user.getId()).willReturn(id);
         given(user.getPoints()).willReturn(points);
@@ -23,8 +23,8 @@ public class MockCreator {
         Party party = Mockito.mock(Party.class);
         OTT ott = getOttFixture(1L);
         given(party.getId()).willReturn(id);
-        given(party.getMaxMemberCapacity()).willReturn(4);
-        given(party.getCurrentMemberCapacity()).willReturn(2);
+        given(party.getPartyMemberCapacity()).willReturn(4);
+        given(party.getCurrentMember()).willReturn(2);
         given(party.getTotalFee()).willReturn(16000);
         given(party.getMonthlyReimbursement()).willReturn(12000);
         given(party.getRemainingReimbursement()).willReturn(48000);

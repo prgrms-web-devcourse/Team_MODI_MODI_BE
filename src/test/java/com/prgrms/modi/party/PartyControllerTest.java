@@ -1,13 +1,5 @@
 package com.prgrms.modi.party;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.prgrms.modi.history.domain.CommissionHistory;
@@ -18,15 +10,10 @@ import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.request.RuleRequest;
 import com.prgrms.modi.party.repository.PartyRepository;
-import com.prgrms.modi.user.domain.Member;
-import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.MemberRepository;
 import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
-import java.text.MessageFormat;
-import java.time.LocalDate;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +22,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -175,12 +174,12 @@ class PartyControllerTest {
     @DisplayName("파티를 참여할 수 있다.")
     @Transactional(readOnly = true)
     public void joinParty() throws Exception {
-        Long userPoint = 50000L;
+        int userPoint = 50000;
         Long userId = 1L;
         Long partyId = 4L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(print());
 
@@ -190,7 +189,7 @@ class PartyControllerTest {
         List<CommissionHistory> commissionHistoryList = commissionHistoryRepository.findByUserId(userId);
 
         assertThat(user.getPoints(), equalTo(userPoint - party.getTotalFee()));
-        assertThat(party.getCurrentMemberCapacity(), equalTo(3));
+        assertThat(party.getCurrentMember(), equalTo(3));
         assertThat(party.getMonthlyReimbursement(), equalTo(2500));
         assertThat(party.getRemainingReimbursement(), equalTo(party.getTotalFee()));
         assertThat(pointHistoryList.size(), equalTo(1));
@@ -224,4 +223,5 @@ class PartyControllerTest {
             .andDo(print());
 
     }
+
 }
