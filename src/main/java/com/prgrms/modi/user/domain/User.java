@@ -2,9 +2,11 @@ package com.prgrms.modi.user.domain;
 
 import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.error.exception.NotEnoughPointException;
+import com.prgrms.modi.history.domain.CommissionHistory;
 import com.prgrms.modi.history.domain.PointHistory;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -54,9 +56,6 @@ public class User extends BaseEntity {
     @PastOrPresent
     private LocalDateTime deletedAt;
 
-    @OneToMany(mappedBy = "user")
-    private List<PointHistory> pointHistorys = new ArrayList<>();
-
     protected User() {
     }
 
@@ -82,15 +81,6 @@ public class User extends BaseEntity {
         return points;
     }
 
-    public List<PointHistory> getPointHistorys() {
-        return pointHistorys;
-    }
-
-    public void addHistory(PointHistory pointHistory) {
-        this.pointHistorys.add(pointHistory);
-        pointHistory.setUser(this);
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -106,7 +96,9 @@ public class User extends BaseEntity {
     }
 
     public void deductPoint(Long points) {
-        checkArgument(this.points >= points, new NotEnoughPointException("포인트가 부족합니다."));
+        if (this.points < points) {
+            throw new NotEnoughPointException("포인트가 부족합니다.");
+        }
         this.points -= points;
     }
 

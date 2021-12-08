@@ -3,6 +3,7 @@ package com.prgrms.modi.user.domain;
 import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.party.domain.Party;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,11 +27,11 @@ public class Member extends BaseEntity {
     @PastOrPresent
     private LocalDateTime deletedAt;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "party_id")
     private Party party;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 

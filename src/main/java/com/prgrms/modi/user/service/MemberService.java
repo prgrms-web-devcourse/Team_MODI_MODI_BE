@@ -23,14 +23,20 @@ public class MemberService {
         memberRepository.save(new Member(party, userService.findUser(userId), true));
     }
 
-    @Transactional
-    public User findUserWithHistory(Long userId) {
-        return userService.findUserWithPointHistory(userId);
+    public User findUser(Long userId) {
+        return userService.findUser(userId);
     }
 
-    @Transactional
     public void save(Party party, User user) {
         memberRepository.save(new Member(party, user, false));
+    }
+
+    public void saveCommissionHistory(Party party, User user) {
+        userService.saveCommissionHistory(party, user);
+    }
+
+    public void savePointHistory(Party party, User user) {
+        userService.savePointHistory(party, user);
     }
 
 }

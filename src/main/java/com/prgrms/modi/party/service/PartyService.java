@@ -3,6 +3,8 @@ package com.prgrms.modi.party.service;
 import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.error.exception.NotEnoughPointException;
 import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.history.domain.CommissionDetail;
+import com.prgrms.modi.history.domain.CommissionHistory;
 import com.prgrms.modi.history.domain.PointDetail;
 import com.prgrms.modi.history.domain.PointHistory;
 import com.prgrms.modi.ott.domain.OTT;
@@ -97,19 +99,12 @@ public class PartyService {
 
     @Transactional
     public Long joinParty(Long userId, Long partyId) {
-        User user = memberService.findUserWithHistory(userId);
+        User user = memberService.findUser(userId);
         Party party = findPartyWithOtt(partyId);
 
-        if (user.getPoints() < party.getTotalFee()) {
-            throw new NotEnoughPointException("포인트가 부족합니다.");
-        }
-
-        if (party.getCurrentMemberCapacity() >= party.getMaxMemberCapacity()) {
-            throw new NotEnoughPartyCapacityException("파티 정원이 다 찼습니다.");
-        }
-
         user.deductPoint(Long.valueOf(party.getTotalFee()));
-        user.getPointHistorys().add(new PointHistory(PointDetail.PARTICIPATE, party.getTotalFee()));
+        memberService.saveCommissionHistory(party, user);
+        memberService.savePointHistory(party, user);
         party.increaseCurrentMemberCapacity();
         party.increaseMonthlyReimbursement(party.getOtt().getMonthlyFee());
         party.increaseRemainingReimbursement(party.getTotalFee());

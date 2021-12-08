@@ -2,6 +2,8 @@ package com.prgrms.modi.error;
 
 import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
+import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
+import com.prgrms.modi.error.exception.NotEnoughPointException;
 import com.prgrms.modi.error.exception.NotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
@@ -21,6 +24,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity
             .internalServerError()
             .body(new ErrorResponse(e.getMessage(), "", HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({
+        IllegalStateException.class, IllegalArgumentException.class,
+        NotEnoughPointException.class, NotEnoughPartyCapacityException.class
+    })
+    public ResponseEntity<ErrorResponse> handleBadRequestException(Exception e) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorResponse(e.getMessage(), "", HttpStatus.BAD_REQUEST));
     }
 
     @ExceptionHandler(NotFoundException.class)

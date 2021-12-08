@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.prgrms.modi.utils.MockCreator.getOttFixture;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -31,21 +32,6 @@ class OttServiceTest {
 
     @Mock
     private OttRepository ottRepository;
-
-    public OTT getOttFixture(Long id) {
-        OTT ott = Mockito.mock(OTT.class);
-        given(ott.getId()).willReturn(id);
-        given(ott.getName()).willReturn("testOttName");
-        given(ott.getSubscriptionFee()).willReturn(16000);
-        given(ott.getMonthlyFee()).willReturn(4000);
-        given(ott.getMaxMemberCapacity()).willReturn(4);
-        given(ott.getGrade()).willReturn("프리미엄");
-        return ott;
-    }
-
-    public OTT getOttFixture() {
-        return getOttFixture(1L);
-    }
 
     @Test
     @DisplayName("OTT 전체 조회 테스트")

@@ -10,10 +10,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import com.prgrms.modi.history.domain.CommissionHistory;
+import com.prgrms.modi.history.domain.PointHistory;
+import com.prgrms.modi.history.repository.CommissionHistoryRepository;
+import com.prgrms.modi.history.repository.PointHistoryRepository;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.request.RuleRequest;
 import com.prgrms.modi.party.repository.PartyRepository;
+import com.prgrms.modi.user.domain.Member;
+import com.prgrms.modi.user.domain.Role;
+import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.repository.MemberRepository;
+import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
 import java.text.MessageFormat;
 import java.time.LocalDate;
@@ -40,6 +49,18 @@ class PartyControllerTest {
     @Autowired
     PartyRepository partyRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    CommissionHistoryRepository commissionHistoryRepository;
+
+    @Autowired
+    PointHistoryRepository pointHistoryRepository;
+
     @Test
     @DisplayName("OTT 파티 목록 첫 페이지를 조회할 수 있다")
     public void getPartyList() throws Exception {
@@ -52,7 +73,7 @@ class PartyControllerTest {
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.ottId").value(ottId),
-                jsonPath("$.partyList[0].partyId").value(5)
+                jsonPath("$.partyList[0].partyId").value(6)
             )
             .andDo(print());
     }
@@ -149,4 +170,58 @@ class PartyControllerTest {
         assertThat(maybeParty.getSharedId(), equalTo("modi@gmail.com"));
     }
 
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("파티를 참여할 수 있다.")
+    @Transactional(readOnly = true)
+    public void joinParty() throws Exception {
+        Long userPoint = 50000L;
+        Long userId = 1L;
+        Long partyId = 4L;
+
+        mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andDo(print());
+
+        User user = userRepository.findById(1L).get();
+        Party party = partyRepository.findById(partyId).get();
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUserId(userId);
+        List<CommissionHistory> commissionHistoryList = commissionHistoryRepository.findByUserId(userId);
+
+        assertThat(user.getPoints(), equalTo(userPoint - party.getTotalFee()));
+        assertThat(party.getCurrentMemberCapacity(), equalTo(3));
+        assertThat(party.getMonthlyReimbursement(), equalTo(2500));
+        assertThat(party.getRemainingReimbursement(), equalTo(party.getTotalFee()));
+        assertThat(pointHistoryList.size(), equalTo(1));
+        assertThat(commissionHistoryList.size(), equalTo(1));
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("포인트가 부족할 경우 파티에 가입할 수 없다.")
+    @Transactional(readOnly = true)
+    public void notEnoughPointTest() throws Exception {
+        Long partyId = 6L;
+
+        mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andDo(print());
+
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("파티가 만원인 경우에는 참여할 수 없다.")
+    @Transactional(readOnly = true)
+    public void notEnoughPartyCapacityTest() throws Exception {
+        Long partyId = 1L;
+
+        mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andDo(print());
+
+    }
 }

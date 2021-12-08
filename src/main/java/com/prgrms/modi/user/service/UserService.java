@@ -8,6 +8,9 @@ import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.prgrms.modi.common.oauth2.info.ProviderType;
 import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.history.service.CommissionHistoryService;
+import com.prgrms.modi.history.service.PointHistoryService;
+import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.dto.UserResponse;
@@ -30,8 +33,18 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final PointHistoryService pointHistoryService;
+
+    private final CommissionHistoryService commissionHistoryService;
+
+    public UserService(
+        UserRepository userRepository,
+        PointHistoryService pointHistoryService,
+        CommissionHistoryService commissionHistoryService
+    ) {
         this.userRepository = userRepository;
+        this.pointHistoryService = pointHistoryService;
+        this.commissionHistoryService = commissionHistoryService;
     }
 
     @Transactional(readOnly = true)
@@ -54,12 +67,6 @@ public class UserService {
         checkArgument(isNotEmpty(providerId), "providerId must be provided");
 
         return userRepository.findByProviderAndProviderId(provider, providerId);
-    }
-
-    @Transactional
-    public User findUserWithPointHistory(Long userId) {
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
     }
 
     @Transactional
@@ -107,6 +114,14 @@ public class UserService {
         log.info("birthyear : {}, birthday : {}", birthyear, birthday);
         String dateOfBirth = birthyear + birthday.replaceAll("[^0-9]", "");
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
+    }
+
+    public void saveCommissionHistory(Party party, User user) {
+        commissionHistoryService.save(party, user);
+    }
+
+    public void savePointHistory(Party party, User user) {
+        pointHistoryService.save(party, user);
     }
 
 }

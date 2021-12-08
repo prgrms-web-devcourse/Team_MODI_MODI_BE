@@ -1,15 +1,5 @@
 package com.prgrms.modi.party;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.service.OttService;
 import com.prgrms.modi.party.domain.Party;
@@ -21,9 +11,9 @@ import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.party.service.PartyRuleService;
 import com.prgrms.modi.party.service.PartyService;
+import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.service.MemberService;
-import java.time.LocalDate;
-import java.util.List;
+import com.prgrms.modi.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +24,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageRequest;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static com.prgrms.modi.utils.MockCreator.getPartyFixture;
+import static com.prgrms.modi.utils.MockCreator.getUserFixture;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -202,6 +211,25 @@ class PartyServiceTest {
         verify(partyRepository, times(1)).save(any(Party.class));
         verify(partyRuleService, times(ruleRequests.size())).savePartyRule(any(Party.class), any(Long.class));
         verify(memberService, times(1)).saveLeaderMember(any(Party.class), any(Long.class));
+    }
+
+    @Test
+    @DisplayName("유저 파티 가입 테스트")
+    void joinParty() {
+        User user = getUserFixture(1L, 50000L);
+        Party party = getPartyFixture(1L);
+
+        given(memberService.findUser(anyLong())).willReturn(user);
+        given(partyRepository.findPartyWithOtt(anyLong())).willReturn(Optional.of(party));
+
+        partyService.joinParty(user.getId(), party.getId());
+
+        verify(memberService).findUser(anyLong());
+        verify(partyRepository).findPartyWithOtt(anyLong());
+        verify(user).deductPoint(anyLong());
+        verify(party).increaseCurrentMemberCapacity();
+        verify(party).increaseMonthlyReimbursement(anyInt());
+        verify(party).increaseRemainingReimbursement(anyInt());
     }
 
 }

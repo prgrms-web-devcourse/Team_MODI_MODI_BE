@@ -36,15 +36,9 @@ public class PointHistory extends BaseEntity {
     protected PointHistory() {
     }
 
-    public PointHistory(PointDetail pointDetail, Integer amount) {
+    public PointHistory(PointDetail pointDetail, Integer amount, User user) {
         this.pointDetail = pointDetail;
         this.amount = amount;
-    }
-
-    public void setUser(User user) {
-        if (Objects.nonNull(this.user)) {
-            this.user.getPointHistorys().remove(this);
-        }
         this.user = user;
     }
 

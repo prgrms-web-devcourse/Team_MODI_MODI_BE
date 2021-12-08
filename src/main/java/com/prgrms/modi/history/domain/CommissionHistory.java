@@ -31,4 +31,17 @@ public class CommissionHistory extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    protected CommissionHistory() {
+    }
+
+    public CommissionHistory(CommissionDetail commissionDetail, Integer amount, User user) {
+        this.commissionDetail = commissionDetail;
+        this.amount = amount;
+        this.user = user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

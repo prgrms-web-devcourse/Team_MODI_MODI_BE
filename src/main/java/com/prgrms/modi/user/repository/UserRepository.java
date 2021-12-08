@@ -12,7 +12,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByProviderAndProviderId(String provider, String providerId);
 
-    @Query(value = "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.pointHistorys WHERE u.id = :userId")
-    Optional<User> findUserWithPointHistory(Long userId);
-
 }
