@@ -16,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,11 +32,11 @@ class UserControllerTest {
     @DisplayName("유저 정보 조회 성공 테스트")
     void findUserSuccessTest() throws Exception {
         int userId = 1;
-        ResultActions result = mockMvc.perform(
-            get(BASE_URL + "/{id}", userId)
-                .accept(MediaType.APPLICATION_JSON)
-        );
-        result.andDo(print())
+        mockMvc
+            .perform(
+                get(BASE_URL + "/{id}", userId)
+                    .accept(MediaType.APPLICATION_JSON)
+            )
             .andExpectAll(
                 status().isOk(),
                 handler().handlerType(UserController.class),
@@ -45,7 +44,8 @@ class UserControllerTest {
                 jsonPath("$.userId").value(userId),
                 jsonPath("$.username").value("테스트 유저1"),
                 jsonPath("$.points").value(0)
-            );
+            )
+            .andDo(print());
     }
 
 }

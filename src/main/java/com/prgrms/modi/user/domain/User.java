@@ -1,9 +1,5 @@
 package com.prgrms.modi.user.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
 import com.prgrms.modi.common.domain.BaseEntity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +15,7 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "users")
@@ -28,19 +25,20 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "이름은 최대 8자로 필수입니다")
+    @Length(min = 1, max = 8)
     private String username;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @PositiveOrZero
+    @PositiveOrZero(message = "포인트는 0이상의 값만 가능합니다")
     private Long points;
 
-    @NotBlank
+    @NotBlank(message = "로그인은 naver나 kakao만 가능합니다")
     private String provider;
 
-    @NotBlank
+    @NotBlank(message = "providerId는 필수입니다")
     private String providerId;
 
     @Past
@@ -53,16 +51,6 @@ public class User extends BaseEntity {
     }
 
     public User(String username, Role role, Long points, String provider, String providerId, LocalDate dateOfBirth) {
-        checkArgument(isNotEmpty(username), "username must be provided.");
-        checkArgument(
-            username.length() >= 1 && username.length() <= 8,
-            "username length must be between 1 to 8 characters."
-        );
-        checkNotNull(role, "role must be provided.");
-        checkNotNull(points, "points must be provided.");
-        checkNotNull(provider, "provider must be provided.");
-        checkNotNull(providerId, "providerId must be provided.");
-
         this.username = username;
         this.role = role;
         this.points = points;

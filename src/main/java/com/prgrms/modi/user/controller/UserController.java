@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,15 +33,14 @@ public class UserController {
         @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     public ResponseEntity<UserResponse> getUserDetail(
-        @PathVariable @Parameter(description = "조회 대상자 PK (본인)", required = true, example = "1") Long id,
+        @PathVariable @Valid @Parameter(description = "조회 대상자 PK (본인)", required = true, example = "1") Long id,
         @AuthenticationPrincipal JwtAuthentication authentication
     ) {
-        if (id.equals(authentication.userId)) {
-            return ResponseEntity.ok(
-                userService.findById(authentication.userId));
-        } else {
+        if (!id.equals(authentication.userId)) {
             throw new ForbiddenException("접근할 수 없는 정보입니다.");
         }
+        return ResponseEntity.ok(
+            userService.getUserDetail(authentication.userId));
     }
 
 }

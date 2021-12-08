@@ -51,7 +51,6 @@ spring:
     console.enabled: true
 
 jwt:
-  header: token
   issuer: modi
   client-secret: ${JWT_SECRET}
   expiry-seconds: 172800

@@ -18,7 +18,7 @@ public class UserResponse {
     @ApiModelProperty(value = "포인트", required = true)
     private Long points;
 
-    public UserResponse(Long userId, String username, Long points) {
+    private UserResponse(Long userId, String username, Long points) {
         this.userId = userId;
         this.username = username;
         this.points = points;

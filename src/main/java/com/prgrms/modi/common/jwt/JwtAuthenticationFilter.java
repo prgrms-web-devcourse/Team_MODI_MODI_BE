@@ -78,9 +78,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                 String jwtToken = token.substring(7);
                 return URLDecoder.decode(jwtToken, StandardCharsets.UTF_8);
             } catch (IllegalArgumentException e) {
-                log.debug("Unable to get JWT Token");
+                log.error("Unable to get JWT Token");
             } catch (TokenExpiredException e) {
-                log.debug("JWT Token has expired");
+                log.warn("JWT Token has expired");
             }
         }
         return null;

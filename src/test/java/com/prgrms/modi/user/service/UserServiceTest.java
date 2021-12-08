@@ -31,7 +31,7 @@ class UserServiceTest {
         User user = getUserFixture();
         given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
 
-        UserResponse userResponse = userService.findById(1L);
+        UserResponse userResponse = userService.getUserDetail(1L);
 
         then(userResponse)
             .hasFieldOrPropertyWithValue("userId", user.getId())

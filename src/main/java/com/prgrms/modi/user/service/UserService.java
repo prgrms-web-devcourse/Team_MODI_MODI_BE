@@ -32,7 +32,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResponse findById(Long id) {
+    public UserResponse getUserDetail(Long id) {
         checkArgument(id != null, "userId must be provided");
         return userRepository.findById(id)
             .map(UserResponse::from)
