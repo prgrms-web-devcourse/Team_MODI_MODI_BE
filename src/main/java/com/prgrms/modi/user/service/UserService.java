@@ -11,6 +11,7 @@ import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
+import com.prgrms.modi.utils.UsernameGenerator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -92,10 +93,6 @@ public class UserService {
         log.info("birthyear : {}, birthday : {}", birthyear, birthday);
         String dateOfBirth = birthyear + birthday.replaceAll("[^0-9]", "");
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
-    }
-
-    private String getRandomUserName() {
-        return "default";
     }
 
 }
