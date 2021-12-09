@@ -9,6 +9,8 @@ group = 'com.prgrms'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+def querydslVersion = '4.3.1'
+
 repositories {
     mavenCentral()
 }
@@ -22,6 +24,15 @@ dependencies {
     implementation group: 'com.auth0', name: 'java-jwt', version: '3.18.1'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
     implementation group: 'com.google.guava', name: 'guava', version: '31.0-jre'
+
+    implementation group: 'com.querydsl', name: 'querydsl-jpa', version: querydslVersion
+    implementation group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion
+    implementation group: 'com.querydsl', name: 'querydsl-core', version: querydslVersion
+
+    annotationProcessor group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion
+    annotationProcessor group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion, classifier: 'jpa'
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
