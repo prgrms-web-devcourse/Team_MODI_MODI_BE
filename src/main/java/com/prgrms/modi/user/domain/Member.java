@@ -27,11 +27,11 @@ public class Member extends BaseEntity {
     @PastOrPresent
     private LocalDateTime deletedAt;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "party_id")
     private Party party;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
