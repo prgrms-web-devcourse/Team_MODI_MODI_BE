@@ -5,9 +5,10 @@ import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
+import com.prgrms.modi.party.dto.response.RuleListResponse;
 import com.prgrms.modi.party.service.PartyService;
-import com.prgrms.modi.user.service.UserService;
 
+import com.prgrms.modi.party.service.RuleService;
 import javax.validation.constraints.Positive;
 
 import org.springframework.http.ResponseEntity;
@@ -28,11 +29,11 @@ public class PartyController {
 
     private final PartyService partyService;
 
-    private final UserService userService;
+    private final RuleService ruleService;
 
-    public PartyController(PartyService partyService, UserService userService) {
+    public PartyController(PartyService partyService, RuleService ruleService) {
         this.partyService = partyService;
-        this.userService = userService;
+        this.ruleService = ruleService;
     }
 
     @GetMapping("/otts/{ottId}/parties")
@@ -69,6 +70,11 @@ public class PartyController {
         }
 
         return ResponseEntity.ok(partyService.joinParty(authentication.userId, partyId));
+    }
+  
+    @GetMapping("/rules")
+    public ResponseEntity<RuleListResponse> getRuleList() {
+        return ResponseEntity.ok(ruleService.getAllRule());
     }
 
 }

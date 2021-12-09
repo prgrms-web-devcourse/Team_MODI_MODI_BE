@@ -1,7 +1,6 @@
 package com.prgrms.modi.party.domain;
 
 import com.prgrms.modi.common.domain.BaseEntity;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,5 +18,13 @@ public class Rule extends BaseEntity {
 
     @NotBlank
     private String name;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 
 }
