@@ -28,11 +28,8 @@ public class PartyController {
 
     private final PartyService partyService;
 
-    private final UserService userService;
-
-    public PartyController(PartyService partyService, UserService userService) {
+    public PartyController(PartyService partyService) {
         this.partyService = partyService;
-        this.userService = userService;
     }
 
     @GetMapping("/otts/{ottId}/parties")
