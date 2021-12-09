@@ -41,7 +41,6 @@ public class PartyController {
         if (lastPartyId == null) {
             return ResponseEntity.ok(partyService.getPartyList(ottId, size));
         }
-
         return ResponseEntity.ok(partyService.getPartyList(ottId, size, lastPartyId));
     }
 

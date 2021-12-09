@@ -40,8 +40,4 @@ public class CommissionHistory extends BaseEntity {
         this.user = user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
 }
