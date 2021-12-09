@@ -89,7 +89,7 @@ public class PartyService {
     }
 
     @Transactional
-    public Long joinParty(Long userId, Long partyId) {
+    public PartyIdResponse joinParty(Long userId, Long partyId) {
         User user = memberService.findUser(userId);
         Party party = this.findPartyWithOtt(partyId);
 
@@ -98,7 +98,7 @@ public class PartyService {
         party.increaseMonthlyReimbursement(party.getOtt().getMonthlyFee());
         party.increaseRemainingReimbursement(party.getTotalFee());
         memberService.save(party, user);
-        return partyId;
+        return PartyIdResponse.from(party);
     }
 
     private Party findPartyWithOtt(Long partyId) {
