@@ -8,6 +8,8 @@ import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.prgrms.modi.common.oauth2.info.ProviderType;
 import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.history.domain.CommissionDetail;
+import com.prgrms.modi.history.domain.PointDetail;
 import com.prgrms.modi.history.service.CommissionHistoryService;
 import com.prgrms.modi.history.service.PointHistoryService;
 import com.prgrms.modi.party.domain.Party;
@@ -117,12 +119,12 @@ public class UserService {
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
-    public void saveCommissionHistory(Party party, User user) {
-        commissionHistoryService.save(party, user);
+    public void saveCommissionHistory(CommissionDetail commissionDetail, Integer fee, User user) {
+        commissionHistoryService.save(commissionDetail, fee, user);
     }
 
-    public void savePointHistory(Party party, User user) {
-        pointHistoryService.save(party, user);
+    public void savePointHistory(PointDetail pointDetail, Integer fee, User user) {
+        pointHistoryService.save(pointDetail, fee, user);
     }
 
     @Transactional

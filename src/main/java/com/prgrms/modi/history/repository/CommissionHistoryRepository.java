@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CommissionHistoryRepository extends JpaRepository<CommissionHistory, Long> {
 
-    List<CommissionHistory> findByUserId(Long userId);
+    List<CommissionHistory> findAllByUserId(Long userId);
 
 }

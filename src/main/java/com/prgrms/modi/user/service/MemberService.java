@@ -1,5 +1,7 @@
 package com.prgrms.modi.user.service;
 
+import com.prgrms.modi.history.domain.CommissionDetail;
+import com.prgrms.modi.history.domain.PointDetail;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
@@ -29,14 +31,8 @@ public class MemberService {
 
     public void save(Party party, User user) {
         memberRepository.save(new Member(party, user, false));
-    }
-
-    public void saveCommissionHistory(Party party, User user) {
-        userService.saveCommissionHistory(party, user);
-    }
-
-    public void savePointHistory(Party party, User user) {
-        userService.savePointHistory(party, user);
+        userService.saveCommissionHistory(CommissionDetail.PARTICIPATE, party.getTotalFee(), user);
+        userService.savePointHistory(PointDetail.PARTICIPATE, party.getTotalFee(), user);
     }
 
 }

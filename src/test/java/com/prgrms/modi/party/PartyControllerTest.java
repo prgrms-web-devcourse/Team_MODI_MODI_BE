@@ -185,8 +185,8 @@ class PartyControllerTest {
 
         User user = userRepository.findById(1L).get();
         Party party = partyRepository.findById(partyId).get();
-        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUserId(userId);
-        List<CommissionHistory> commissionHistoryList = commissionHistoryRepository.findByUserId(userId);
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findAllByUserId(userId);
+        List<CommissionHistory> commissionHistoryList = commissionHistoryRepository.findAllByUserId(userId);
 
         assertThat(user.getPoints(), equalTo(userPoint - party.getTotalFee()));
         assertThat(party.getCurrentMember(), equalTo(3));

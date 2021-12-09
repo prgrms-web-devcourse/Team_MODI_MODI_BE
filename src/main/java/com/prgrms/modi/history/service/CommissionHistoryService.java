@@ -18,9 +18,9 @@ public class CommissionHistoryService {
         this.commissionHistoryRepository = commissionHistoryRepository;
     }
 
-    public void save(Party party, User user) {
+    public void save(CommissionDetail commissionDetail, Integer fee, User user) {
         commissionHistoryRepository.save(
-            new CommissionHistory(CommissionDetail.PARTICIPATE, getCommission(party.getTotalFee()), user));
+            new CommissionHistory(commissionDetail, getCommission(fee), user));
     }
 
     private int getCommission(Integer totalFee) {

@@ -97,8 +97,6 @@ public class PartyService {
         party.increaseCurrentMemberCapacity();
         party.increaseMonthlyReimbursement(party.getOtt().getMonthlyFee());
         party.increaseRemainingReimbursement(party.getTotalFee());
-        memberService.saveCommissionHistory(party, user);
-        memberService.savePointHistory(party, user);
         memberService.save(party, user);
         return partyId;
     }

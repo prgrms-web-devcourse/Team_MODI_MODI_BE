@@ -153,10 +153,16 @@ public class Party extends BaseEntity {
     }
 
     public void increaseMonthlyReimbursement(Integer monthlyReimbursement) {
+        if (monthlyReimbursement < 0) {
+            throw new IllegalArgumentException("월 상환금은 양수여야 합니다.");
+        }
         this.monthlyReimbursement += monthlyReimbursement;
     }
 
     public void increaseRemainingReimbursement(Integer reimbursement) {
+        if (reimbursement < 0) {
+            throw new IllegalArgumentException("상환금은 양수여야 합니다.");
+        }
         this.remainingReimbursement += reimbursement;
     }
 
