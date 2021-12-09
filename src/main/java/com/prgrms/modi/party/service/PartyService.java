@@ -88,6 +88,7 @@ public class PartyService {
         return PartyIdResponse.from(newParty);
     }
 
+<<<<<<< HEAD
     @Transactional
     public Long joinParty(Long userId, Long partyId) {
         User user = memberService.findUser(userId);
@@ -105,6 +106,11 @@ public class PartyService {
         return partyRepository.findPartyWithOtt(partyId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다."));
     }
+=======
+//    public Party getUserParty(Long memberId, Integer size, Long lastPartyId, PartyStatus partyStatus) {
+//        return partyRepository.findUserPartyByMemberIdAndStatus(memberId, size, lastPartyId, partyStatus);
+//    }
+>>>>>>> [MODI-83] FEAT:  유저의 참여 파티 목록 조회 기능 구현
 
     private Party saveParty(CreatePartyRequest request) {
         OTT ott = ottService.findOtt(request.getOttId());

@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface PartyRepository extends JpaRepository<Party, Long> {
+public interface PartyRepository extends JpaRepository<Party, Long>, PartyRepositoryCustom {
 
     @Query(value = "SELECT p FROM Party p WHERE p.ott = :ott AND p.status = :partyStatus "
         + "AND ((p.startDate = :startDate AND p.id < :lastPartyId) OR (p.startDate > :startDate)) "

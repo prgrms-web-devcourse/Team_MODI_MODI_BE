@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Table(name = "members")
@@ -42,6 +44,25 @@ public class Member extends BaseEntity {
         this.party = party;
         this.user = user;
         this.isLeader = isLeader;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public boolean isLeader() {
+        return isLeader;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            .append("id", id)
+            .append("isLeader", isLeader)
+            .append("deletedAt", deletedAt)
+            .append("party", party)
+            .append("user", user)
+            .toString();
     }
 
 }
