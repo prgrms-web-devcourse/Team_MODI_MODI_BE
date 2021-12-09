@@ -6,7 +6,7 @@ import javax.validation.constraints.PositiveOrZero;
 public class PointChargeRequest {
 
     @NotNull
-    @PositiveOrZero
+    @PositiveOrZero(message = "포인트는 0이상의 값만 가능합니다")
     private Integer points;
 
     protected PointChargeRequest() {
