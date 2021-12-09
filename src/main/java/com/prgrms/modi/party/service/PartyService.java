@@ -7,10 +7,13 @@ import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.request.RuleRequest;
+import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
-import com.prgrms.modi.party.dto.response.PartyResponse;
+import com.prgrms.modi.party.dto.response.PartyBriefResponse;
+import com.prgrms.modi.party.dto.response.SharedAccountResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
+import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.service.MemberService;
 import org.slf4j.Logger;
@@ -39,11 +42,19 @@ public class PartyService {
     private final MemberService memberService;
 
     public PartyService(PartyRepository partyRepository, OttService ottService, PartyRuleService partyRuleService,
-                        MemberService memberService) {
+        MemberService memberService) {
         this.partyRepository = partyRepository;
         this.ottService = ottService;
         this.partyRuleService = partyRuleService;
         this.memberService = memberService;
+    }
+
+    @Transactional(readOnly = true)
+    public PartyDetailResponse getParty(Long partyId) {
+        return PartyDetailResponse.from(
+            partyRepository.findById(partyId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"))
+        );
     }
 
     @Transactional(readOnly = true)
@@ -57,7 +68,7 @@ public class PartyService {
             partyRepository
                 .findAllRecruitingParty(ott, PartyStatus.RECRUITING, minDate, Long.MAX_VALUE, page)
                 .stream()
-                .map(PartyResponse::from)
+                .map(PartyBriefResponse::from)
                 .collect(Collectors.toList())
         );
     }
@@ -73,7 +84,7 @@ public class PartyService {
             partyRepository
                 .findAllRecruitingParty(ott, PartyStatus.RECRUITING, lastParty.getStartDate(), lastPartyId, page)
                 .stream()
-                .map(PartyResponse::from)
+                .map(PartyBriefResponse::from)
                 .collect(Collectors.toList())
         );
     }
@@ -144,6 +155,30 @@ public class PartyService {
 
     private void saveLeader(Party newParty, Long userId) {
         memberService.saveLeaderMember(newParty, userId);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean notPartyMember(Long partyId, Long userId) {
+        Party party = partyRepository.findById(partyId)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"));
+
+        User user = memberService.findUser(userId);
+
+        for (Member member : party.getMembers()) {
+            if (member.getUser().equals(user)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Transactional(readOnly = true)
+    public SharedAccountResponse getSharedAccount(Long partyId) {
+        return SharedAccountResponse.from(
+            partyRepository.findById(partyId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"))
+        );
     }
 
 }

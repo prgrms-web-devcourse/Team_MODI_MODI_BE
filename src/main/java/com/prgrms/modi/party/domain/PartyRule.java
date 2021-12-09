@@ -29,4 +29,12 @@ public class PartyRule {
         this.rule = rule;
     }
 
+    public Party getParty() {
+        return party;
+    }
+
+    public Rule getRule() {
+        return rule;
+    }
+
 }

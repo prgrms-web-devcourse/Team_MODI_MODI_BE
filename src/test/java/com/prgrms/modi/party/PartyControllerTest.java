@@ -29,6 +29,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -59,6 +60,40 @@ class PartyControllerTest {
 
     @Autowired
     PointHistoryRepository pointHistoryRepository;
+
+    @Test
+    @DisplayName("특정 파티를 조회할 수 있다")
+    public void getParty() throws Exception {
+        long partyId = 1L;
+
+        mockMvc
+            .perform(get("/api/parties/" + partyId))
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$.partyId").value(partyId),
+                jsonPath("$.ottId").value(1L),
+                jsonPath("$.members", hasSize(4)),
+                jsonPath("$.rules", hasSize(3))
+            )
+            .andDo(print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("파티 공유 계정을 조회할 수 있다")
+    public void getSharedAccount() throws Exception {
+        long partyId = 1L;
+
+        mockMvc
+            .perform(get("/api/parties/" + partyId + "/sharedAccount"))
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$.sharedId").value("modi112@gmail.com"),
+                jsonPath("$.sharedPassword").value("modi")
+            )
+            .andDo(print());
+    }
+
 
     @Test
     @DisplayName("OTT 파티 목록 첫 페이지를 조회할 수 있다")

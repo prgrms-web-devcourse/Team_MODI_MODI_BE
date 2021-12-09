@@ -2,13 +2,17 @@ package com.prgrms.modi.party.controller;
 
 import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
+import com.prgrms.modi.error.exception.InvalidAuthorizationException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
+import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.dto.response.RuleListResponse;
+import com.prgrms.modi.party.dto.response.SharedAccountResponse;
 import com.prgrms.modi.party.service.PartyService;
 
 import com.prgrms.modi.party.service.RuleService;
+import io.swagger.models.Response;
 import javax.validation.constraints.Positive;
 
 import org.springframework.http.ResponseEntity;
@@ -36,7 +40,6 @@ public class PartyController {
         this.ruleService = ruleService;
     }
 
-
     @GetMapping("/otts/{ottId}/parties")
     public ResponseEntity<PartyListResponse> getPartyList(
         @PathVariable Long ottId,
@@ -47,6 +50,25 @@ public class PartyController {
             return ResponseEntity.ok(partyService.getPartyList(ottId, size));
         }
         return ResponseEntity.ok(partyService.getPartyList(ottId, size, lastPartyId));
+    }
+
+    @GetMapping("/parties/{partyId}")
+    public ResponseEntity<PartyDetailResponse> getParty(@PathVariable @Positive Long partyId) {
+        return ResponseEntity.ok(partyService.getParty(partyId));
+    }
+
+    @GetMapping("/parties/{partyId}/sharedAccount")
+    public ResponseEntity<SharedAccountResponse> getPartySharedAccount(
+        @PathVariable Long partyId,
+        @AuthenticationPrincipal JwtAuthentication authentication
+    ) {
+        if (authentication == null) {
+            throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
+        }
+        if (partyService.notPartyMember(partyId, authentication.userId)) {
+            throw new InvalidAuthorizationException("인가되지 않은 사용자입니다");
+        }
+        return ResponseEntity.ok(partyService.getSharedAccount(partyId));
     }
 
     @PostMapping("/parties")
