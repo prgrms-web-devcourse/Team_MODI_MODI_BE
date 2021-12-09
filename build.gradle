@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
+    id "org.flywaydb.flyway" version "8.1.0"
 }
 
 group = 'com.prgrms'
@@ -22,6 +23,7 @@ dependencies {
     implementation group: 'com.auth0', name: 'java-jwt', version: '3.18.1'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
     implementation group: 'com.google.guava', name: 'guava', version: '31.0-jre'
+    implementation 'org.flywaydb:flyway-core:8.1.0'
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
@@ -70,6 +72,13 @@ jacocoTestCoverageVerification {
             excludes = []
         }
     }
+}
+
+flyway {
+    url = 'jdbc:h2:mem:~/modi;DB_CLOSE_DELAY=-1'
+    user = 'sa'
+    password = ''
+    locations = ['classpath:db/migration', 'classpath:db/seed']
 }
 
 compileJava.options.encoding = 'UTF-8'

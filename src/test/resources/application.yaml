@@ -36,14 +36,17 @@ spring:
     password:
   jpa:
     open-in-view: false
-    defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
       naming.physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
     show-sql: true
     database-platform: org.hibernate.dialect.H2Dialect
     properties:
       hibernate.format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration, classpath:db/seed
+    baseline-on-migrate: true
   output:
     ansi.enabled: always
   h2:
