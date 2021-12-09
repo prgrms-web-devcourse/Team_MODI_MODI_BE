@@ -77,7 +77,7 @@ class UserControllerTest {
         mockMvc
             .perform(
                 get(MessageFormat
-                    .format("/api/users/me/parties?partyStatus={0}&size={1}&lastPartyId={2}", partyStatus, size,
+                    .format("/api/users/me/parties?status={0}&size={1}&lastPartyId={2}", partyStatus, size,
                         lastPartyId
                     )
                 )
@@ -103,7 +103,7 @@ class UserControllerTest {
         mockMvc
             .perform(
                 get(MessageFormat
-                    .format("/api/users/me/parties?partyStatus={0}&size={1}&lastPartyId={2}", partyStatus, size,
+                    .format("/api/users/me/parties?status={0}&size={1}&lastPartyId={2}", partyStatus, size,
                         lastPartyId
                     )
                 )
@@ -115,6 +115,28 @@ class UserControllerTest {
                 handler().methodName("getUserPartyList"),
                 jsonPath("$.parties[0].partyId").value(lastPartyId - 2),
                 jsonPath("$.parties[0].startDate").value("2021-11-02")
+            )
+            .andDo(print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("유저 FINISHED 파티 조회 테스트")
+    void getUserFinishedPartiesTest() throws Exception {
+        PartyStatus partyStatus = PartyStatus.FINISHED;
+        int size = 5;
+        mockMvc
+            .perform(
+                get(MessageFormat
+                    .format("/api/users/me/parties?status={0}&size={1}", partyStatus, size)
+                )
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpectAll(
+                status().isOk(),
+                handler().handlerType(UserController.class),
+                handler().methodName("getUserPartyList"),
+                jsonPath("$.parties").isEmpty()
             )
             .andDo(print());
     }
