@@ -1,7 +1,7 @@
 package com.prgrms.modi.point.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prgrms.modi.point.dto.PointChargeRequest;
+import com.prgrms.modi.point.dto.PointAddRequest;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
 import com.prgrms.modi.user.service.UserService;
@@ -37,15 +37,15 @@ class PointControllerTest {
     @DisplayName("포인트를 충전 할 수 있다.")
     @WithMockJwtAuthentication
     @Transactional
-    void chargePoints() throws Exception {
+    void addPoints() throws Exception {
         Integer originalPoints = 50_000;
         Integer points = 10_000;
-        PointChargeRequest pointChargeRequest = new PointChargeRequest(points);
+        PointAddRequest pointAddRequest = new PointAddRequest(points);
 
         mockMvc.perform(
                 post("/api/points/add")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(pointChargeRequest))
+                    .content(objectMapper.writeValueAsString(pointAddRequest))
             )
             .andExpect(status().isOk())
             .andDo(print());

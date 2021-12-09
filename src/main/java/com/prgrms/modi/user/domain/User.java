@@ -83,7 +83,7 @@ public class User extends BaseEntity {
         return points;
     }
 
-    public void chargePoints(Integer points) {
+    public void addPoints(Integer points) {
         if (points < 0) {
             throw new IllegalArgumentException("포인트는 양수여야 합니다.");
         }

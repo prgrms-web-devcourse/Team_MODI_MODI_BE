@@ -2,7 +2,7 @@ package com.prgrms.modi.point.controller;
 
 import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
-import com.prgrms.modi.point.dto.PointChargeRequest;
+import com.prgrms.modi.point.dto.PointAddRequest;
 import com.prgrms.modi.point.service.PointService;
 import com.prgrms.modi.user.dto.PointAmountDto;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +25,14 @@ public class PointController {
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<PointAmountDto> chargePoints(
+    public ResponseEntity<PointAmountDto> addPoints(
         @AuthenticationPrincipal JwtAuthentication authentication,
-        @RequestBody @Valid PointChargeRequest pointChargeRequest
+        @RequestBody @Valid PointAddRequest pointAddRequest
     ) {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(pointService.chargePoints(authentication.userId, pointChargeRequest.getPoints()));
+        return ResponseEntity.ok(pointService.addPoints(authentication.userId, pointAddRequest.getPoints()));
     }
 
 }

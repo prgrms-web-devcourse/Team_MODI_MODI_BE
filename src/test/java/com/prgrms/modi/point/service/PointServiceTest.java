@@ -32,17 +32,17 @@ class PointServiceTest {
 
     @Test
     @DisplayName("포인트를 충전할 수 있어야한다.")
-    void chargePoints() {
+    void addPoints() {
         User user = getUserFixture(1L);
         given(userService.findUser(anyLong())).willReturn(user);
 
-        PointAmountDto pointAmountDto = pointService.chargePoints(1L, 10000);
+        PointAmountDto pointAmountDto = pointService.addPoints(1L, 10000);
 
         then(pointAmountDto)
             .hasFieldOrPropertyWithValue("points", pointAmountDto.getPoints());
 
         verify(userService).findUser(anyLong());
-        verify(user).chargePoints(anyInt());
+        verify(user).addPoints(anyInt());
         verify(userService).savePointHistory(PointDetail.ADD, 10000, user);
 
     }

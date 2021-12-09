@@ -17,9 +17,9 @@ public class PointService {
     }
 
     @Transactional
-    public PointAmountDto chargePoints(Long userId, Integer points) {
+    public PointAmountDto addPoints(Long userId, Integer points) {
         User user = userService.findUser(userId);
-        user.chargePoints(points);
+        user.addPoints(points);
         userService.savePointHistory(PointDetail.ADD, points, user);
         return new PointAmountDto(user.getPoints());
     }
