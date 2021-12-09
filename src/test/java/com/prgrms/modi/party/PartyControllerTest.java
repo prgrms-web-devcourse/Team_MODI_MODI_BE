@@ -78,6 +78,22 @@ class PartyControllerTest {
             .andDo(print());
     }
 
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("파티 공유 계정을 조회할 수 있다")
+    public void getSharedAccount() throws Exception {
+        long partyId = 1L;
+
+        mockMvc
+            .perform(get("/api/parties/" + partyId + "/sharedAccount"))
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$.sharedId").value("modi112@gmail.com"),
+                jsonPath("$.sharedPassword").value("modi")
+            )
+            .andDo(print());
+    }
+
 
     @Test
     @DisplayName("OTT 파티 목록 첫 페이지를 조회할 수 있다")
