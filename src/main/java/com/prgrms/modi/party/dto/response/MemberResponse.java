@@ -14,7 +14,7 @@ public class MemberResponse {
     protected MemberResponse() {
     }
 
-    public MemberResponse(Member member) {
+    private MemberResponse(Member member) {
         this.userId = member.getUser().getId();
         this.username = member.getUser().getUsername();
         this.isLeader = member.isLeader();
