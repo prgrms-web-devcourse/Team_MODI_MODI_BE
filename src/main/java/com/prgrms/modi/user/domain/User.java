@@ -1,11 +1,12 @@
 package com.prgrms.modi.user.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
 import com.prgrms.modi.common.domain.BaseEntity;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import com.prgrms.modi.error.exception.NotEnoughPointException;
+import com.prgrms.modi.history.domain.CommissionHistory;
+import com.prgrms.modi.history.domain.PointHistory;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -19,6 +20,13 @@ import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Entity
 @Table(name = "users")
@@ -86,6 +94,13 @@ public class User extends BaseEntity {
             .append("dateOfBirth", dateOfBirth)
             .append("deletedAt", deletedAt)
             .toString();
+    }
+
+    public void deductPoint(Integer points) {
+        if (this.points < points) {
+            throw new NotEnoughPointException("포인트가 부족합니다.");
+        }
+        this.points -= points;
     }
 
 }

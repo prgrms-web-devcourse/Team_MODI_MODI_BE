@@ -7,8 +7,10 @@ import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.dto.response.RuleListResponse;
 import com.prgrms.modi.party.service.PartyService;
+
 import com.prgrms.modi.party.service.RuleService;
 import javax.validation.constraints.Positive;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -34,6 +36,7 @@ public class PartyController {
         this.ruleService = ruleService;
     }
 
+
     @GetMapping("/otts/{ottId}/parties")
     public ResponseEntity<PartyListResponse> getPartyList(
         @PathVariable Long ottId,
@@ -43,7 +46,6 @@ public class PartyController {
         if (lastPartyId == null) {
             return ResponseEntity.ok(partyService.getPartyList(ottId, size));
         }
-
         return ResponseEntity.ok(partyService.getPartyList(ottId, size, lastPartyId));
     }
 
@@ -56,6 +58,18 @@ public class PartyController {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
         return ResponseEntity.ok(partyService.createParty(request, authentication.userId));
+    }
+
+    @PostMapping("/parties/{partyId}/join")
+    public ResponseEntity<Long> joinParty(
+        @AuthenticationPrincipal JwtAuthentication authentication,
+        @PathVariable Long partyId
+    ) {
+        if (authentication == null) {
+            throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
+        }
+
+        return ResponseEntity.ok(partyService.joinParty(authentication.userId, partyId));
     }
 
     @GetMapping("/rules")

@@ -1,9 +1,11 @@
 package com.prgrms.modi.party.domain;
 
 import com.prgrms.modi.common.domain.BaseEntity;
+import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.ott.domain.OTT;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -18,8 +20,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Entity
 @Table(name = "parties")
@@ -146,6 +150,27 @@ public class Party extends BaseEntity {
 
     public void reimburse() {
         remainingReimbursement -= monthlyReimbursement;
+    }
+
+    public void increaseMonthlyReimbursement(Integer monthlyReimbursement) {
+        if (monthlyReimbursement < 0) {
+            throw new IllegalArgumentException("월 상환금은 양수여야 합니다.");
+        }
+        this.monthlyReimbursement += monthlyReimbursement;
+    }
+
+    public void increaseRemainingReimbursement(Integer reimbursement) {
+        if (reimbursement < 0) {
+            throw new IllegalArgumentException("상환금은 양수여야 합니다.");
+        }
+        this.remainingReimbursement += reimbursement;
+    }
+
+    public void increaseCurrentMemberCapacity() {
+        if (this.currentMember >= this.partyMemberCapacity) {
+            throw new NotEnoughPartyCapacityException("파티 정원이 다 찼습니다.");
+        }
+        this.currentMember++;
     }
 
     public static final class Builder {

@@ -8,14 +8,21 @@ import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.prgrms.modi.common.oauth2.info.ProviderType;
 import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.history.domain.CommissionDetail;
+import com.prgrms.modi.history.domain.PointDetail;
+import com.prgrms.modi.history.service.CommissionHistoryService;
+import com.prgrms.modi.history.service.PointHistoryService;
+import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.dto.PointAmountDto;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -29,8 +36,18 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final PointHistoryService pointHistoryService;
+
+    private final CommissionHistoryService commissionHistoryService;
+
+    public UserService(
+        UserRepository userRepository,
+        PointHistoryService pointHistoryService,
+        CommissionHistoryService commissionHistoryService
+    ) {
         this.userRepository = userRepository;
+        this.pointHistoryService = pointHistoryService;
+        this.commissionHistoryService = commissionHistoryService;
     }
 
     @Transactional(readOnly = true)
@@ -100,6 +117,14 @@ public class UserService {
         log.info("birthyear : {}, birthday : {}", birthyear, birthday);
         String dateOfBirth = birthyear + birthday.replaceAll("[^0-9]", "");
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
+    }
+
+    public void saveCommissionHistory(CommissionDetail commissionDetail, Integer fee, User user) {
+        commissionHistoryService.save(commissionDetail, fee, user);
+    }
+
+    public void savePointHistory(PointDetail pointDetail, Integer fee, User user) {
+        pointHistoryService.save(pointDetail, fee, user);
     }
 
     @Transactional
