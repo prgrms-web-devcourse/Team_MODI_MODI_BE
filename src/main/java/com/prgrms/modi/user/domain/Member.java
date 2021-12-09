@@ -44,4 +44,12 @@ public class Member extends BaseEntity {
         this.isLeader = isLeader;
     }
 
+    public boolean isLeader() {
+        return isLeader;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
 }

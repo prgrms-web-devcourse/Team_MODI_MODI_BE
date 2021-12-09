@@ -3,6 +3,7 @@ package com.prgrms.modi.party.controller;
 import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
+import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.dto.response.RuleListResponse;
@@ -47,6 +48,11 @@ public class PartyController {
             return ResponseEntity.ok(partyService.getPartyList(ottId, size));
         }
         return ResponseEntity.ok(partyService.getPartyList(ottId, size, lastPartyId));
+    }
+
+    @GetMapping("/parties/{partyId}")
+    public ResponseEntity<PartyDetailResponse> getParty(@PathVariable @Positive Long partyId) {
+        return ResponseEntity.ok(partyService.getParty(partyId));
     }
 
     @PostMapping("/parties")

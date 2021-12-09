@@ -6,6 +6,11 @@ import com.prgrms.modi.ott.domain.OTT;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.prgrms.modi.user.domain.Member;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
@@ -71,6 +77,12 @@ public class Party extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "ott_id")
     private OTT ott;
+
+    @OneToMany(mappedBy = "party")
+    private List<Member> members = new ArrayList<>();
+
+    @OneToMany(mappedBy = "party")
+    private List<PartyRule> partyRules = new ArrayList<>();
 
     protected Party() {
     }
@@ -146,6 +158,14 @@ public class Party extends BaseEntity {
 
     public OTT getOtt() {
         return ott;
+    }
+
+    public List<Member> getMembers() {
+        return members;
+    }
+
+    public List<PartyRule> getPartyRules() {
+        return partyRules;
     }
 
     public void reimburse() {
