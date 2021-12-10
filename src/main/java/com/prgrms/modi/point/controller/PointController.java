@@ -9,14 +9,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api/points")
@@ -36,7 +36,7 @@ public class PointController {
         @ApiResponse(responseCode = "401", description = "토큰이 없어 인증할 수 없는 경우 (UNAUTHORIZED)")
     })
     public ResponseEntity<PointAmountDto> addPoints(
-        @AuthenticationPrincipal JwtAuthentication authentication,
+        @AuthenticationPrincipal @ApiIgnore JwtAuthentication authentication,
         @Parameter(description = "충전할 포인트의 양") @RequestBody @Valid PointAddRequest pointAddRequest
     ) {
         if (authentication == null) {

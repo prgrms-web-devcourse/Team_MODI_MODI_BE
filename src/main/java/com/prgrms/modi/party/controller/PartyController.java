@@ -3,7 +3,6 @@ package com.prgrms.modi.party.controller;
 import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
-import com.prgrms.modi.error.exception.InvalidAuthorizationException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
@@ -108,7 +107,7 @@ public class PartyController {
         @ApiResponse(responseCode = "401", description = "토큰이 없어 인증 할 수 경우")
     })
     public ResponseEntity<PartyIdResponse> joinParty(
-        @AuthenticationPrincipal JwtAuthentication authentication,
+        @AuthenticationPrincipal @ApiIgnore JwtAuthentication authentication,
         @Parameter(description = "파티의 ID") @PathVariable Long partyId
     ) {
         if (authentication == null) {
