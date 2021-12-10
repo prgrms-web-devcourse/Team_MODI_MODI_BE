@@ -26,7 +26,7 @@ public class OTT extends BaseEntity {
     private Integer subscriptionFee;
 
     @PositiveOrZero
-    private Integer monthlyFee;
+    private Integer monthlyPrice;
 
     @Positive
     private Integer maxMemberCapacity;
@@ -40,7 +40,7 @@ public class OTT extends BaseEntity {
     private OTT(Builder builder) {
         name = builder.name;
         subscriptionFee = builder.subscriptionFee;
-        monthlyFee = builder.monthlyFee;
+        monthlyPrice = builder.monthlyPrice;
         maxMemberCapacity = builder.maxMemberCapacity;
         grade = builder.grade;
     }
@@ -57,8 +57,8 @@ public class OTT extends BaseEntity {
         return subscriptionFee;
     }
 
-    public Integer getMonthlyFee() {
-        return monthlyFee;
+    public Integer getmonthlyPrice() {
+        return monthlyPrice;
     }
 
     public Integer getMaxMemberCapacity() {
@@ -75,7 +75,7 @@ public class OTT extends BaseEntity {
 
         private Integer subscriptionFee;
 
-        private Integer monthlyFee;
+        private Integer monthlyPrice;
 
         private Integer maxMemberCapacity;
 
@@ -94,8 +94,8 @@ public class OTT extends BaseEntity {
             return this;
         }
 
-        public Builder monthlyFee(Integer val) {
-            monthlyFee = val;
+        public Builder monthlyPrice(Integer val) {
+            monthlyPrice = val;
             return this;
         }
 

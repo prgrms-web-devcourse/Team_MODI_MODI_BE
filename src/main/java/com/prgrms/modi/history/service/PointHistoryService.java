@@ -15,9 +15,9 @@ public class PointHistoryService {
         this.pointHistoryRepository = pointHistoryRepository;
     }
 
-    public void save(PointDetail pointDetail, Integer fee, User user) {
+    public void save(PointDetail pointDetail, Integer price, User user) {
         pointHistoryRepository.save(
-            new PointHistory(pointDetail, fee, user));
+            new PointHistory(pointDetail, price, user));
     }
 
 }

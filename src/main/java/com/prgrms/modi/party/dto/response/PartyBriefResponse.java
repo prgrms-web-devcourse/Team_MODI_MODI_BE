@@ -98,7 +98,7 @@ public class PartyBriefResponse {
         return new Builder()
             .partyId(party.getId())
             .grade(party.getOtt().getGrade())
-            .totalPrice(party.getTotalFee())
+            .totalPrice(party.gettotalPrice())
             .partyMemberCapacity(party.getPartyMemberCapacity())
             .currentMember(party.getCurrentMember())
             .startDate(party.getStartDate())

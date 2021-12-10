@@ -8,13 +8,13 @@ public class CarouselResponse implements CarouselInfo{
 
     private final Long waitingForMatch;
 
-    private final Integer monthlyFee;
+    private final Integer monthlyPrice;
 
     private CarouselResponse(CarouselInfo carouselInfo) {
         this.ottId = carouselInfo.getOttId();
         this.ottName = carouselInfo.getOttName();
         this.waitingForMatch = carouselInfo.getWaitingForMatch();
-        this.monthlyFee = carouselInfo.getMonthlyFee();
+        this.monthlyPrice = carouselInfo.getmonthlyPrice();
     }
 
     public static CarouselResponse from(CarouselInfo carouselInfo) {
@@ -37,8 +37,8 @@ public class CarouselResponse implements CarouselInfo{
     }
 
     @Override
-    public Integer getMonthlyFee() {
-        return monthlyFee;
+    public Integer getmonthlyPrice() {
+        return monthlyPrice;
     }
 
 }

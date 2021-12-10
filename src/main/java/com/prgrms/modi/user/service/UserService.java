@@ -125,13 +125,13 @@ public class UserService {
     }
 
     @Transactional
-    public void saveCommissionHistory(CommissionDetail commissionDetail, Integer fee, User user) {
-        commissionHistoryService.save(commissionDetail, fee, user);
+    public void saveCommissionHistory(CommissionDetail commissionDetail, Integer price, User user) {
+        commissionHistoryService.save(commissionDetail, price, user);
     }
 
     @Transactional
-    public void savePointHistory(PointDetail pointDetail, Integer fee, User user) {
-        pointHistoryService.save(pointDetail, fee, user);
+    public void savePointHistory(PointDetail pointDetail, Integer price, User user) {
+        pointHistoryService.save(pointDetail, price, user);
     }
 
     @Transactional(readOnly = true)

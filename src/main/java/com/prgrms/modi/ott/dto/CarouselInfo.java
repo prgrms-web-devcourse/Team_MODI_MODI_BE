@@ -8,6 +8,6 @@ public interface CarouselInfo {
 
     Long getWaitingForMatch();
 
-    Integer getMonthlyFee();
+    Integer getmonthlyPrice();
 
 }

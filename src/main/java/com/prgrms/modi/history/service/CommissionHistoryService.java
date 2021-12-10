@@ -18,13 +18,13 @@ public class CommissionHistoryService {
         this.commissionHistoryRepository = commissionHistoryRepository;
     }
 
-    public void save(CommissionDetail commissionDetail, Integer fee, User user) {
+    public void save(CommissionDetail commissionDetail, Integer price, User user) {
         commissionHistoryRepository.save(
-            new CommissionHistory(commissionDetail, getCommission(fee), user));
+            new CommissionHistory(commissionDetail, getCommission(price), user));
     }
 
-    private int getCommission(Integer totalFee) {
-        return (int) (totalFee * COMMISSION_PERCENTAGE);
+    private int getCommission(Integer totalPrice) {
+        return (int) (totalPrice * COMMISSION_PERCENTAGE);
     }
 
 }

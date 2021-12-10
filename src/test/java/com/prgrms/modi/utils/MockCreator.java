@@ -25,7 +25,7 @@ public class MockCreator {
         given(party.getId()).willReturn(id);
         given(party.getPartyMemberCapacity()).willReturn(4);
         given(party.getCurrentMember()).willReturn(2);
-        given(party.getTotalFee()).willReturn(16000);
+        given(party.gettotalPrice()).willReturn(16000);
         given(party.getMonthlyReimbursement()).willReturn(12000);
         given(party.getRemainingReimbursement()).willReturn(48000);
         given(party.getStartDate()).willReturn(LocalDate.now());
@@ -41,7 +41,7 @@ public class MockCreator {
         given(ott.getId()).willReturn(id);
         given(ott.getName()).willReturn("testOttName");
         given(ott.getSubscriptionFee()).willReturn(16000);
-        given(ott.getMonthlyFee()).willReturn(4000);
+        given(ott.getmonthlyPrice()).willReturn(4000);
         given(ott.getMaxMemberCapacity()).willReturn(4);
         given(ott.getGrade()).willReturn("프리미엄");
         return ott;
