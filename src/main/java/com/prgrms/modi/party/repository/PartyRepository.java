@@ -13,9 +13,12 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PartyRepository extends JpaRepository<Party, Long>, PartyRepositoryCustom {
 
-    @Query(value = "SELECT p FROM Party p WHERE p.ott = :ott AND p.status = :partyStatus "
-        + "AND ((p.startDate = :startDate AND p.id < :lastPartyId) OR (p.startDate > :startDate)) "
-        + "ORDER BY p.startDate ASC, p.createdAt DESC")
+    @Query(
+        value = "SELECT p FROM Party p WHERE p.ott = :ott AND p.status = :partyStatus "
+            + "AND p.currentMember < p.partyMemberCapacity "
+            + "AND ((p.startDate = :startDate AND p.id < :lastPartyId) OR (p.startDate > :startDate)) "
+            + "ORDER BY p.startDate ASC, p.createdAt DESC"
+    )
     List<Party> findAllRecruitingParty(OTT ott, PartyStatus partyStatus,
         LocalDate startDate, Long lastPartyId, Pageable pageable);
 
