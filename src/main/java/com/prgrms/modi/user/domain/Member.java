@@ -53,6 +53,9 @@ public class Member extends BaseEntity {
     public boolean isLeader() {
         return isLeader;
     }
+  
+    public User getUser() {
+      return user;
 
     @Override
     public String toString() {

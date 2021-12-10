@@ -125,10 +125,12 @@ public class UserService {
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
+    @Transactional
     public void saveCommissionHistory(CommissionDetail commissionDetail, Integer fee, User user) {
         commissionHistoryService.save(commissionDetail, fee, user);
     }
 
+    @Transactional
     public void savePointHistory(PointDetail pointDetail, Integer fee, User user) {
         pointHistoryService.save(pointDetail, fee, user);
     }

@@ -9,9 +9,9 @@ public class PartyListResponse {
 
     private String ottName;
 
-    private List<PartyResponse> partyList;
+    private List<PartyBriefResponse> partyList;
 
-    public PartyListResponse(Long ottId, String ottName, List<PartyResponse> partyList) {
+    public PartyListResponse(Long ottId, String ottName, List<PartyBriefResponse> partyList) {
         this.ottId = ottId;
         this.ottName = ottName;
         this.partyList = partyList;
@@ -25,11 +25,11 @@ public class PartyListResponse {
         return ottName;
     }
 
-    public List<PartyResponse> getPartyList() {
+    public List<PartyBriefResponse> getPartyList() {
         return partyList;
     }
 
-    public static PartyListResponse from(OTT ott, List<PartyResponse> parties) {
+    public static PartyListResponse from(OTT ott, List<PartyBriefResponse> parties) {
         return new PartyListResponse(
             ott.getId(),
             ott.getName(),
