@@ -13,6 +13,8 @@ import com.prgrms.modi.history.domain.PointDetail;
 import com.prgrms.modi.history.service.CommissionHistoryService;
 import com.prgrms.modi.history.service.PointHistoryService;
 import com.prgrms.modi.party.domain.Party;
+import com.prgrms.modi.party.dto.response.PartyDetailResponse;
+import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.dto.PointAmountDto;
@@ -40,14 +42,17 @@ public class UserService {
 
     private final CommissionHistoryService commissionHistoryService;
 
+    private final PartyRepository partyRepository;
+
     public UserService(
         UserRepository userRepository,
         PointHistoryService pointHistoryService,
-        CommissionHistoryService commissionHistoryService
-    ) {
+        CommissionHistoryService commissionHistoryService,
+        PartyRepository partyRepository) {
         this.userRepository = userRepository;
         this.pointHistoryService = pointHistoryService;
         this.commissionHistoryService = commissionHistoryService;
+        this.partyRepository = partyRepository;
     }
 
     @Transactional(readOnly = true)
@@ -132,6 +137,15 @@ public class UserService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("유저가 없습니다."));
         return new PointAmountDto(user.getPoints());
+    }
+
+    @Transactional(readOnly = true)
+    public PartyDetailResponse getUserPartyDetail(Long partyId) {
+        log.info("[*] partyId: {}", partyId);
+        return PartyDetailResponse.from(
+            partyRepository.findById(partyId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"))
+        );
     }
 
 }

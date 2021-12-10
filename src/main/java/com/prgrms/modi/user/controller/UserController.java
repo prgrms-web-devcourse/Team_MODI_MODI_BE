@@ -2,26 +2,40 @@ package com.prgrms.modi.user.controller;
 
 import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
+import com.prgrms.modi.error.exception.InvalidAuthorizationException;
+import com.prgrms.modi.party.dto.response.PartyDetailResponse;
+import com.prgrms.modi.party.service.PartyService;
 import com.prgrms.modi.user.dto.PointAmountDto;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.constraints.Positive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
+    private Logger log = LoggerFactory.getLogger(getClass());
+
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final PartyService partyService;
+
+    public UserController(UserService userService, PartyService partyService) {
         this.userService = userService;
+        this.partyService = partyService;
     }
 
     @GetMapping(path = "/me")
@@ -54,6 +68,26 @@ public class UserController {
         }
         return ResponseEntity.ok(
             userService.getUserPoints(authentication.userId));
+    }
+
+
+    @GetMapping("/me/parties/{partyId}")
+    @Operation(summary = "유저 참여 파티 상세 조회")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "유저 참여 파티 정보 조회 성공 (OK)"),
+        @ApiResponse(responseCode = "401", description = "토큰이 없거나 다른 파티의 상세 정보에 접근할 때 (UNAUTHORIZED)")
+    })
+    public ResponseEntity<PartyDetailResponse> getUserPartyDetail(
+        @Parameter(name = "partyId", description = "조회할 파티 id") @PathVariable @Positive Long partyId,
+        @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
+    ) {
+        if (authentication == null) {
+            throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
+        }
+        if (partyService.notPartyMember(partyId, authentication.userId)) {
+            throw new InvalidAuthorizationException("인가되지 않은 사용자입니다");
+        }
+        return ResponseEntity.ok(userService.getUserPartyDetail(partyId));
     }
 
 }
