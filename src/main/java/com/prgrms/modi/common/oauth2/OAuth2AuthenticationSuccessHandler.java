@@ -6,12 +6,14 @@ import com.prgrms.modi.common.jwt.Jwt;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.service.UserService;
 import com.prgrms.modi.utils.CookieUtil;
+
 import java.io.IOException;
 import java.util.Optional;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -49,8 +51,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             User user = processUserOAuth2UserJoin(oAuth2User, provider);
             String token = generateToken(user);
             String redirectUri = determineTargetUrl(request, response, authentication);
-            String targetUrl = UriComponentsBuilder
-                .fromUriString(redirectUri).queryParam("token", token)
+            String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
+                .queryParam("token", token)
+                .queryParam("userId", user.getId())
                 .build().toUriString();
             clearAuthenticationAttributes(request, response);
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
