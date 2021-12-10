@@ -25,7 +25,7 @@ public class MockCreator {
         given(party.getId()).willReturn(id);
         given(party.getPartyMemberCapacity()).willReturn(4);
         given(party.getCurrentMember()).willReturn(2);
-        given(party.gettotalPrice()).willReturn(16000);
+        given(party.getTotalPrice()).willReturn(16000);
         given(party.getMonthlyReimbursement()).willReturn(12000);
         given(party.getRemainingReimbursement()).willReturn(48000);
         given(party.getStartDate()).willReturn(LocalDate.now());

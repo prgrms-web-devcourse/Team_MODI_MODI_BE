@@ -36,11 +36,8 @@ public class PartyController {
 
     private final PartyService partyService;
 
-    private final RuleService ruleService;
-
-    public PartyController(PartyService partyService, RuleService ruleService) {
+    public PartyController(PartyService partyService) {
         this.partyService = partyService;
-        this.ruleService = ruleService;
     }
 
     @GetMapping("/otts/{ottId}/parties")
@@ -116,13 +113,6 @@ public class PartyController {
         }
 
         return ResponseEntity.ok(partyService.joinParty(authentication.userId, partyId));
-    }
-
-    @GetMapping("/rules")
-    @Operation(summary = "전체 규칙 조회", description = "모든 규칙 태그 조회")
-    @ApiResponse(responseCode = "200", description = "OK")
-    public ResponseEntity<RuleListResponse> getRuleList() {
-        return ResponseEntity.ok(ruleService.getAllRule());
     }
 
 }

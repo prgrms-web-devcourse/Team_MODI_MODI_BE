@@ -104,10 +104,10 @@ public class PartyService {
         User user = memberService.findUser(userId);
         Party party = this.findPartyWithOtt(partyId);
 
-        user.deductPoint(party.gettotalPrice());
+        user.deductPoint(party.getTotalPrice());
         party.increaseCurrentMemberCapacity();
         party.increaseMonthlyReimbursement(party.getOtt().getmonthlyPrice());
-        party.increaseRemainingReimbursement(party.gettotalPrice());
+        party.increaseRemainingReimbursement(party.getTotalPrice());
         memberService.save(party, user);
         return PartyIdResponse.from(party);
     }
@@ -129,10 +129,8 @@ public class PartyService {
             .totalPrice(
                 getTotalPartyPrice(
                     ott.getmonthlyPrice(),
-                    request.getPartyMemberCapacity(),
-                    (int) MONTHS.between(request.getStartDate(), request.getEndDate())
+                    (int) MONTHS.between(request.getStartDate(), request.getEndDate()))
                 )
-            )
             .monthlyReimbursement(0)
             .remainingReimbursement(0)
             .status(PartyStatus.RECRUITING)
@@ -143,8 +141,8 @@ public class PartyService {
         return newParty;
     }
 
-    private int getTotalPartyPrice(int ottmonthlyPrice, int partyMemberCapacity, int period) {
-        return (ottmonthlyPrice / partyMemberCapacity - 1) * period;
+    private int getTotalPartyPrice(int monthlyPrice, int period) {
+        return monthlyPrice * period;
     }
 
     private void savePartyRule(Party newParty, List<RuleRequest> ruleRequests) {

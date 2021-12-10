@@ -39,9 +39,9 @@ class OttRestControllerTest {
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.ottServices[0].ottName").value("넷플릭스"),
-                jsonPath("$.ottServices[1].ottName").value("디즈니+"),
+                jsonPath("$.ottServices[1].ottName").value("디즈니 플러스"),
                 jsonPath("$.ottServices[2].ottName").value("웨이브"),
-                jsonPath("$.ottServices[3].ottName").value("와챠"),
+                jsonPath("$.ottServices[3].ottName").value("왓챠"),
                 jsonPath("$.ottServices[4].ottName").value("티빙")
             );
     }
@@ -93,9 +93,9 @@ class OttRestControllerTest {
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.waitingOtts[0].ottName").value("넷플릭스"),
-                jsonPath("$.waitingOtts[1].ottName").value("디즈니+"),
+                jsonPath("$.waitingOtts[1].ottName").value("디즈니 플러스"),
                 jsonPath("$.waitingOtts[2].ottName").value("웨이브"),
-                jsonPath("$.waitingOtts[3].ottName").value("와챠"),
+                jsonPath("$.waitingOtts[3].ottName").value("왓챠"),
                 jsonPath("$.waitingOtts[4].ottName").value("티빙"),
                 jsonPath("$.waitingOtts[0].waitingForMatch").value(3L),
                 jsonPath("$.waitingOtts[1].waitingForMatch").value(0L),

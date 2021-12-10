@@ -1,5 +1,7 @@
 package com.prgrms.modi.party.domain;
 
+import static java.time.temporal.ChronoUnit.MONTHS;
+
 import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.ott.domain.OTT;
@@ -66,6 +68,9 @@ public class Party extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PartyStatus status;
 
+    @Positive
+    private int period;
+
     @PastOrPresent
     private LocalDateTime deletedAt;
 
@@ -91,6 +96,7 @@ public class Party extends BaseEntity {
         remainingReimbursement = builder.remainingReimbursement;
         startDate = builder.startDate;
         endDate = builder.endDate;
+        period = (int) MONTHS.between(builder.startDate, builder.endDate);
         mustFilled = builder.mustFilled;
         sharedId = builder.sharedId;
         sharedPasswordEncrypted = builder.sharedPasswordEncrypted;
@@ -111,7 +117,7 @@ public class Party extends BaseEntity {
         return currentMember;
     }
 
-    public Integer gettotalPrice() {
+    public Integer getTotalPrice() {
         return totalPrice;
     }
 
@@ -129,6 +135,10 @@ public class Party extends BaseEntity {
 
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    public int getPeriod() {
+        return period;
     }
 
     public boolean isMustFilled() {

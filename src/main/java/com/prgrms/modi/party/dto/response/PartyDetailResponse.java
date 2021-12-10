@@ -83,7 +83,7 @@ public class PartyDetailResponse {
         this.startsIn = (int) DAYS.between(LocalDate.now(), this.startDate);
         this.period = (int) MONTHS.between(this.startDate, this.endDate);
         this.mustFilled = party.isMustFilled();
-        this.totalPrice = party.gettotalPrice();
+        this.totalPrice = party.getTotalPrice();
         this.monthlyPrice = this.totalPrice / this.period;
         this.status = party.getStatus();
         this.members = members;
