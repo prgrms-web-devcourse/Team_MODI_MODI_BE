@@ -1,6 +1,7 @@
 package com.prgrms.modi.user.domain;
 
 import com.prgrms.modi.common.domain.BaseEntity;
+import com.prgrms.modi.common.domain.DeletableEntity;
 import com.prgrms.modi.party.domain.Party;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
@@ -16,16 +17,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Table(name = "members")
-public class Member extends BaseEntity {
+public class Member extends DeletableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private boolean isLeader;
-
-    @PastOrPresent
-    private LocalDateTime deletedAt;
 
     @ManyToOne
     @JoinColumn(name = "party_id")
@@ -61,7 +59,6 @@ public class Member extends BaseEntity {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .append("id", id)
             .append("isLeader", isLeader)
-            .append("deletedAt", deletedAt)
             .append("party", party)
             .append("user", user)
             .toString();

@@ -3,6 +3,7 @@ package com.prgrms.modi.party.domain;
 import static java.time.temporal.ChronoUnit.MONTHS;
 
 import com.prgrms.modi.common.domain.BaseEntity;
+import com.prgrms.modi.common.domain.DeletableEntity;
 import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.user.domain.Member;
@@ -30,7 +31,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Table(name = "parties")
-public class Party extends BaseEntity {
+public class Party extends DeletableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,9 +72,6 @@ public class Party extends BaseEntity {
     @Positive
     private int period;
 
-    @PastOrPresent
-    private LocalDateTime deletedAt;
-
     @ManyToOne
     @JoinColumn(name = "ott_id")
     private OTT ott;
@@ -101,7 +99,6 @@ public class Party extends BaseEntity {
         sharedId = builder.sharedId;
         sharedPasswordEncrypted = builder.sharedPasswordEncrypted;
         status = builder.status;
-        deletedAt = builder.deletedAt;
         ott = builder.ott;
     }
 
@@ -155,10 +152,6 @@ public class Party extends BaseEntity {
 
     public PartyStatus getStatus() {
         return status;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
     }
 
     public OTT getOtt() {

@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.prgrms.modi.common.domain.BaseEntity;
+import com.prgrms.modi.common.domain.DeletableEntity;
 import com.prgrms.modi.error.exception.NotEnoughPointException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class User extends DeletableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,9 +47,6 @@ public class User extends BaseEntity {
 
     @Past
     private LocalDate dateOfBirth;
-
-    @PastOrPresent
-    private LocalDateTime deletedAt;
 
     protected User() {
     }
@@ -92,7 +90,6 @@ public class User extends BaseEntity {
             .append("provider", provider)
             .append("providerId", providerId)
             .append("dateOfBirth", dateOfBirth)
-            .append("deletedAt", deletedAt)
             .toString();
     }
 
