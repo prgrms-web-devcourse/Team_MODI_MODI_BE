@@ -4,6 +4,7 @@ import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.error.exception.NotEnoughPointException;
 import com.prgrms.modi.history.domain.CommissionHistory;
 import com.prgrms.modi.history.domain.PointHistory;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.CascadeType;
@@ -80,6 +81,13 @@ public class User extends BaseEntity {
 
     public Integer getPoints() {
         return points;
+    }
+
+    public void addPoints(Integer points) {
+        if (points < 0) {
+            throw new IllegalArgumentException("포인트는 양수여야 합니다.");
+        }
+        this.points += points;
     }
 
     @Override

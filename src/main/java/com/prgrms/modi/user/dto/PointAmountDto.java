@@ -11,4 +11,8 @@ public class PointAmountDto {
         this.points = points;
     }
 
+    public Integer getPoints() {
+        return points;
+    }
+
 }
