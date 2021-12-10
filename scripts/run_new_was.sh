@@ -1,15 +1,32 @@
-CURRENT_PORT=$(cat /home/ec2-user/service_url.inc | grep -Po '[0-9]+' | tail -1)
-TARGET_PORT=0
+PROJECT_NAME=modi
+BUILD_JAR=$(ls /home/ubuntu/action/build/libs/*.jar)
+JAR_NAME=$(basename $BUILD_JAR)
 
-echo "> WAS is running on ${CURRENT_PORT}"
+echo "> Build 파일명: $JAR_NAME" >>/home/ubuntu/action/deploy.log
 
-TARGET_PID=$(lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
+echo "> 현재 구동 중인 애플리케이션 pid 확인" >>/home/ubuntu/action/deploy.log
+CURRENT_PID=$(pgrep -fl ${PROJECT_NAME} | grep jar | awk '{print $1}')
 
-if [ ! -z ${TARGET_PID} ]; then
-  echo "> Kill WAS running at ${TARGET_PORT}."
-  sudo kill ${TARGET_PID}
+echo "현재 구동 중인 애플리케이션 pid: $CURRENT_PID"
+
+if [ -z "$CURRENT_PID" ]; then
+  echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다." >>/home/ubuntu/action/deploy.log
+else
+  echo "> kill -15 $CURRENT_PID"
+  kill -15 $CURRENT_PID
+  sleep 5
 fi
 
-nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/Team_MODI_MODI_BE/build/libs/* >/home/ubuntu/nohup.out 2>&1 &
-echo "> Now new WAS runs at ${TARGET_PORT}."
+echo "> 새 어플리케이션 배포" >>/home/ec2-user/action/deploy.log
+
+echo "> JAR Name: $JAR_NAME"
+
+echo "> JAR_NAME에 실행권한 추가"
+
+chmod +x $JAR_NAME
+
+echo "> $JAR_NAME 실행"
+
+nohup java -jar $JAR_NAME >/home/ubuntu/action/build/libs/nohup.out 2>&1 &
+
 exit 0
