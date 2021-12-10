@@ -1,6 +1,7 @@
 package com.prgrms.modi.party.controller;
 
 import com.prgrms.modi.common.jwt.JwtAuthentication;
+import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.error.exception.InvalidAuthorizationException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api")
@@ -42,6 +44,8 @@ public class PartyController {
     }
 
     @GetMapping("/otts/{ottId}/parties")
+    @Operation(summary = "모집중인 파티 목록 조회", description = "특정 OTT 파티를 모집 중인 파티 목록을 조회합니다")
+    @ApiResponse(responseCode = "200", description = "OK")
     public ResponseEntity<PartyListResponse> getPartyList(
         @PathVariable Long ottId,
         @RequestParam @Positive Integer size,
@@ -54,28 +58,41 @@ public class PartyController {
     }
 
     @GetMapping("/parties/{partyId}")
+    @Operation(summary = "파티 상세 정보 조회", description = "파티 목록에서 파티 상세 정보 조회")
+    @ApiResponse(responseCode = "200", description = "OK")
     public ResponseEntity<PartyDetailResponse> getParty(@PathVariable @Positive Long partyId) {
         return ResponseEntity.ok(partyService.getParty(partyId));
     }
 
     @GetMapping("/parties/{partyId}/sharedAccount")
+    @Operation(summary = "파티 상세 정보 조회", description = "파티 목록에서 파티 상세 정보 조회")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "401", description = "JWT가 없는 경우 UNAUTHORIZED"),
+        @ApiResponse(responseCode = "403", description = "파티 멤버가 아닌 유저인 경우 FORBIDDEN")
+    })
     public ResponseEntity<SharedAccountResponse> getPartySharedAccount(
         @PathVariable Long partyId,
-        @AuthenticationPrincipal JwtAuthentication authentication
+        @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
     ) {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
         if (partyService.notPartyMember(partyId, authentication.userId)) {
-            throw new InvalidAuthorizationException("인가되지 않은 사용자입니다");
+            throw new ForbiddenException("인가되지 않은 사용자입니다");
         }
         return ResponseEntity.ok(partyService.getSharedAccount(partyId));
     }
 
     @PostMapping("/parties")
+    @Operation(summary = "파티 생성", description = "파티 생성. JWT토큰 필요")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "401", description = "JWT가 없는 경우 UNAUTHORIZED")
+    })
     public ResponseEntity<PartyIdResponse> createParty(
         @RequestBody final CreatePartyRequest request,
-        @AuthenticationPrincipal JwtAuthentication authentication
+        @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
     ) {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
@@ -102,6 +119,8 @@ public class PartyController {
     }
 
     @GetMapping("/rules")
+    @Operation(summary = "전체 규칙 조회", description = "모든 규칙 태그 조회")
+    @ApiResponse(responseCode = "200", description = "OK")
     public ResponseEntity<RuleListResponse> getRuleList() {
         return ResponseEntity.ok(ruleService.getAllRule());
     }

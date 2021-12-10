@@ -5,31 +5,42 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.prgrms.modi.party.domain.Party;
+import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PartyBriefResponse {
 
+    @ApiModelProperty(value = "파티 ID")
     private Long partyId;
 
+    @ApiModelProperty(value = "OTT 서비스 등급")
     private String grade;
 
+    @ApiModelProperty(value = "파티 참여 가격")
     private Integer totalPrice;
 
+    @ApiModelProperty(value = "파티 정원")
     private Integer partyMemberCapacity;
 
+    @ApiModelProperty(value = "현재 참여 중 파티 인원")
     private Integer currentMember;
 
+    @ApiModelProperty(value = "파티 시작일")
     private LocalDate startDate;
 
+    @ApiModelProperty(value = "파티 종료일")
     private LocalDate endDate;
 
+    @ApiModelProperty(value = "파티 시작까지 남은 일수")
     private Integer startsIn;
 
+    @ApiModelProperty(value = "총 파티 진행 기간")
     private Integer period;
 
+    @ApiModelProperty(value = "파티원 충족되지 않을 시 시작 여부")
     private boolean mustFilled;
-
+    
     private PartyBriefResponse(Builder builder) {
         partyId = builder.partyId;
         grade = builder.grade;
