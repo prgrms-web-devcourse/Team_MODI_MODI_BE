@@ -1,9 +1,11 @@
 package com.prgrms.modi.party.dto.response;
 
+import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 public class RuleListResponse {
 
+    @ApiModelProperty(value = "규칙 리스트")
     private List<RuleResponse> rules;
 
     public List<RuleResponse> getRules() {

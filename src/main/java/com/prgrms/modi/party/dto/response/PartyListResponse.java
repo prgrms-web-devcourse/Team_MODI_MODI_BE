@@ -1,14 +1,18 @@
 package com.prgrms.modi.party.dto.response;
 
 import com.prgrms.modi.ott.domain.OTT;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 public class PartyListResponse {
 
+    @ApiModelProperty(value = "OTT 서비스 ID")
     private Long ottId;
 
+    @ApiModelProperty(value = "OTT 서비스 이름")
     private String ottName;
 
+    @ApiModelProperty(value = "간략한 파티 정보")
     private List<PartyBriefResponse> partyList;
 
     public PartyListResponse(Long ottId, String ottName, List<PartyBriefResponse> partyList) {

@@ -14,10 +14,12 @@ import com.prgrms.modi.history.service.CommissionHistoryService;
 import com.prgrms.modi.history.service.PointHistoryService;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
+import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.dto.PointAmountDto;
+import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
 
@@ -38,6 +40,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final PartyRepository partyRepository;
+
     private final PointHistoryService pointHistoryService;
 
     private final CommissionHistoryService commissionHistoryService;
@@ -48,7 +52,8 @@ public class UserService {
         UserRepository userRepository,
         PointHistoryService pointHistoryService,
         CommissionHistoryService commissionHistoryService,
-        PartyRepository partyRepository) {
+        PartyRepository partyRepository
+    ) {
         this.userRepository = userRepository;
         this.pointHistoryService = pointHistoryService;
         this.commissionHistoryService = commissionHistoryService;
@@ -124,18 +129,20 @@ public class UserService {
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
+    @Transactional
     public void saveCommissionHistory(CommissionDetail commissionDetail, Integer fee, User user) {
         commissionHistoryService.save(commissionDetail, fee, user);
     }
 
+    @Transactional
     public void savePointHistory(PointDetail pointDetail, Integer fee, User user) {
         pointHistoryService.save(pointDetail, fee, user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public PointAmountDto getUserPoints(Long userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException("유저가 없습니다."));
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
         return new PointAmountDto(user.getPoints());
     }
 
@@ -144,8 +151,14 @@ public class UserService {
         log.info("[*] partyId: {}", partyId);
         return PartyDetailResponse.from(
             partyRepository.findById(partyId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"))
-        );
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다")));
+    }
+
+    @Transactional(readOnly = true)  
+    public UserPartyListResponse getUserPartyList(Long userId, PartyStatus partyStatus, Integer size,
+        Long lastPartyId) {
+        return new UserPartyListResponse(
+            partyRepository.findAllPartiesByStatusAndUserId(userId, partyStatus, size, lastPartyId));
     }
 
 }
