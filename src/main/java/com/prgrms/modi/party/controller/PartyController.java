@@ -10,15 +10,12 @@ import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.dto.response.RuleListResponse;
 import com.prgrms.modi.party.dto.response.SharedAccountResponse;
 import com.prgrms.modi.party.service.PartyService;
-
 import com.prgrms.modi.party.service.RuleService;
-import io.swagger.models.Response;
-import javax.validation.constraints.Positive;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;

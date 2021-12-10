@@ -2,8 +2,7 @@ package com.prgrms.modi.user.domain;
 
 import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.party.domain.Party;
-
-import javax.persistence.CascadeType;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.PastOrPresent;
-import java.time.LocalDateTime;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -53,9 +51,10 @@ public class Member extends BaseEntity {
     public boolean isLeader() {
         return isLeader;
     }
-  
+
     public User getUser() {
-      return user;
+        return user;
+    }
 
     @Override
     public String toString() {

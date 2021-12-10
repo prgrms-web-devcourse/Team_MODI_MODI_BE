@@ -1,13 +1,12 @@
 package com.prgrms.modi.user.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.error.exception.NotEnoughPointException;
-import com.prgrms.modi.history.domain.CommissionHistory;
-import com.prgrms.modi.history.domain.PointHistory;
-import io.swagger.models.auth.In;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.persistence.CascadeType;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,13 +20,6 @@ import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Entity
 @Table(name = "users")

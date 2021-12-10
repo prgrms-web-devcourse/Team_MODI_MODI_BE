@@ -1,7 +1,6 @@
 package com.prgrms.modi.party.dto.response;
 
 import com.prgrms.modi.user.domain.Member;
-import com.prgrms.modi.user.domain.User;
 
 public class MemberResponse {
 
@@ -20,6 +19,10 @@ public class MemberResponse {
         this.isLeader = member.isLeader();
     }
 
+    public static MemberResponse from(Member member) {
+        return new MemberResponse(member);
+    }
+
     public long getUserId() {
         return userId;
     }
@@ -30,10 +33,6 @@ public class MemberResponse {
 
     public boolean isLeader() {
         return isLeader;
-    }
-
-    public static MemberResponse from(Member member) {
-        return new MemberResponse(member);
     }
 
 }
