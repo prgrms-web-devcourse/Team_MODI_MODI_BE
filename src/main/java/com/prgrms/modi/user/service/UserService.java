@@ -12,10 +12,12 @@ import com.prgrms.modi.history.domain.CommissionDetail;
 import com.prgrms.modi.history.domain.PointDetail;
 import com.prgrms.modi.history.service.CommissionHistoryService;
 import com.prgrms.modi.history.service.PointHistoryService;
-import com.prgrms.modi.party.domain.Party;
+import com.prgrms.modi.party.domain.PartyStatus;
+import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.dto.PointAmountDto;
+import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
 
@@ -36,6 +38,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final PartyRepository partyRepository;
+
     private final PointHistoryService pointHistoryService;
 
     private final CommissionHistoryService commissionHistoryService;
@@ -43,11 +47,13 @@ public class UserService {
     public UserService(
         UserRepository userRepository,
         PointHistoryService pointHistoryService,
-        CommissionHistoryService commissionHistoryService
+        CommissionHistoryService commissionHistoryService,
+        PartyRepository partyRepository
     ) {
         this.userRepository = userRepository;
         this.pointHistoryService = pointHistoryService;
         this.commissionHistoryService = commissionHistoryService;
+        this.partyRepository = partyRepository;
     }
 
     @Transactional(readOnly = true)
@@ -129,11 +135,18 @@ public class UserService {
         pointHistoryService.save(pointDetail, fee, user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public PointAmountDto getUserPoints(Long userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException("유저가 없습니다."));
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
         return new PointAmountDto(user.getPoints());
+    }
+
+    @Transactional(readOnly = true)
+    public UserPartyListResponse getUserPartyList(Long userId, PartyStatus partyStatus, Integer size,
+        Long lastPartyId) {
+        return new UserPartyListResponse(
+            partyRepository.findAllPartiesByStatusAndUserId(userId, partyStatus, size, lastPartyId));
     }
 
 }

@@ -3,9 +3,6 @@ package com.prgrms.modi.party.domain;
 import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.ott.domain.OTT;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import com.prgrms.modi.user.domain.Member;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,10 +23,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Table(name = "parties")
@@ -193,6 +188,15 @@ public class Party extends BaseEntity {
         this.currentMember++;
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            .append("id", id)
+            .append("startDate", startDate)
+            .append("endDate", endDate)
+            .toString();
+    }
+
     public static final class Builder {
 
         private Long id;
@@ -300,15 +304,6 @@ public class Party extends BaseEntity {
             return new Party(this);
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("id", id)
-            .append("startDate", startDate)
-            .append("endDate", endDate)
-            .toString();
     }
 
 }

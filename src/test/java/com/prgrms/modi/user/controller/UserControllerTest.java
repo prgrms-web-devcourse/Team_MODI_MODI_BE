@@ -6,7 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
+import java.text.MessageFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -64,5 +66,80 @@ class UserControllerTest {
             )
             .andDo(print());
     }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("유저 RECRUITING 파티 조회 테스트")
+    void getUserRecruitingPartiesTest() throws Exception {
+        PartyStatus partyStatus = PartyStatus.RECRUITING;
+        int size = 5;
+        long lastPartyId = 5;
+        mockMvc
+            .perform(
+                get(MessageFormat
+                    .format("/api/users/me/parties?status={0}&size={1}&lastPartyId={2}", partyStatus, size,
+                        lastPartyId
+                    )
+                )
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpectAll(
+                status().isOk(),
+                handler().handlerType(UserController.class),
+                handler().methodName("getUserPartyList"),
+                jsonPath("$.parties[0].partyId").value(lastPartyId - 1),
+                jsonPath("$.parties[0].startDate").value("2021-12-26")
+            )
+            .andDo(print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("유저 ONGOING 파티 조회 테스트")
+    void getUserOnGoingPartiesTest() throws Exception {
+        PartyStatus partyStatus = PartyStatus.ONGOING;
+        int size = 5;
+        long lastPartyId = 5;
+        mockMvc
+            .perform(
+                get(MessageFormat
+                    .format("/api/users/me/parties?status={0}&size={1}&lastPartyId={2}", partyStatus, size,
+                        lastPartyId
+                    )
+                )
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpectAll(
+                status().isOk(),
+                handler().handlerType(UserController.class),
+                handler().methodName("getUserPartyList"),
+                jsonPath("$.parties[0].partyId").value(lastPartyId - 2),
+                jsonPath("$.parties[0].startDate").value("2021-11-02")
+            )
+            .andDo(print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("유저 FINISHED 파티 조회 테스트")
+    void getUserFinishedPartiesTest() throws Exception {
+        PartyStatus partyStatus = PartyStatus.FINISHED;
+        int size = 5;
+        mockMvc
+            .perform(
+                get(MessageFormat
+                    .format("/api/users/me/parties?status={0}&size={1}", partyStatus, size)
+                )
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpectAll(
+                status().isOk(),
+                handler().handlerType(UserController.class),
+                handler().methodName("getUserPartyList"),
+                jsonPath("$.parties").isEmpty()
+            )
+            .andDo(print());
+    }
+
 
 }
