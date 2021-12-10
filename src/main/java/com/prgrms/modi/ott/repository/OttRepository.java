@@ -15,7 +15,7 @@ public interface OttRepository extends JpaRepository<OTT, Long> {
         + "     o.id as ottId, "
         + "     o.name as ottName, "
         + "     (select count(p) from Party p where o.id = p.ott.id and p.status = 'RECRUITING') as waitingForMatch, "
-        + "     o.monthlyFee as monthlyFee "
+        + "     o.monthlyPrice as monthlyPrice "
         + " from "
         + "     OTT o")
     List<CarouselInfo> getCarouselList();

@@ -10,7 +10,7 @@ public class OttResponse {
 
     private final Integer subscriptionFee;
 
-    private final Integer monthlyFee;
+    private final Integer monthlyPrice;
 
     private final Integer maxMemberCapacity;
 
@@ -20,7 +20,7 @@ public class OttResponse {
         this.ottId = ott.getId();
         this.ottName = ott.getName();
         this.subscriptionFee = ott.getSubscriptionFee();
-        this.monthlyFee = ott.getMonthlyFee();
+        this.monthlyPrice = ott.getmonthlyPrice();
         this.maxMemberCapacity = ott.getMaxMemberCapacity();
         this.grade = ott.getGrade();
     }
@@ -41,8 +41,8 @@ public class OttResponse {
         return subscriptionFee;
     }
 
-    public Integer getMonthlyFee() {
-        return monthlyFee;
+    public Integer getmonthlyPrice() {
+        return monthlyPrice;
     }
 
     public Integer getMaxMemberCapacity() {

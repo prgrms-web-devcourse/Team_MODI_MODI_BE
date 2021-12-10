@@ -24,11 +24,17 @@ public class PartyDetailResponse {
     @ApiModelProperty(value = "OTT 서비스 등급")
     private String grade;
 
+    @ApiModelProperty(value = "파티장 월 환급금")
+    private Integer monthlyReimbersement;
+
+    @ApiModelProperty(value = "파티장 잔여 환급금")
+    private Integer remainingReimbersement;
+
     @ApiModelProperty(value = "월 파티 참여 가격")
-    private Integer monthlyFee;
+    private Integer monthlyPrice;
 
     @ApiModelProperty(value = "총 파티 참여 가격")
-    private Integer totalFee;
+    private Integer totalPrice;
 
     @ApiModelProperty(value = "파티 정원")
     private Integer partyMemberCapacity;
@@ -68,6 +74,8 @@ public class PartyDetailResponse {
         this.ottId = party.getOtt().getId();
         this.ottName = party.getOtt().getName();
         this.grade = party.getOtt().getGrade();
+        this.monthlyReimbersement = party.getMonthlyReimbursement();
+        this.remainingReimbersement = party.getRemainingReimbursement();
         this.partyMemberCapacity = party.getPartyMemberCapacity();
         this.currentMember = party.getCurrentMember();
         this.startDate = party.getStartDate();
@@ -75,8 +83,8 @@ public class PartyDetailResponse {
         this.startsIn = (int) DAYS.between(LocalDate.now(), this.startDate);
         this.period = (int) MONTHS.between(this.startDate, this.endDate);
         this.mustFilled = party.isMustFilled();
-        this.totalFee = party.getTotalFee();
-        this.monthlyFee = this.totalFee / this.period;
+        this.totalPrice = party.gettotalPrice();
+        this.monthlyPrice = this.totalPrice / this.period;
         this.status = party.getStatus();
         this.members = members;
         this.rules = rules;
@@ -112,12 +120,20 @@ public class PartyDetailResponse {
         return grade;
     }
 
-    public Integer getMonthlyFee() {
-        return monthlyFee;
+    public Integer getMonthlyReimbersement() {
+        return monthlyReimbersement;
     }
 
-    public Integer getTotalFee() {
-        return totalFee;
+    public Integer getRemainingReimbersement() {
+        return remainingReimbersement;
+    }
+
+    public Integer getMonthlyPrice() {
+        return monthlyPrice;
+    }
+
+    public Integer getTotalPrice() {
+        return totalPrice;
     }
 
     public Integer getPartyMemberCapacity() {

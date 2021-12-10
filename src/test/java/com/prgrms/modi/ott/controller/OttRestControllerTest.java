@@ -53,7 +53,7 @@ class OttRestControllerTest {
         OTT ott = new OTT.Builder()
             .name("넷플릭스")
             .subscriptionFee(16000)
-            .monthlyFee(4000)
+            .monthlyPrice(4000)
             .maxMemberCapacity(4)
             .grade("프리미엄")
             .build();
@@ -67,7 +67,7 @@ class OttRestControllerTest {
                 jsonPath("$.ottId").value(ott.getId()),
                 jsonPath("$.ottName").value(ott.getName()),
                 jsonPath("$.subscriptionFee").value(ott.getSubscriptionFee()),
-                jsonPath("$.monthlyFee").value(ott.getMonthlyFee()),
+                jsonPath("$.monthlyPrice").value(ott.getmonthlyPrice()),
                 jsonPath("$.maxMemberCapacity").value(ott.getMaxMemberCapacity()),
                 jsonPath("$.grade").value(ott.getGrade())
             );

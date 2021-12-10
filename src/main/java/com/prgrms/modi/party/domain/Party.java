@@ -41,7 +41,7 @@ public class Party extends BaseEntity {
     private Integer currentMember;
 
     @PositiveOrZero
-    private Integer totalFee;
+    private Integer totalPrice;
 
     @PositiveOrZero
     private Integer monthlyReimbursement;
@@ -86,7 +86,7 @@ public class Party extends BaseEntity {
         id = builder.id;
         partyMemberCapacity = builder.partyMemberCapacity;
         currentMember = builder.currentMember;
-        totalFee = builder.totalFee;
+        totalPrice = builder.totalPrice;
         monthlyReimbursement = builder.monthlyReimbursement;
         remainingReimbursement = builder.remainingReimbursement;
         startDate = builder.startDate;
@@ -111,8 +111,8 @@ public class Party extends BaseEntity {
         return currentMember;
     }
 
-    public Integer getTotalFee() {
-        return totalFee;
+    public Integer gettotalPrice() {
+        return totalPrice;
     }
 
     public Integer getMonthlyReimbursement() {
@@ -205,7 +205,7 @@ public class Party extends BaseEntity {
 
         private Integer currentMember;
 
-        private Integer totalFee;
+        private Integer totalPrice;
 
         private Integer monthlyReimbursement;
 
@@ -245,8 +245,8 @@ public class Party extends BaseEntity {
             return this;
         }
 
-        public Builder totalFee(Integer totalFee) {
-            this.totalFee = totalFee;
+        public Builder totalPrice(Integer totalPrice) {
+            this.totalPrice = totalPrice;
             return this;
         }
 

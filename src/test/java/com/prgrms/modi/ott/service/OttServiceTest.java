@@ -39,7 +39,7 @@ class OttServiceTest {
         given(ott.getId()).willReturn(id);
         given(ott.getName()).willReturn("testOttName");
         given(ott.getSubscriptionFee()).willReturn(16000);
-        given(ott.getMonthlyFee()).willReturn(4000);
+        given(ott.getmonthlyPrice()).willReturn(4000);
         given(ott.getMaxMemberCapacity()).willReturn(4);
         given(ott.getGrade()).willReturn("프리미엄");
         return ott;
@@ -54,7 +54,7 @@ class OttServiceTest {
         given(carouselInfo.getOttId()).willReturn(id);
         given(carouselInfo.getOttName()).willReturn("testOttName");
         given(carouselInfo.getWaitingForMatch()).willReturn(5L);
-        given(carouselInfo.getMonthlyFee()).willReturn(2500);
+        given(carouselInfo.getmonthlyPrice()).willReturn(2500);
         return carouselInfo;
     }
 
@@ -82,7 +82,7 @@ class OttServiceTest {
             .hasFieldOrPropertyWithValue("ottId", ottResponse.getOttId())
             .hasFieldOrPropertyWithValue("ottName", ottResponse.getOttName())
             .hasFieldOrPropertyWithValue("subscriptionFee", ottResponse.getSubscriptionFee())
-            .hasFieldOrPropertyWithValue("monthlyFee", ottResponse.getMonthlyFee())
+            .hasFieldOrPropertyWithValue("monthlyPrice", ottResponse.getmonthlyPrice())
             .hasFieldOrPropertyWithValue("maxMemberCapacity", ottResponse.getMaxMemberCapacity())
             .hasFieldOrPropertyWithValue("grade", ottResponse.getGrade());
     }

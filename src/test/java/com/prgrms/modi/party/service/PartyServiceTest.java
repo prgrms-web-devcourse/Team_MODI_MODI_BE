@@ -65,7 +65,7 @@ class PartyServiceTest {
         OTT ott = Mockito.mock(OTT.class);
         given(ott.getId()).willReturn(id);
         given(ott.getName()).willReturn("testOttName");
-        given(ott.getMonthlyFee()).willReturn(10000);
+        given(ott.getmonthlyPrice()).willReturn(10000);
         return ott;
     }
 
@@ -83,7 +83,7 @@ class PartyServiceTest {
             .id(1L)
             .partyMemberCapacity(4)
             .currentMember(1)
-            .totalFee(1000)
+            .totalPrice(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(LocalDate.now())
@@ -95,7 +95,7 @@ class PartyServiceTest {
             .id(2L)
             .partyMemberCapacity(4)
             .currentMember(1)
-            .totalFee(1000)
+            .totalPrice(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(LocalDate.now())
@@ -132,7 +132,7 @@ class PartyServiceTest {
             .id(1L)
             .partyMemberCapacity(4)
             .currentMember(1)
-            .totalFee(1000)
+            .totalPrice(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(LocalDate.now())
@@ -144,7 +144,7 @@ class PartyServiceTest {
             .id(2L)
             .partyMemberCapacity(4)
             .currentMember(1)
-            .totalFee(1000)
+            .totalPrice(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(LocalDate.now())
@@ -196,7 +196,7 @@ class PartyServiceTest {
             .id(1L)
             .partyMemberCapacity(createPartyRequest.getPartyMemberCapacity())
             .currentMember(1)
-            .totalFee(1000)
+            .totalPrice(1000)
             .monthlyReimbursement(2000)
             .remainingReimbursement(8000)
             .startDate(createPartyRequest.getStartDate())

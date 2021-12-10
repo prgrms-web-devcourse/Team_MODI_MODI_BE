@@ -226,10 +226,10 @@ class PartyControllerTest {
         List<PointHistory> pointHistoryList = pointHistoryRepository.findAllByUserId(userId);
         List<CommissionHistory> commissionHistoryList = commissionHistoryRepository.findAllByUserId(userId);
 
-        assertThat(user.getPoints(), equalTo(userPoint - party.getTotalFee()));
+        assertThat(user.getPoints(), equalTo(userPoint - party.gettotalPrice()));
         assertThat(party.getCurrentMember(), equalTo(3));
         assertThat(party.getMonthlyReimbursement(), equalTo(2500));
-        assertThat(party.getRemainingReimbursement(), equalTo(party.getTotalFee()));
+        assertThat(party.getRemainingReimbursement(), equalTo(party.gettotalPrice()));
         assertThat(pointHistoryList.size(), equalTo(1));
         assertThat(commissionHistoryList.size(), equalTo(1));
     }

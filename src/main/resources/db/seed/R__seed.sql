@@ -6,7 +6,7 @@ VALUES
     (4, '테스트 유저4', 'USER', '1997-04-13', 0, '2021-11-04 06:30:00', '2021-11-04 06:30:00', null, null, null),
     (5, '테스트 유저5', 'ADMIN', '1997-05-13', 0, '2021-11-05 06:30:00', '2021-11-05 06:30:00', null, null, null);
 
-INSERT INTO otts(id, name, subscription_fee, monthly_fee, max_member_capacity, grade, created_at, updated_at)
+INSERT INTO otts(id, name, subscription_fee, monthly_price, max_member_capacity, grade, created_at, updated_at)
 VALUES
     (1, '넷플릭스', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
     (2, '디즈니+', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
@@ -14,7 +14,7 @@ VALUES
     (4, '와챠', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
     (5, '티빙', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00');
 
-INSERT INTO parties(id, party_member_capacity, current_member, total_fee, monthly_reimbursement, remaining_reimbursement, start_date, end_date,
+INSERT INTO parties(id, party_member_capacity, current_member, total_price, monthly_reimbursement, remaining_reimbursement, start_date, end_date,
                     must_filled, shared_id, shared_password_encrypted, status, created_at, updated_at, deleted_at, ott_id)
 VALUES
     (1, 4, 4, 10000, 5000, 25000, '2021-11-02', '2022-05-02', 1, 'modi112@gmail.com', 'modi', 'ONGOING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
