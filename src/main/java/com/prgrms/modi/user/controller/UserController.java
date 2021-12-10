@@ -1,6 +1,7 @@
 package com.prgrms.modi.user.controller;
 
 import com.prgrms.modi.common.jwt.JwtAuthentication;
+import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.error.exception.InvalidAuthorizationException;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.service.PartyService;
