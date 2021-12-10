@@ -49,6 +49,7 @@ jacocoTestReport {
                     excludes: [
                             '**/com/prgrms/modi/error/**',
                             '**/com/prgrms/modi/common/**',
+                            '**/com/prgrms/modi/utils/**'
                     ]
             )
         }))
