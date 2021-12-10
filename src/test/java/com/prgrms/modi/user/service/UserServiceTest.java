@@ -1,10 +1,13 @@
 package com.prgrms.modi.user.service;
 
 import static com.prgrms.modi.user.domain.UserTest.getUserFixture;
+import static com.prgrms.modi.utils.MockCreator.getPartyFixture;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
+import com.prgrms.modi.party.domain.Party;
+import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.User;
@@ -59,6 +62,20 @@ class UserServiceTest {
 
         then(pointAmountDto)
             .hasFieldOrPropertyWithValue("points", user.getPoints());
+    }
+
+    @Test
+    @DisplayName("유저가 참여한 파티 상세 정보를 조회할 수 있다.")
+    public void getUserPartyTest() {
+        User user = getUserFixture();
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+        Party party = getPartyFixture(1L);
+        given(partyRepository.findById(party.getId())).willReturn(Optional.of(party));
+
+        PartyDetailResponse userPartyDetail = userService.getUserPartyDetail(party.getId());
+
+        then(userPartyDetail)
+            .hasNoNullFieldsOrProperties();
     }
 
     @Test
