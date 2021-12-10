@@ -1,5 +1,6 @@
 package com.prgrms.modi.user.controller;
 
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
@@ -28,7 +29,7 @@ class UserControllerTest {
 
     @Test
     @WithMockJwtAuthentication
-    @DisplayName("유저 정보 조회 성공 테스트")
+    @DisplayName("유저의 정보를 조회할 수 있다")
     void getUserSuccessTest() throws Exception {
         int userId = 1;
         mockMvc
@@ -49,7 +50,7 @@ class UserControllerTest {
 
     @Test
     @WithMockJwtAuthentication
-    @DisplayName("유저 포인트 조회 테스트")
+    @DisplayName("유저의 포인트를 조회할 수 있다")
     void getUserPointsSuccessTest() throws Exception {
         mockMvc
             .perform(
@@ -61,6 +62,26 @@ class UserControllerTest {
                 handler().handlerType(UserController.class),
                 handler().methodName("getUserPoints"),
                 jsonPath("$.points").value(50000)
+            )
+            .andDo(print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("유저가 참여한 특정 파티를 조회할 수 있다")
+    public void getUserParty() throws Exception {
+        long partyId = 1L;
+
+        mockMvc
+            .perform(get("/api/users/me/parties/" + partyId))
+            .andExpectAll(
+                status().isOk(),
+                handler().handlerType(UserController.class),
+                handler().methodName("getUserPartyDetail"),
+                jsonPath("$.partyId").value(partyId),
+                jsonPath("$.ottId").value(1L),
+                jsonPath("$.members", hasSize(4)),
+                jsonPath("$.rules", hasSize(3))
             )
             .andDo(print());
     }
