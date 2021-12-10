@@ -215,7 +215,10 @@ class PartyControllerTest {
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
                 .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$.partyId").value(partyId)
+            )
             .andDo(print());
 
         User user = userRepository.findById(1L).get();

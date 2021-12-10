@@ -5,6 +5,10 @@ import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.point.dto.PointAddRequest;
 import com.prgrms.modi.point.service.PointService;
 import com.prgrms.modi.user.dto.PointAmountDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,9 +29,15 @@ public class PointController {
     }
 
     @PostMapping(path = "/add")
+    @Operation(summary = "유저 포인트 충전", description = "유저의 포인트를 충전합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "포인트 중천 성공(OK)"),
+        @ApiResponse(responseCode = "400", description = "충전할 포인트가 음수일 경우(BADREQUEST)"),
+        @ApiResponse(responseCode = "401", description = "토큰이 없어 인증할 수 없는 경우 (UNAUTHORIZED)")
+    })
     public ResponseEntity<PointAmountDto> addPoints(
         @AuthenticationPrincipal JwtAuthentication authentication,
-        @RequestBody @Valid PointAddRequest pointAddRequest
+        @Parameter(description = "충전할 포인트의 양") @RequestBody @Valid PointAddRequest pointAddRequest
     ) {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");

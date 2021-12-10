@@ -15,6 +15,10 @@ import com.prgrms.modi.party.service.RuleService;
 import io.swagger.models.Response;
 import javax.validation.constraints.Positive;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -83,9 +87,15 @@ public class PartyController {
     }
 
     @PostMapping("/parties/{partyId}/join")
-    public ResponseEntity<Long> joinParty(
+    @Operation(summary = "파티 가입 신청", description = "파티 가입을 신청합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "파티 가입 후, 가입 된 파티 ID를 응답으로 보내줍니다."),
+        @ApiResponse(responseCode = "400", description = "파티 정원이 가득 찼거나, 포인트가 부족할 경우"),
+        @ApiResponse(responseCode = "401", description = "토큰이 없어 인증 할 수 경우")
+    })
+    public ResponseEntity<PartyIdResponse> joinParty(
         @AuthenticationPrincipal JwtAuthentication authentication,
-        @PathVariable Long partyId
+        @Parameter(description = "파티의 ID") @PathVariable Long partyId
     ) {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
