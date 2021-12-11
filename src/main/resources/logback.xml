@@ -5,7 +5,6 @@
               value="[%d{HH:mm:ss:SSS}] %green([%thread]) %highlight(%-5level) %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
     <property name="LOG_FILE_PATTERN"
               value="[%d{HH:mm:ss.SSS}] [%thread] %-5level %logger{36} - %msg%n"/>
-    <property name="LOG_PATH" value="/home/ubuntu/action"/>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${LOG_CONSOLE_PATTERN}</pattern>
@@ -15,7 +14,7 @@
         <appender-ref ref="CONSOLE"/>
     </root>
     <appender name="FILE-INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/log/info/info-${BY_DATE}.log</file>
+        <file>./log/info/info-${BY_DATE}.log</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
             <onMatch>ACCEPT</onMatch>
@@ -32,7 +31,7 @@
         </rollingPolicy>
     </appender>
     <appender name="FILE-WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/log/warn/warn-${BY_DATE}.log</file>
+        <file>./log/warn/warn-${BY_DATE}.log</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>WARN</level>
             <onMatch>ACCEPT</onMatch>
@@ -49,7 +48,7 @@
         </rollingPolicy>
     </appender>
     <appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/log/error/error-${BY_DATE}.log</file>
+        <file>./log/error/error-${BY_DATE}.log</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
