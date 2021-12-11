@@ -1,14 +1,15 @@
 package com.prgrms.modi.utils;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
+import com.prgrms.modi.party.domain.Rule;
 import com.prgrms.modi.user.domain.User;
-import org.mockito.Mockito;
-
 import java.time.LocalDate;
-
-import static org.mockito.BDDMockito.given;
+import org.mockito.Mockito;
 
 public class MockCreator {
 
@@ -20,6 +21,7 @@ public class MockCreator {
     }
 
     public static Party getPartyFixture(Long id) {
+        long period = 6;
         Party party = Mockito.mock(Party.class);
         OTT ott = getOttFixture(1L);
         given(party.getId()).willReturn(id);
@@ -29,7 +31,7 @@ public class MockCreator {
         given(party.getMonthlyReimbursement()).willReturn(12000);
         given(party.getRemainingReimbursement()).willReturn(48000);
         given(party.getStartDate()).willReturn(LocalDate.now());
-        given(party.getEndDate()).willReturn(LocalDate.now().plusMonths(4));
+        given(party.getEndDate()).willReturn(LocalDate.now().plusMonths(period));
         given(party.isMustFilled()).willReturn(true);
         given(party.getStatus()).willReturn(PartyStatus.RECRUITING);
         given(party.getOtt()).willReturn(ott);
@@ -47,8 +49,12 @@ public class MockCreator {
         return ott;
     }
 
-    public static OTT getOttFixture() {
-        return getOttFixture(1L);
+    public static Rule getRuleFixture(Long id) {
+        Rule rule = Mockito.mock(Rule.class);
+        doReturn(id).when(rule).getId();
+        doReturn("테스트 규칙 " + id).when(rule).getName();
+
+        return rule;
     }
 
 }
