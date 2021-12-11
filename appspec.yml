@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-  - source:  /
+  - source: /
     destination: /home/ubuntu/action
     overwrite: yes
 
@@ -10,4 +10,9 @@ permissions:
     pattern: "**"
     owner: ubuntu
     group: ubuntu
-    
+
+hooks:
+  ApplicationStart:
+    - location: scripts/deploy.sh
+      timeout: 180
+      runas: ubuntu
