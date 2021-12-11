@@ -107,7 +107,8 @@ class PartyControllerTest {
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.ottId").value(ottId),
-                jsonPath("$.partyList[0].partyId").value(6)
+                jsonPath("$.partyList[0].partyId").value(6),
+                jsonPath("$.partyList", hasSize(3))
             )
             .andDo(print());
     }
@@ -226,10 +227,10 @@ class PartyControllerTest {
         List<PointHistory> pointHistoryList = pointHistoryRepository.findAllByUserId(userId);
         List<CommissionHistory> commissionHistoryList = commissionHistoryRepository.findAllByUserId(userId);
 
-        assertThat(user.getPoints(), equalTo(userPoint - party.gettotalPrice()));
+        assertThat(user.getPoints(), equalTo(userPoint - party.getTotalPrice()));
         assertThat(party.getCurrentMember(), equalTo(3));
         assertThat(party.getMonthlyReimbursement(), equalTo(2500));
-        assertThat(party.getRemainingReimbursement(), equalTo(party.gettotalPrice()));
+        assertThat(party.getRemainingReimbursement(), equalTo(party.getTotalPrice()));
         assertThat(pointHistoryList.size(), equalTo(1));
         assertThat(commissionHistoryList.size(), equalTo(1));
     }

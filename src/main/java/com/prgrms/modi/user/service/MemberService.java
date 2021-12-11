@@ -31,8 +31,8 @@ public class MemberService {
 
     public void save(Party party, User user) {
         memberRepository.save(new Member(party, user, false));
-        userService.saveCommissionHistory(CommissionDetail.PARTICIPATE, party.gettotalPrice(), user);
-        userService.savePointHistory(PointDetail.PARTICIPATE, party.gettotalPrice(), user);
+        userService.saveCommissionHistory(CommissionDetail.PARTICIPATE, party.getTotalPrice(), user);
+        userService.savePointHistory(PointDetail.PARTICIPATE, party.getTotalPrice(), user);
     }
 
 }

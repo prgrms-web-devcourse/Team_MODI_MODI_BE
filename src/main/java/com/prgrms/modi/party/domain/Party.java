@@ -1,6 +1,9 @@
 package com.prgrms.modi.party.domain;
 
+import static java.time.temporal.ChronoUnit.MONTHS;
+
 import com.prgrms.modi.common.domain.BaseEntity;
+import com.prgrms.modi.common.domain.DeletableEntity;
 import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.user.domain.Member;
@@ -25,10 +28,15 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "parties")
-public class Party extends BaseEntity {
+@Where(clause = "deleted_at is null")
+public class Party extends DeletableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,8 +74,8 @@ public class Party extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PartyStatus status;
 
-    @PastOrPresent
-    private LocalDateTime deletedAt;
+    @Positive
+    private int period;
 
     @ManyToOne
     @JoinColumn(name = "ott_id")
@@ -91,11 +99,11 @@ public class Party extends BaseEntity {
         remainingReimbursement = builder.remainingReimbursement;
         startDate = builder.startDate;
         endDate = builder.endDate;
+        period = (int) MONTHS.between(builder.startDate, builder.endDate);
         mustFilled = builder.mustFilled;
         sharedId = builder.sharedId;
         sharedPasswordEncrypted = builder.sharedPasswordEncrypted;
         status = builder.status;
-        deletedAt = builder.deletedAt;
         ott = builder.ott;
     }
 
@@ -111,7 +119,7 @@ public class Party extends BaseEntity {
         return currentMember;
     }
 
-    public Integer gettotalPrice() {
+    public Integer getTotalPrice() {
         return totalPrice;
     }
 
@@ -131,6 +139,10 @@ public class Party extends BaseEntity {
         return endDate;
     }
 
+    public int getPeriod() {
+        return period;
+    }
+
     public boolean isMustFilled() {
         return mustFilled;
     }
@@ -145,10 +157,6 @@ public class Party extends BaseEntity {
 
     public PartyStatus getStatus() {
         return status;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
     }
 
     public OTT getOtt() {

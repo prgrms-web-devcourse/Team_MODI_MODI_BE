@@ -25,10 +25,10 @@ public class PartyDetailResponse {
     private String grade;
 
     @ApiModelProperty(value = "파티장 월 환급금")
-    private Integer monthlyReimbersement;
+    private Integer monthlyReimbursement;
 
     @ApiModelProperty(value = "파티장 잔여 환급금")
-    private Integer remainingReimbersement;
+    private Integer remainingReimbursement;
 
     @ApiModelProperty(value = "월 파티 참여 가격")
     private Integer monthlyPrice;
@@ -74,8 +74,8 @@ public class PartyDetailResponse {
         this.ottId = party.getOtt().getId();
         this.ottName = party.getOtt().getName();
         this.grade = party.getOtt().getGrade();
-        this.monthlyReimbersement = party.getMonthlyReimbursement();
-        this.remainingReimbersement = party.getRemainingReimbursement();
+        this.monthlyReimbursement = party.getMonthlyReimbursement();
+        this.remainingReimbursement = party.getRemainingReimbursement();
         this.partyMemberCapacity = party.getPartyMemberCapacity();
         this.currentMember = party.getCurrentMember();
         this.startDate = party.getStartDate();
@@ -83,7 +83,7 @@ public class PartyDetailResponse {
         this.startsIn = (int) DAYS.between(LocalDate.now(), this.startDate);
         this.period = (int) MONTHS.between(this.startDate, this.endDate);
         this.mustFilled = party.isMustFilled();
-        this.totalPrice = party.gettotalPrice();
+        this.totalPrice = party.getTotalPrice();
         this.monthlyPrice = this.totalPrice / this.period;
         this.status = party.getStatus();
         this.members = members;
@@ -120,12 +120,12 @@ public class PartyDetailResponse {
         return grade;
     }
 
-    public Integer getMonthlyReimbersement() {
-        return monthlyReimbersement;
+    public Integer getMonthlyReimbursement() {
+        return monthlyReimbursement;
     }
 
-    public Integer getRemainingReimbersement() {
-        return remainingReimbersement;
+    public Integer getRemainingReimbursement() {
+        return remainingReimbursement;
     }
 
     public Integer getMonthlyPrice() {
