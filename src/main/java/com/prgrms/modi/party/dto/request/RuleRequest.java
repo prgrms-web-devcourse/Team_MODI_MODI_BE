@@ -1,7 +1,12 @@
 package com.prgrms.modi.party.dto.request;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
 public class RuleRequest {
 
+    @NotNull
+    @Positive
     private Long ruleId;
 
     private String ruleName;

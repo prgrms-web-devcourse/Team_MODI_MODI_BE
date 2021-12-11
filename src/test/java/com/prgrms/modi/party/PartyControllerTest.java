@@ -1,5 +1,14 @@
 package com.prgrms.modi.party;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.prgrms.modi.history.domain.CommissionHistory;
@@ -14,6 +23,9 @@ import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.MemberRepository;
 import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
+import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.MessageFormat;
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -129,38 +128,6 @@ class PartyControllerTest {
                 jsonPath("$.ottId").value(ottId),
                 jsonPath("$.partyList[0].partyId").value(4)
             );
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 OTT의 파티 목록을 조회할 수 없다")
-    public void getPartyListInvalidOtt() throws Exception {
-        long ottId = -1;
-        int size = 5;
-
-        mockMvc
-            .perform(get(MessageFormat.format("/api/otts/{0}/parties?size={1}", ottId, size)))
-            .andExpect(status().isNotFound())
-            .andDo(print());
-    }
-
-    @Test
-    @DisplayName("파티 목록 조회 페이지 크기는 양수이다")
-    public void pageSizePositive() throws Exception {
-        int ottId = 1;
-        int positiveSize = 1;
-        mockMvc
-            .perform(get(MessageFormat.format("/api/otts/{0}/parties?size={1}", ottId, positiveSize)))
-            .andExpect(status().isOk());
-
-        int zeroSize = 0;
-        mockMvc
-            .perform(get(MessageFormat.format("/api/otts/{0}/parties?size={1}", ottId, zeroSize)))
-            .andExpect(status().isBadRequest());
-
-        int negativeSize = -1;
-        mockMvc
-            .perform(get(MessageFormat.format("/api/otts/{0}/parties?size={1}", ottId, negativeSize)))
-            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -262,6 +229,7 @@ class PartyControllerTest {
             .andDo(print());
     }
 
+    @Test
     @DisplayName("모든 규칙 태그를 조회할 수 있다")
     public void getAllRule() throws Exception {
         // When
