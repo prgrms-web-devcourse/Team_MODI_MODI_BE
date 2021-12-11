@@ -63,3 +63,6 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+logging:
+  file:
+    path: ./logs/projectname/${spring.application.instance-id}
