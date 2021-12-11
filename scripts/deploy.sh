@@ -1,10 +1,10 @@
 PROJECT_NAME=modi
 BUILD_JAR=$(ls /home/ubuntu/action/build/libs/*.jar)
-JAR_NAME=$(basename $BUILD_JAR)
+JAR_NAME=$(ls -tr $BUILD_JAR | tail -n 1)
 
 echo "> Build 파일명: $JAR_NAME" >>/home/ubuntu/action/deploy.log
 
-echo "> 현재 구동 중인 애플리케이션 pid 확인" >>/home/ubuntu/action/build/libs/deploy.log
+echo "> 현재 구동 중인 애플리케이션 pid 확인" >>/home/ubuntu/action/deploy.log
 CURRENT_PID=$(ps -e | grep java | awk '{print $1}')
 
 echo "현재 구동 중인 애플리케이션 pid: $CURRENT_PID"
@@ -21,7 +21,7 @@ echo "> 새 어플리케이션 배포" >>/home/ubuntu/action/deploy.log
 
 echo "> JAR Name: $JAR_NAME"
 
-echo "> JAR_NAME에 실행권한 추가"
+echo "> $JAR_NAME에 실행권한 추가"
 
 chmod +x $JAR_NAME
 
