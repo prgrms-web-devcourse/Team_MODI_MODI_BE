@@ -1,33 +1,5 @@
 package com.prgrms.modi.party.service;
 
-import com.prgrms.modi.ott.domain.OTT;
-import com.prgrms.modi.ott.service.OttService;
-import com.prgrms.modi.party.domain.Party;
-import com.prgrms.modi.party.domain.PartyStatus;
-import com.prgrms.modi.party.dto.request.CreatePartyRequest;
-import com.prgrms.modi.party.dto.request.RuleRequest;
-import com.prgrms.modi.party.dto.response.PartyIdResponse;
-import com.prgrms.modi.party.dto.response.PartyListResponse;
-import com.prgrms.modi.party.repository.PartyRepository;
-import com.prgrms.modi.party.service.PartyRuleService;
-import com.prgrms.modi.party.service.PartyService;
-import com.prgrms.modi.user.domain.User;
-import com.prgrms.modi.user.service.MemberService;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.data.domain.PageRequest;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
 import static com.prgrms.modi.utils.MockCreator.getPartyFixture;
 import static com.prgrms.modi.utils.MockCreator.getUserFixture;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,6 +13,32 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.prgrms.modi.ott.domain.OTT;
+import com.prgrms.modi.ott.service.OttService;
+import com.prgrms.modi.party.domain.Party;
+import com.prgrms.modi.party.domain.PartyStatus;
+import com.prgrms.modi.party.dto.request.CreatePartyRequest;
+import com.prgrms.modi.party.dto.request.RuleRequest;
+import com.prgrms.modi.party.dto.response.PartyIdResponse;
+import com.prgrms.modi.party.dto.response.PartyListResponse;
+import com.prgrms.modi.party.repository.PartyRepository;
+import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.service.MemberService;
+import com.prgrms.modi.utils.MockCreator;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -61,110 +59,52 @@ class PartyServiceTest {
     @Mock
     private MemberService memberService;
 
-    public OTT getOttFixture(Long id) {
-        OTT ott = Mockito.mock(OTT.class);
-        given(ott.getId()).willReturn(id);
-        given(ott.getName()).willReturn("testOttName");
-        given(ott.getmonthlyPrice()).willReturn(10000);
-        return ott;
-    }
-
     @Test
-    @DisplayName("파티 목록 첫 페이지를 가져올 수 있다")
+    @DisplayName("파티 목록 커서 기반 페이지로 가져올 수 있다")
     public void getFirstPartyList() {
         // Given
         long ottId = 1L;
         int size = 5;
+        int partySize = 5;
+        int period = 6;
 
-        OTT ott = getOttFixture(ottId);
-        int period = 12;
+        OTT ott = MockCreator.getOttFixture(ottId);
+        List<Party> parties = new ArrayList<>();
+        for (long i = 0; i < partySize; i++) {
+            parties.add(MockCreator.getPartyFixture(i));
+        }
 
-        Party party1 = new Party.Builder()
-            .id(1L)
-            .partyMemberCapacity(4)
-            .currentMember(1)
-            .totalPrice(1000)
-            .monthlyReimbursement(2000)
-            .remainingReimbursement(8000)
-            .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(period))
-            .mustFilled(true)
-            .ott(ott)
-            .build();
-        Party party2 = new Party.Builder()
-            .id(2L)
-            .partyMemberCapacity(4)
-            .currentMember(1)
-            .totalPrice(1000)
-            .monthlyReimbursement(2000)
-            .remainingReimbursement(8000)
-            .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(period))
-            .mustFilled(true)
-            .ott(ott)
-            .build();
-        List<Party> partyList = List.of(party2, party1);
-        LocalDate minDate = LocalDate.of(0, 1, 1);
-        PageRequest page = PageRequest.of(0, size);
+        doReturn(ott)
+            .when(ottService)
+            .findOtt(any(Long.class));
 
-        when(ottService.findOtt(1L)).thenReturn(ott);
-        when(partyRepository.findAllRecruitingParty(ott, PartyStatus.RECRUITING, minDate, Long.MAX_VALUE, page))
-            .thenReturn(partyList);
+        doReturn(parties)
+            .when(partyRepository)
+            .findAllRecruitingParty(
+                any(OTT.class),
+                any(PartyStatus.class),
+                any(LocalDate.class),
+                any(Long.class),
+                any(Pageable.class)
+            );
 
         // When
         PartyListResponse response = partyService.getPartyList(ottId, size);
 
         // Then
-        assertThat(response.getPartyList().size(), equalTo(2));
+        verify(ottService, times(1))
+            .findOtt(anyLong());
+        verify(partyRepository, times(1))
+            .findAllRecruitingParty(
+                any(OTT.class),
+                any(PartyStatus.class),
+                any(LocalDate.class),
+                any(Long.class),
+                any(Pageable.class)
+            );
+
+        assertThat(response.getPartyList().size(), equalTo(partySize));
         assertThat(response.getPartyList().get(0).getPeriod(), equalTo(period));
-    }
-
-    @Test
-    @DisplayName("파티 목록을 커서 기반 페이지로 가져올 수 있다")
-    public void getCursorPartyList() {
-        // Given
-        long ottId = 1L;
-        long lastPartyId = 2L;
-        int size = 5;
-
-        OTT ott = getOttFixture(ottId);
-        Party party1 = new Party.Builder()
-            .id(1L)
-            .partyMemberCapacity(4)
-            .currentMember(1)
-            .totalPrice(1000)
-            .monthlyReimbursement(2000)
-            .remainingReimbursement(8000)
-            .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(12))
-            .mustFilled(true)
-            .ott(ott)
-            .build();
-        Party party2 = new Party.Builder()
-            .id(2L)
-            .partyMemberCapacity(4)
-            .currentMember(1)
-            .totalPrice(1000)
-            .monthlyReimbursement(2000)
-            .remainingReimbursement(8000)
-            .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(12))
-            .mustFilled(true)
-            .ott(ott)
-            .build();
-        List<Party> partyList = List.of(party1);
-        LocalDate minDate = LocalDate.of(0, 1, 1);
-        PageRequest page = PageRequest.of(0, size);
-
-        when(ottService.findOtt(1L)).thenReturn(ott);
-        doReturn(partyList)
-            .when(partyRepository).findAllRecruitingParty(ott, PartyStatus.RECRUITING, minDate, Long.MAX_VALUE, page);
-
-        // When
-        PartyListResponse response = partyService.getPartyList(ottId, size);
-
-        // Then
-        assertThat(response.getPartyList().size(), equalTo(1));
     }
 
     @Test
@@ -173,7 +113,7 @@ class PartyServiceTest {
         // Given
         Long ottId = 1L;
         Long userId = 1L;
-        OTT ott = getOttFixture(ottId);
+        OTT ott = MockCreator.getOttFixture(ottId);
 
         RuleRequest ruleRequest1 = new RuleRequest(1L, "1인 1회선");
         RuleRequest ruleRequest2 = new RuleRequest(2L, "양도 금지");
@@ -192,18 +132,7 @@ class PartyServiceTest {
             .sharedPassword("modimodi123")
             .build();
 
-        Party party = new Party.Builder()
-            .id(1L)
-            .partyMemberCapacity(createPartyRequest.getPartyMemberCapacity())
-            .currentMember(1)
-            .totalPrice(1000)
-            .monthlyReimbursement(2000)
-            .remainingReimbursement(8000)
-            .startDate(createPartyRequest.getStartDate())
-            .endDate(createPartyRequest.getEndDate())
-            .mustFilled(createPartyRequest.isMustFilled())
-            .ott(ott)
-            .build();
+        Party party = MockCreator.getPartyFixture(1L);
 
         when(partyRepository.save(any(Party.class))).thenReturn(party);
         doNothing().when(partyRuleService).savePartyRule(any(Party.class), any(Long.class));
