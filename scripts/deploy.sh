@@ -4,8 +4,8 @@ JAR_NAME=$(basename $BUILD_JAR)
 
 echo "> Build 파일명: $JAR_NAME" >>/home/ubuntu/action/deploy.log
 
-echo "> 현재 구동 중인 애플리케이션 pid 확인" >>/home/ubuntu/action/deploy.log
-CURRENT_PID=$(pgrep -fl ${PROJECT_NAME} | grep jar | awk '{print $1}')
+echo "> 현재 구동 중인 애플리케이션 pid 확인" >>/home/ubuntu/action/build/libs/deploy.log
+CURRENT_PID=$(ps -e | grep java | awk '{print $1}')
 
 echo "현재 구동 중인 애플리케이션 pid: $CURRENT_PID"
 
@@ -17,7 +17,7 @@ else
   sleep 5
 fi
 
-echo "> 새 어플리케이션 배포" >>/home/ec2-user/action/deploy.log
+echo "> 새 어플리케이션 배포" >>/home/ubuntu/action/deploy.log
 
 echo "> JAR Name: $JAR_NAME"
 
@@ -27,6 +27,6 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 
-nohup java -jar $JAR_NAME >/home/ubuntu/action/build/libs/nohup.out 2>&1 &
+nohup java -jar -Dspring.profiles.active=prod $JAR_NAME >/home/ubuntu/action/build/libs/nohup.out 2>&1 &
 
 exit 0
