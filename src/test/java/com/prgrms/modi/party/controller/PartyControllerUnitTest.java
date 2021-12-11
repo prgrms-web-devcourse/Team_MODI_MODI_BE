@@ -1,4 +1,4 @@
-package com.prgrms.modi.party;
+package com.prgrms.modi.party.controller;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;

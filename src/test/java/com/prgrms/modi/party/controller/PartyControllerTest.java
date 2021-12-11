@@ -1,4 +1,4 @@
-package com.prgrms.modi.party;
+package com.prgrms.modi.party.controller;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -226,20 +226,6 @@ class PartyControllerTest {
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andDo(print());
-    }
-
-    @Test
-    @DisplayName("모든 규칙 태그를 조회할 수 있다")
-    public void getAllRule() throws Exception {
-        // When
-        mockMvc
-            .perform(get("/api/rules"))
-            .andExpectAll(
-                status().isOk(),
-                jsonPath("$.rules[0].ruleId").value(1),
-                jsonPath("$.rules[0].ruleName").value("1인 1회선")
-            )
             .andDo(print());
     }
 
