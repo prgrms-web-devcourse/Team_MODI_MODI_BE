@@ -27,6 +27,6 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 
-nohup java -jar $JAR_NAME >/home/ubuntu/action/build/libs/nohup.out 2>&1 &
+nohup java -jar -Dspring.profiles.active=prod $JAR_NAME >/home/ubuntu/action/build/libs/nohup.out 2>&1 &
 
 exit 0
