@@ -22,8 +22,9 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
     public List<UserPartyBriefResponse> findAllPartiesByStatusAndUserId(Long userId, PartyStatus status, Integer size,
         Long lastPartyId) {
         return queryFactory
-            .select(new QUserPartyBriefResponse(party.id, party.ott.id, party.ott.name, party.startDate, party.endDate,
-                member.isLeader, party.monthlyReimbursement
+            .select(new QUserPartyBriefResponse(party.id, party.status, party.ott.id, party.ott.name, party.startDate,
+                party.endDate, member.isLeader, party.monthlyReimbursement, party.remainingReimbursement,
+                (party.totalPrice.castToNum(Integer.class).divide(party.period.castToNum(Integer.class))), party.totalPrice
             ))
             .from(member)
             .leftJoin(party).on(party.id.eq(member.party.id))
