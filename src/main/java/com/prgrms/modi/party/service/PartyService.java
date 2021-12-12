@@ -1,5 +1,7 @@
 package com.prgrms.modi.party.service;
 
+import static java.time.temporal.ChronoUnit.MONTHS;
+
 import com.prgrms.modi.error.exception.NotFoundException;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.service.OttService;
@@ -7,26 +9,23 @@ import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.request.RuleRequest;
+import com.prgrms.modi.party.dto.response.PartyBriefResponse;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
-import com.prgrms.modi.party.dto.response.PartyBriefResponse;
 import com.prgrms.modi.party.dto.response.SharedAccountResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.service.MemberService;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.time.temporal.ChronoUnit.MONTHS;
 
 @Service
 public class PartyService {
@@ -129,8 +128,9 @@ public class PartyService {
             .totalPrice(
                 getTotalPartyPrice(
                     ott.getmonthlyPrice(),
-                    (int) MONTHS.between(request.getStartDate(), request.getEndDate()))
+                    (int) MONTHS.between(request.getStartDate(), request.getEndDate())
                 )
+            )
             .monthlyReimbursement(0)
             .remainingReimbursement(0)
             .status(PartyStatus.RECRUITING)

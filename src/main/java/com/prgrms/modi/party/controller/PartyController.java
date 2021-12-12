@@ -7,14 +7,13 @@ import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
-import com.prgrms.modi.party.dto.response.RuleListResponse;
 import com.prgrms.modi.party.dto.response.SharedAccountResponse;
 import com.prgrms.modi.party.service.PartyService;
-import com.prgrms.modi.party.service.RuleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,9 +42,9 @@ public class PartyController {
     @Operation(summary = "모집중인 파티 목록 조회", description = "특정 OTT 파티를 모집 중인 파티 목록을 조회합니다")
     @ApiResponse(responseCode = "200", description = "OK")
     public ResponseEntity<PartyListResponse> getPartyList(
-        @PathVariable Long ottId,
+        @PathVariable @Positive Long ottId,
         @RequestParam @Positive Integer size,
-        @RequestParam(required = false) Long lastPartyId
+        @RequestParam(required = false) @Positive Long lastPartyId
     ) {
         if (lastPartyId == null) {
             return ResponseEntity.ok(partyService.getPartyList(ottId, size));
@@ -61,14 +60,14 @@ public class PartyController {
     }
 
     @GetMapping("/parties/{partyId}/sharedAccount")
-    @Operation(summary = "파티 상세 정보 조회", description = "파티 목록에서 파티 상세 정보 조회")
+    @Operation(summary = "파티 공유 계정 조회", description = "파티의 OTT 공유계정 조회")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "401", description = "JWT가 없는 경우 UNAUTHORIZED"),
         @ApiResponse(responseCode = "403", description = "파티 멤버가 아닌 유저인 경우 FORBIDDEN")
     })
     public ResponseEntity<SharedAccountResponse> getPartySharedAccount(
-        @PathVariable Long partyId,
+        @PathVariable @Positive Long partyId,
         @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
     ) {
         if (authentication == null) {
@@ -87,7 +86,7 @@ public class PartyController {
         @ApiResponse(responseCode = "401", description = "JWT가 없는 경우 UNAUTHORIZED")
     })
     public ResponseEntity<PartyIdResponse> createParty(
-        @RequestBody final CreatePartyRequest request,
+        @RequestBody @Valid final CreatePartyRequest request,
         @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
     ) {
         if (authentication == null) {
