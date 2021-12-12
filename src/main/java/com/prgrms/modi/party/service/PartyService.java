@@ -40,8 +40,12 @@ public class PartyService {
 
     private final MemberService memberService;
 
-    public PartyService(PartyRepository partyRepository, OttService ottService, PartyRuleService partyRuleService,
-        MemberService memberService) {
+    public PartyService(
+        PartyRepository partyRepository,
+        OttService ottService,
+        PartyRuleService partyRuleService,
+        MemberService memberService
+    ) {
         this.partyRepository = partyRepository;
         this.ottService = ottService;
         this.partyRuleService = partyRuleService;
@@ -57,35 +61,33 @@ public class PartyService {
     }
 
     @Transactional(readOnly = true)
-    public PartyListResponse getPartyList(Long ottId, Integer size) {
+    public PartyListResponse getPartyList(long ottId, int size) {
         OTT ott = ottService.findOtt(ottId);
-        LocalDate minDate = LocalDate.of(0, 1, 1);
-        PageRequest page = PageRequest.of(0, size);
+        LocalDate minStartDate = LocalDate.of(0, 1, 1);
 
-        return PartyListResponse.from(
-            ott,
-            partyRepository
-                .findAllRecruitingParty(ott, PartyStatus.RECRUITING, minDate, Long.MAX_VALUE, page)
-                .stream()
-                .map(PartyBriefResponse::from)
-                .collect(Collectors.toList())
-        );
+        List<PartyBriefResponse> parties = getRecruitingParties(ott, minStartDate, Long.MAX_VALUE, size);
+
+        return PartyListResponse.from(ott, parties);
     }
 
     @Transactional(readOnly = true)
-    public PartyListResponse getPartyList(Long ottId, Integer size, Long lastPartyId) {
+    public PartyListResponse getPartyList(long ottId, int size, long lastPartyId) {
         OTT ott = ottService.findOtt(ottId);
         Party lastParty = partyRepository.getById(lastPartyId);
+
+        List<PartyBriefResponse> parties = getRecruitingParties(ott, lastParty.getStartDate(), lastPartyId, size);
+
+        return PartyListResponse.from(ott, parties);
+    }
+
+    private List<PartyBriefResponse> getRecruitingParties(OTT ott, LocalDate startDate, long lastPartyId, int size) {
         PageRequest page = PageRequest.of(0, size);
 
-        return PartyListResponse.from(
-            ott,
-            partyRepository
-                .findAllRecruitingParty(ott, PartyStatus.RECRUITING, lastParty.getStartDate(), lastPartyId, page)
-                .stream()
-                .map(PartyBriefResponse::from)
-                .collect(Collectors.toList())
-        );
+        return partyRepository
+            .findPartyPage(ott, PartyStatus.RECRUITING, startDate, lastPartyId, page)
+            .stream()
+            .map(PartyBriefResponse::from)
+            .collect(Collectors.toList());
     }
 
     @Transactional

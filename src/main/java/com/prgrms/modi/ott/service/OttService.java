@@ -38,7 +38,8 @@ public class OttService {
     }
 
     public OTT findOtt(Long id) {
-        return ottRepository.findById(id).orElseThrow(() -> new NotFoundException("존재하지 않는 OTT 입니다"));
+        return ottRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 OTT 입니다"));
     }
 
     public CarouselListResponse getCarouselList() {

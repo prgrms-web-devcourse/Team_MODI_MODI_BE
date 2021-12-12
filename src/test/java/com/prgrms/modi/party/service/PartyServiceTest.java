@@ -80,7 +80,7 @@ class PartyServiceTest {
 
         doReturn(parties)
             .when(partyRepository)
-            .findAllRecruitingParty(
+            .findPartyPage(
                 any(OTT.class),
                 any(PartyStatus.class),
                 any(LocalDate.class),
@@ -95,7 +95,7 @@ class PartyServiceTest {
         verify(ottService, times(1))
             .findOtt(anyLong());
         verify(partyRepository, times(1))
-            .findAllRecruitingParty(
+            .findPartyPage(
                 any(OTT.class),
                 any(PartyStatus.class),
                 any(LocalDate.class),
