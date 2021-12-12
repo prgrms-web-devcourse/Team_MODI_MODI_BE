@@ -9,8 +9,6 @@ import com.prgrms.modi.party.dto.request.RuleRequest;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
-import com.prgrms.modi.party.service.PartyRuleService;
-import com.prgrms.modi.party.service.PartyService;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -28,6 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.prgrms.modi.utils.MockCreator.getOttFixture;
 import static com.prgrms.modi.utils.MockCreator.getPartyFixture;
 import static com.prgrms.modi.utils.MockCreator.getUserFixture;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -60,14 +58,6 @@ class PartyServiceTest {
 
     @Mock
     private MemberService memberService;
-
-    public OTT getOttFixture(Long id) {
-        OTT ott = Mockito.mock(OTT.class);
-        given(ott.getId()).willReturn(id);
-        given(ott.getName()).willReturn("testOttName");
-        given(ott.getmonthlyPrice()).willReturn(10000);
-        return ott;
-    }
 
     @Test
     @DisplayName("파티 목록 첫 페이지를 가져올 수 있다")
