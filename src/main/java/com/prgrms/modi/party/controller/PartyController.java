@@ -1,21 +1,19 @@
 package com.prgrms.modi.party.controller;
 
 import com.prgrms.modi.common.jwt.JwtAuthentication;
+import com.prgrms.modi.error.exception.AlreadyJoinedException;
 import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
-import com.prgrms.modi.party.dto.response.RuleListResponse;
 import com.prgrms.modi.party.dto.response.SharedAccountResponse;
 import com.prgrms.modi.party.service.PartyService;
-import com.prgrms.modi.party.service.RuleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import javax.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+
+import javax.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api")
@@ -110,7 +110,9 @@ public class PartyController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-
+        if (!partyService.notPartyMember(partyId, authentication.userId)) {
+            throw new AlreadyJoinedException("이미 가입된 파티에 가입할 수 없습니다");
+        }
         return ResponseEntity.ok(partyService.joinParty(authentication.userId, partyId));
     }
 
