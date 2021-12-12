@@ -1,6 +1,7 @@
 package com.prgrms.modi.party.controller;
 
 import com.prgrms.modi.common.jwt.JwtAuthentication;
+import com.prgrms.modi.error.exception.AlreadyJoinedException;
 import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
@@ -109,7 +110,9 @@ public class PartyController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-
+        if (!partyService.notPartyMember(partyId, authentication.userId)) {
+            throw new AlreadyJoinedException("이미 가입된 파티에 가입할 수 없습니다");
+        }
         return ResponseEntity.ok(partyService.joinParty(authentication.userId, partyId));
     }
 
