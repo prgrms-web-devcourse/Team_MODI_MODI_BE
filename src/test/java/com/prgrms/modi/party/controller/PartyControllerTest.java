@@ -177,9 +177,11 @@ class PartyControllerTest {
     @DisplayName("파티를 참여할 수 있다.")
     @Transactional(readOnly = true)
     public void joinParty() throws Exception {
-        int userPoint = 50000;
+        int userPoint = 100_000;
         Long userId = 1L;
-        Long partyId = 4L;
+        Long partyId = 6L;
+        User user = userRepository.findById(userId).get();
+        user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -189,7 +191,6 @@ class PartyControllerTest {
             )
             .andDo(print());
 
-        User user = userRepository.findById(1L).get();
         Party party = partyRepository.findById(partyId).get();
         List<PointHistory> pointHistoryList = pointHistoryRepository.findAllByUserId(userId);
         List<CommissionHistory> commissionHistoryList = commissionHistoryRepository.findAllByUserId(userId);
@@ -226,6 +227,39 @@ class PartyControllerTest {
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
+            .andDo(print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("파티에 중복 가입을 할 수 없다.")
+    @Transactional
+    public void alreadyJoinedExceptionTest() throws Exception {
+        Long partyId = 1L;
+        Long userId = 1L;
+        User user = userRepository.findById(userId).get();
+        int userPoint = 100_000;
+        user.addPoints(userPoint);
+
+        mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorMessage").value("이미 가입된 파티에 가입할 수 없습니다")
+            )
+            .andDo(print());
+    }
+
+    @DisplayName("모든 규칙 태그를 조회할 수 있다")
+    public void getAllRule() throws Exception {
+        // When
+        mockMvc
+            .perform(get("/api/rules"))
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$.rules[0].ruleId").value(1),
+                jsonPath("$.rules[0].ruleName").value("1인 1회선")
+            )
             .andDo(print());
     }
 

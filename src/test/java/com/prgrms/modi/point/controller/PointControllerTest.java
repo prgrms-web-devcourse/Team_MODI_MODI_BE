@@ -38,8 +38,7 @@ class PointControllerTest {
     @WithMockJwtAuthentication
     @Transactional
     void addPoints() throws Exception {
-        Integer originalPoints = 50_000;
-        Integer points = 10_000;
+        int points = 10_000;
         PointAddRequest pointAddRequest = new PointAddRequest(points);
 
         mockMvc.perform(
@@ -51,7 +50,7 @@ class PointControllerTest {
             .andDo(print());
 
         User user = userService.findUser(1L);
-        assertThat(user.getPoints(), equalTo(originalPoints + points));
+        assertThat(user.getPoints(), equalTo(points));
     }
 
 }

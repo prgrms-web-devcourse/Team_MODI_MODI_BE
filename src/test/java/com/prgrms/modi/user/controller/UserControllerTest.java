@@ -1,15 +1,7 @@
 package com.prgrms.modi.user.controller;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
-import java.text.MessageFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,6 +10,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.text.MessageFormat;
+
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -45,7 +46,7 @@ class UserControllerTest {
                 handler().methodName("getUserDetail"),
                 jsonPath("$.userId").value(userId),
                 jsonPath("$.username").value("테스트 유저1"),
-                jsonPath("$.points").value(50000)
+                jsonPath("$.points").value(0)
             )
             .andDo(print());
     }
@@ -63,7 +64,7 @@ class UserControllerTest {
                 status().isOk(),
                 handler().handlerType(UserController.class),
                 handler().methodName("getUserPoints"),
-                jsonPath("$.points").value(50000)
+                jsonPath("$.points").value(0)
             )
             .andDo(print());
     }
