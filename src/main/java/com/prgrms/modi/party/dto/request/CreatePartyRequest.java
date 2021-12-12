@@ -2,30 +2,36 @@ package com.prgrms.modi.party.dto.request;
 
 import java.time.LocalDate;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 public class CreatePartyRequest {
 
+    @NotNull
     @Positive
     private Long ottId;
 
-    @NotBlank
     private String ottName;
 
-    @NotBlank
     private String grade;
 
     @NotNull
+    @Positive
     private Integer partyMemberCapacity;
 
+    @NotNull
     private LocalDate startDate;
 
+    @NotNull
     private LocalDate endDate;
 
-    private boolean mustFilled;
+    @NotNull
+    private Boolean mustFilled;
 
+    @NotNull
+    @Valid
     private List<RuleRequest> rules;
 
     @NotBlank
@@ -74,7 +80,7 @@ public class CreatePartyRequest {
         return endDate;
     }
 
-    public boolean isMustFilled() {
+    public Boolean isMustFilled() {
         return mustFilled;
     }
 
@@ -105,7 +111,7 @@ public class CreatePartyRequest {
 
         private LocalDate endDate;
 
-        private boolean mustFilled;
+        private Boolean mustFilled;
 
         private List<RuleRequest> rules;
 
@@ -146,7 +152,7 @@ public class CreatePartyRequest {
             return this;
         }
 
-        public Builder mustFilled(boolean mustFilled) {
+        public Builder mustFilled(Boolean mustFilled) {
             this.mustFilled = mustFilled;
             return this;
         }
