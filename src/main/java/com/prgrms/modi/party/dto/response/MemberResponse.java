@@ -1,7 +1,6 @@
 package com.prgrms.modi.party.dto.response;
 
 import com.prgrms.modi.user.domain.Member;
-import com.prgrms.modi.user.domain.User;
 import io.swagger.annotations.ApiModelProperty;
 
 public class MemberResponse {
