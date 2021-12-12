@@ -172,11 +172,9 @@ public class PartyService {
     }
 
     @Transactional(readOnly = true)
-    public SharedAccountResponse getSharedAccount(Long partyId) {
-        return SharedAccountResponse.from(
-            partyRepository.findById(partyId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"))
-        );
+    public SharedAccountResponse getSharedAccount(long partyId) {
+        Party party = this.findParty(partyId);
+        return SharedAccountResponse.from(party);
     }
 
     private Party findParty(long partyId) {
