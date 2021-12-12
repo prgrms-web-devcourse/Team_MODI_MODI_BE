@@ -30,10 +30,11 @@ public class OttService {
         return OttListResponse.from(otts);
     }
 
-    public OttResponse getOtt(Long ottId) {
-        return OttResponse.from(
-            ottRepository.findById(ottId)
-                .orElseThrow(() -> new NotFoundException("요청하신 Ott를 찾지 못했습니다.")));
+    public OttResponse getOtt(Long id) {
+        OTT ott = ottRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("요청하신 Ott를 찾지 못했습니다."));
+
+        return OttResponse.from(ott);
     }
 
     public OTT findOtt(Long id) {
