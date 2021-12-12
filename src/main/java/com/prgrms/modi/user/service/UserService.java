@@ -17,7 +17,7 @@ import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
-import com.prgrms.modi.user.dto.PointAmountDto;
+import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
@@ -60,12 +60,6 @@ public class UserService {
         checkArgument(id != null, "userId must be provided");
         return userRepository.findById(id)
             .map(UserResponse::from)
-            .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
-    }
-
-    @Transactional(readOnly = true)
-    public User findUser(Long id) {
-        return userRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
     }
 
@@ -135,10 +129,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public PointAmountDto getUserPoints(Long userId) {
+    public PointAmountResponse getUserPoints(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
-        return new PointAmountDto(user.getPoints());
+        return new PointAmountResponse(user.getPoints());
     }
 
     @Transactional(readOnly = true)
@@ -154,6 +148,12 @@ public class UserService {
         Long lastPartyId) {
         return new UserPartyListResponse(
             partyRepository.findAllPartiesByStatusAndUserId(userId, partyStatus, size, lastPartyId));
+    }
+
+    @Transactional(readOnly = true)
+    public User findUser(Long id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
     }
 
 }

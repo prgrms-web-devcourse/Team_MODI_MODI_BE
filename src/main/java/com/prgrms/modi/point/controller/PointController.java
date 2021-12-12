@@ -4,7 +4,7 @@ import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.point.dto.PointAddRequest;
 import com.prgrms.modi.point.service.PointService;
-import com.prgrms.modi.user.dto.PointAmountDto;
+import com.prgrms.modi.user.dto.PointAmountResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,14 +35,15 @@ public class PointController {
         @ApiResponse(responseCode = "400", description = "충전할 포인트가 음수일 경우(BADREQUEST)"),
         @ApiResponse(responseCode = "401", description = "토큰이 없어 인증할 수 없는 경우 (UNAUTHORIZED)")
     })
-    public ResponseEntity<PointAmountDto> addPoints(
+    public ResponseEntity<PointAmountResponse> addPoints(
         @AuthenticationPrincipal @ApiIgnore JwtAuthentication authentication,
-        @Parameter(description = "충전할 포인트의 양") @RequestBody @Valid PointAddRequest pointAddRequest
+        @Parameter(description = "충전할 포인트의 양") @RequestBody @Valid PointAddRequest request
     ) {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(pointService.addPoints(authentication.userId, pointAddRequest.getPoints()));
+        PointAmountResponse resp = pointService.addPoints(authentication.userId, request.getPoints());
+        return ResponseEntity.ok(resp);
     }
 
 }

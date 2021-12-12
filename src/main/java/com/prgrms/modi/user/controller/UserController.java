@@ -3,10 +3,10 @@ package com.prgrms.modi.user.controller;
 import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.error.exception.InvalidAuthorizationException;
+import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.service.PartyService;
-import com.prgrms.modi.party.domain.PartyStatus;
-import com.prgrms.modi.user.dto.PointAmountDto;
+import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.service.UserService;
@@ -63,7 +63,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "유저 개인 정보 조회 성공 (OK)"),
         @ApiResponse(responseCode = "401", description = "토큰이 없어 인증할 수 없는 경우 (UNAUTHORIZED)")
     })
-    public ResponseEntity<PointAmountDto> getUserPoints(
+    public ResponseEntity<PointAmountResponse> getUserPoints(
         @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
     ) {
         if (authentication == null) {
