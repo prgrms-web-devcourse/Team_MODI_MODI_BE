@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/otts")
-public class OttRestController {
+public class OttController {
 
     private final OttService ottService;
 
-    public OttRestController(OttService ottService) {
+    public OttController(OttService ottService) {
         this.ottService = ottService;
     }
 
