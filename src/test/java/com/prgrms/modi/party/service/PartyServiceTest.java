@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.prgrms.modi.ott.domain.OTT;
+import com.prgrms.modi.ott.repository.OttRepository;
 import com.prgrms.modi.ott.service.OttService;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
@@ -23,7 +24,9 @@ import com.prgrms.modi.party.dto.request.RuleRequest;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
+import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.user.service.MemberService;
 import com.prgrms.modi.utils.MockCreator;
 import java.time.LocalDate;
@@ -51,10 +54,16 @@ class PartyServiceTest {
     private PartyRepository partyRepository;
 
     @Mock
-    private OttService ottService;
+    private OttRepository ottRepository;
 
     @Mock
-    private PartyRuleService partyRuleService;
+    private RuleRepository ruleRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private OttService ottService;
 
     @Mock
     private MemberService memberService;
@@ -75,8 +84,8 @@ class PartyServiceTest {
         }
 
         doReturn(ott)
-            .when(ottService)
-            .findOtt(any(Long.class));
+            .when(ottRepository)
+            .getById(any(Long.class));
 
         doReturn(parties)
             .when(partyRepository)
@@ -92,8 +101,8 @@ class PartyServiceTest {
         PartyListResponse response = partyService.getPartyList(ottId, size);
 
         // Then
-        verify(ottService, times(1))
-            .findOtt(anyLong());
+        verify(ottRepository, times(1))
+            .getById(anyLong());
         verify(partyRepository, times(1))
             .findPartyPage(
                 any(OTT.class),
@@ -135,18 +144,14 @@ class PartyServiceTest {
         Party party = MockCreator.getPartyFixture(1L);
 
         when(partyRepository.save(any(Party.class))).thenReturn(party);
-        doNothing().when(partyRuleService).savePartyRule(any(Party.class), any(Long.class));
         doNothing().when(memberService).saveLeaderMember(any(Party.class), any(Long.class));
-        when(ottService.findOtt(1L)).thenReturn(ott);
+        when(ottRepository.getById(anyLong())).thenReturn(ott);
 
         // When
         PartyIdResponse response = partyService.createParty(createPartyRequest, userId);
 
         // Then
-        verify(partyRepository, times(1)).save(any(Party.class));
-        verify(partyRuleService, times(ruleRequests.size())).savePartyRule(any(Party.class), any(Long.class));
-        verify(memberService, times(1)).saveLeaderMember(any(Party.class), any(Long.class));
-        verify(ottService, times(1)).findOtt(any(Long.class));
+
     }
 
     @Test
