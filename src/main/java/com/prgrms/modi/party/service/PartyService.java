@@ -53,11 +53,9 @@ public class PartyService {
     }
 
     @Transactional(readOnly = true)
-    public PartyDetailResponse getParty(Long partyId) {
-        return PartyDetailResponse.from(
-            partyRepository.findById(partyId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"))
-        );
+    public PartyDetailResponse getParty(long partyId) {
+        Party party = this.findParty(partyId);
+        return PartyDetailResponse.from(party);
     }
 
     @Transactional(readOnly = true)
@@ -179,6 +177,11 @@ public class PartyService {
             partyRepository.findById(partyId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"))
         );
+    }
+
+    private Party findParty(long partyId) {
+        return partyRepository.findById(partyId)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"));
     }
 
 }

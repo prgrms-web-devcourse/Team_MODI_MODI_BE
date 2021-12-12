@@ -55,7 +55,10 @@ public class PartyController {
 
     @GetMapping("/parties/{partyId}")
     @Operation(summary = "파티 상세 정보 조회", description = "파티 목록에서 파티 상세 정보 조회")
-    @ApiResponse(responseCode = "200", description = "OK")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "NOTFOUND")
+    })
     public ResponseEntity<PartyDetailResponse> getParty(@PathVariable @Positive Long partyId) {
         return ResponseEntity.ok(partyService.getParty(partyId));
     }
