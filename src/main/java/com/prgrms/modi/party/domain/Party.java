@@ -100,7 +100,7 @@ public class Party extends DeletableEntity {
         sharedPasswordEncrypted = builder.sharedPasswordEncrypted;
         status = builder.status;
         ott = builder.ott;
-        totalPrice = ott.getmonthlyPrice() * period;
+        totalPrice = ott.getMonthlyPrice() * period;
     }
 
     public Long getId() {

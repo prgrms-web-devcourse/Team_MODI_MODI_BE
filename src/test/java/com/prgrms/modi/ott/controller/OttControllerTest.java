@@ -42,7 +42,12 @@ class OttControllerTest {
                 jsonPath("$.ottServices[1].ottName").value("디즈니 플러스"),
                 jsonPath("$.ottServices[2].ottName").value("웨이브"),
                 jsonPath("$.ottServices[3].ottName").value("왓챠"),
-                jsonPath("$.ottServices[4].ottName").value("티빙")
+                jsonPath("$.ottServices[4].ottName").value("티빙"),
+                jsonPath("$.ottServices[0].ottNameEn").value("netflix"),
+                jsonPath("$.ottServices[1].ottNameEn").value("disneyPlus"),
+                jsonPath("$.ottServices[2].ottNameEn").value("wavve"),
+                jsonPath("$.ottServices[3].ottNameEn").value("watcha"),
+                jsonPath("$.ottServices[4].ottNameEn").value("tving")
             );
     }
 
@@ -52,6 +57,7 @@ class OttControllerTest {
     void getOttTest() throws Exception {
         OTT ott = new OTT.Builder()
             .name("넷플릭스")
+            .englishName("netflix")
             .subscriptionFee(16000)
             .monthlyPrice(4000)
             .maxMemberCapacity(4)
@@ -66,8 +72,9 @@ class OttControllerTest {
                 status().isOk(),
                 jsonPath("$.ottId").value(ott.getId()),
                 jsonPath("$.ottName").value(ott.getName()),
+                jsonPath("$.ottNameEn").value(ott.getEnglishName()),
                 jsonPath("$.subscriptionFee").value(ott.getSubscriptionFee()),
-                jsonPath("$.monthlyPrice").value(ott.getmonthlyPrice()),
+                jsonPath("$.monthlyPrice").value(ott.getMonthlyPrice()),
                 jsonPath("$.maxMemberCapacity").value(ott.getMaxMemberCapacity()),
                 jsonPath("$.grade").value(ott.getGrade())
             );

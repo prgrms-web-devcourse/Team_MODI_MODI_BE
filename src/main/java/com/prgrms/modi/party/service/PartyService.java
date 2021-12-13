@@ -168,7 +168,7 @@ public class PartyService {
 
     private void participate(User user, Party party) {
         int totalPrice = party.getTotalPrice();
-        int monthlyPrice = party.getOtt().getmonthlyPrice();
+        int monthlyPrice = party.getOtt().getMonthlyPrice();
 
         party.addMember(user, monthlyPrice, totalPrice);
         user.deductPoint(totalPrice);
