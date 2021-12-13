@@ -45,7 +45,8 @@ spring:
       hibernate.format_sql: true
   flyway:
     enabled: true
-    locations: filesystem:./src/main/resources/db/migration, filesystem:./src/test/resources/db/seed
+    # 인텔리제이 envFile 버그로 테스트 환경에서 .env 못 읽어옴
+    locations: filesystem:${MODI_ROOT:.}/src/main/resources/db/migration, filesystem:${MODI_ROOT:.}/src/test/resources/db/seed
     baseline-on-migrate: true
   output:
     ansi.enabled: always
