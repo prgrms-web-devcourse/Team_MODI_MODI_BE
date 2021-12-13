@@ -1,21 +1,29 @@
 package com.prgrms.modi.ott.dto;
 
 import com.prgrms.modi.ott.domain.OTT;
+import io.swagger.annotations.ApiModelProperty;
 
 public class OttResponse {
 
+    @ApiModelProperty(value = "OTT id")
     private final Long ottId;
 
+    @ApiModelProperty(value = "OTT 이름")
     private final String ottName;
 
+    @ApiModelProperty(value = "OTT 영어 이름")
     private final String ottNameEn;
 
+    @ApiModelProperty(value = "OTT 구독료")
     private final Integer subscriptionFee;
 
+    @ApiModelProperty(value = "개월 당 요금")
     private final Integer monthlyPrice;
 
+    @ApiModelProperty(value = "파티 정원")
     private final Integer maxMemberCapacity;
 
+    @ApiModelProperty(value = "OTT 서비스 등급")
     private final String grade;
 
     private OttResponse(OTT ott) {
