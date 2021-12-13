@@ -67,6 +67,7 @@ class OttServiceTest {
         then(ottResponse)
             .hasFieldOrPropertyWithValue("ottId", ottResponse.getOttId())
             .hasFieldOrPropertyWithValue("ottName", ottResponse.getOttName())
+            .hasFieldOrPropertyWithValue("ottNameEn", ottResponse.getOttNameEn())
             .hasFieldOrPropertyWithValue("subscriptionFee", ottResponse.getSubscriptionFee())
             .hasFieldOrPropertyWithValue("monthlyPrice", ottResponse.getMonthlyPrice())
             .hasFieldOrPropertyWithValue("maxMemberCapacity", ottResponse.getMaxMemberCapacity())
