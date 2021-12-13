@@ -1,6 +1,9 @@
 package com.prgrms.modi.party.service;
 
-import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.history.domain.CommissionDetail;
+import com.prgrms.modi.history.domain.PointDetail;
+import com.prgrms.modi.history.service.CommissionHistoryService;
+import com.prgrms.modi.history.service.PointHistoryService;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.repository.OttRepository;
 import com.prgrms.modi.party.domain.Party;
@@ -17,7 +20,6 @@ import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
-import com.prgrms.modi.user.service.MemberService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,20 +42,24 @@ public class PartyService {
 
     private final UserRepository userRepository;
 
-    private final MemberService memberService;
+    private final CommissionHistoryService commissionHistoryService;
+
+    private final PointHistoryService pointHistoryService;
+
 
     public PartyService(
         PartyRepository partyRepository,
         RuleRepository ruleRepository,
         OttRepository ottRepository,
         UserRepository userRepository,
-        MemberService memberService
-    ) {
+        CommissionHistoryService commissionHistoryService,
+        PointHistoryService pointHistoryService) {
         this.partyRepository = partyRepository;
         this.ruleRepository = ruleRepository;
         this.ottRepository = ottRepository;
         this.userRepository = userRepository;
-        this.memberService = memberService;
+        this.commissionHistoryService = commissionHistoryService;
+        this.pointHistoryService = pointHistoryService;
     }
 
     @Transactional(readOnly = true)
@@ -92,15 +98,13 @@ public class PartyService {
     }
 
     @Transactional
-    public PartyIdResponse joinParty(Long userId, Long partyId) {
-        User user = memberService.findUser(userId);
-        Party party = this.findPartyWithOtt(partyId);
+    public PartyIdResponse joinParty(long userId, long partyId) {
+        User user = userRepository.getById(userId);
+        Party party = partyRepository.getById(partyId);
 
-        user.deductPoint(party.getTotalPrice());
-        party.increaseCurrentMemberCapacity();
-        party.increaseMonthlyReimbursement(party.getOtt().getmonthlyPrice());
-        party.increaseRemainingReimbursement(party.getTotalPrice());
-        memberService.save(party, user);
+        this.participate(user, party);
+
+        logger.info("User {} joined party {}", user, party);
         return PartyIdResponse.from(party);
     }
 
@@ -133,11 +137,6 @@ public class PartyService {
             .collect(Collectors.toList());
     }
 
-    private Party findPartyWithOtt(Long partyId) {
-        return partyRepository.findPartyWithOtt(partyId)
-            .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다."));
-    }
-
     private Party createNewParty(CreatePartyRequest request, long userId) {
         OTT ott = ottRepository.getById(request.getOttId());
 
@@ -165,6 +164,17 @@ public class PartyService {
         newParty.setLeaderMember(leader);
 
         return newParty;
+    }
+
+    private void participate(User user, Party party) {
+        int totalPrice = party.getTotalPrice();
+        int monthlyPrice = party.getOtt().getmonthlyPrice();
+
+        party.addMember(user, monthlyPrice, totalPrice);
+        user.deductPoint(totalPrice);
+
+        commissionHistoryService.save(CommissionDetail.PARTICIPATE, totalPrice, user);
+        pointHistoryService.save(PointDetail.PARTICIPATE, totalPrice, user);
     }
 
 }

@@ -8,10 +8,6 @@ import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.prgrms.modi.common.oauth2.info.ProviderType;
 import com.prgrms.modi.error.exception.NotFoundException;
-import com.prgrms.modi.history.domain.CommissionDetail;
-import com.prgrms.modi.history.domain.PointDetail;
-import com.prgrms.modi.history.service.CommissionHistoryService;
-import com.prgrms.modi.history.service.PointHistoryService;
 import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
@@ -39,19 +35,9 @@ public class UserService {
 
     private final PartyRepository partyRepository;
 
-    private final PointHistoryService pointHistoryService;
 
-    private final CommissionHistoryService commissionHistoryService;
-
-    public UserService(
-        UserRepository userRepository,
-        PointHistoryService pointHistoryService,
-        CommissionHistoryService commissionHistoryService,
-        PartyRepository partyRepository
-    ) {
+    public UserService(UserRepository userRepository, PartyRepository partyRepository) {
         this.userRepository = userRepository;
-        this.pointHistoryService = pointHistoryService;
-        this.commissionHistoryService = commissionHistoryService;
         this.partyRepository = partyRepository;
     }
 
@@ -116,16 +102,6 @@ public class UserService {
         log.info("birthyear : {}, birthday : {}", birthyear, birthday);
         String dateOfBirth = birthyear + birthday.replaceAll("[^0-9]", "");
         return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
-    }
-
-    @Transactional
-    public void saveCommissionHistory(CommissionDetail commissionDetail, Integer price, User user) {
-        commissionHistoryService.save(commissionDetail, price, user);
-    }
-
-    @Transactional
-    public void savePointHistory(PointDetail pointDetail, Integer price, User user) {
-        pointHistoryService.save(pointDetail, price, user);
     }
 
     @Transactional(readOnly = true)

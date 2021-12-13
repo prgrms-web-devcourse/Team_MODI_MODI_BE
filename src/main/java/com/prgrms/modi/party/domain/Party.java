@@ -187,25 +187,33 @@ public class Party extends DeletableEntity {
         this.members.add(leader);
     }
 
+    public void addMember(User user, int monthlyPrice, int totalPrice) {
+        Member member = new Member(this, user, false);
+        this.members.add(member);
+        this.increaseCurrentMember();
+        this.increaseMonthlyReimbursement(monthlyPrice);
+        this.increaseRemainingReimbursement(totalPrice);
+    }
+
     public void reimburse() {
         remainingReimbursement -= monthlyReimbursement;
     }
 
-    public void increaseMonthlyReimbursement(Integer monthlyReimbursement) {
+    private void increaseMonthlyReimbursement(Integer monthlyReimbursement) {
         if (monthlyReimbursement < 0) {
             throw new IllegalArgumentException("월 상환금은 양수여야 합니다.");
         }
         this.monthlyReimbursement += monthlyReimbursement;
     }
 
-    public void increaseRemainingReimbursement(Integer reimbursement) {
+    private void increaseRemainingReimbursement(Integer reimbursement) {
         if (reimbursement < 0) {
             throw new IllegalArgumentException("상환금은 양수여야 합니다.");
         }
         this.remainingReimbursement += reimbursement;
     }
 
-    public void increaseCurrentMemberCapacity() {
+    private void increaseCurrentMember() {
         if (this.currentMember >= this.partyMemberCapacity) {
             throw new NotEnoughPartyCapacityException("파티 정원이 다 찼습니다.");
         }
