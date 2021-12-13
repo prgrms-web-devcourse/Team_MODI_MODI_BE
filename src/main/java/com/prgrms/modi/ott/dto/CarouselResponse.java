@@ -1,13 +1,19 @@
 package com.prgrms.modi.ott.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class CarouselResponse implements CarouselInfo{
 
+    @ApiModelProperty(value = "OTT id")
     private final Long ottId;
 
+    @ApiModelProperty(value = "OTT 이름")
     private final String ottName;
 
+    @ApiModelProperty(value = "Recruiting 중인 파티 수")
     private final Long waitingForMatch;
 
+    @ApiModelProperty(value = "개월 당 요금")
     private final Integer monthlyPrice;
 
     private CarouselResponse(CarouselInfo carouselInfo) {
