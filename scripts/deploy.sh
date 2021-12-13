@@ -2,6 +2,11 @@ PROJECT_NAME=modi
 BUILD_JAR=$(ls /home/ubuntu/action/build/libs/*.jar)
 JAR_NAME=$(ls -tr $BUILD_JAR | tail -n 1)
 
+source /etc/profile.d/codedeploy.sh
+echo ${RDS_URL} >>/home/ubuntu/action/deploy.log
+echo ${RDS_USERNAME} >>/home/ubuntu/action/deploy.log
+echo ${RDS_PASSWORD} >>/home/ubuntu/action/deploy.log
+
 echo "> Build 파일명: $JAR_NAME" >>/home/ubuntu/action/deploy.log
 
 echo "> 현재 구동 중인 애플리케이션 pid 확인" >>/home/ubuntu/action/deploy.log
