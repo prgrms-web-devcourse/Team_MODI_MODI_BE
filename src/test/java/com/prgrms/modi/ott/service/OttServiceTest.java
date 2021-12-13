@@ -39,7 +39,7 @@ class OttServiceTest {
         given(ott.getId()).willReturn(id);
         given(ott.getName()).willReturn("testOttName");
         given(ott.getSubscriptionFee()).willReturn(16000);
-        given(ott.getmonthlyPrice()).willReturn(4000);
+        given(ott.getMonthlyPrice()).willReturn(4000);
         given(ott.getMaxMemberCapacity()).willReturn(4);
         given(ott.getGrade()).willReturn("프리미엄");
         return ott;

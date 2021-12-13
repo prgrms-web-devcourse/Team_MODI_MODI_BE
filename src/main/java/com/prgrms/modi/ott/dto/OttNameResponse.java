@@ -8,9 +8,12 @@ public class OttNameResponse {
 
     private final String ottName;
 
+    private final String ottNameEn;
+
     private OttNameResponse(OTT ott) {
         this.ottId = ott.getId();
         this.ottName = ott.getName();
+        this.ottNameEn = ott.getEnglishName();
     }
 
     public static OttNameResponse from(OTT ott) {
@@ -23,6 +26,10 @@ public class OttNameResponse {
 
     public String getOttName() {
         return ottName;
+    }
+
+    public String getOttNameEn() {
+        return ottNameEn;
     }
 
 }

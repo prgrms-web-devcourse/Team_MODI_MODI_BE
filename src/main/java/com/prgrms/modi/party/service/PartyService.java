@@ -105,7 +105,7 @@ public class PartyService {
 
         user.deductPoint(party.getTotalPrice());
         party.increaseCurrentMemberCapacity();
-        party.increaseMonthlyReimbursement(party.getOtt().getmonthlyPrice());
+        party.increaseMonthlyReimbursement(party.getOtt().getMonthlyPrice());
         party.increaseRemainingReimbursement(party.getTotalPrice());
         memberService.save(party, user);
         return PartyIdResponse.from(party);
@@ -127,7 +127,7 @@ public class PartyService {
             .mustFilled(request.isMustFilled())
             .totalPrice(
                 getTotalPartyPrice(
-                    ott.getmonthlyPrice(),
+                    ott.getMonthlyPrice(),
                     (int) MONTHS.between(request.getStartDate(), request.getEndDate())
                 )
             )

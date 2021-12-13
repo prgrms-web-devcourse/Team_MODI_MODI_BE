@@ -8,6 +8,8 @@ public class OttResponse {
 
     private final String ottName;
 
+    private final String ottNameEn;
+
     private final Integer subscriptionFee;
 
     private final Integer monthlyPrice;
@@ -19,8 +21,9 @@ public class OttResponse {
     private OttResponse(OTT ott) {
         this.ottId = ott.getId();
         this.ottName = ott.getName();
+        this.ottNameEn = ott.getEnglishName();
         this.subscriptionFee = ott.getSubscriptionFee();
-        this.monthlyPrice = ott.getmonthlyPrice();
+        this.monthlyPrice = ott.getMonthlyPrice();
         this.maxMemberCapacity = ott.getMaxMemberCapacity();
         this.grade = ott.getGrade();
     }
@@ -35,6 +38,10 @@ public class OttResponse {
 
     public String getOttName() {
         return ottName;
+    }
+
+    public String getOttNameEn() {
+        return ottNameEn;
     }
 
     public Integer getSubscriptionFee() {

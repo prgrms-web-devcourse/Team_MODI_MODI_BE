@@ -6,13 +6,13 @@ VALUES
     (4, '테스트 유저4', 'USER', '1997-04-13', 0, '2021-11-04 06:30:00', '2021-11-04 06:30:00', null, null, null),
     (5, '테스트 유저5', 'ADMIN', '1997-05-13', 0, '2021-11-05 06:30:00', '2021-11-05 06:30:00', null, null, null);
 
-INSERT INTO otts(id, name, subscription_fee, monthly_price, max_member_capacity, grade, created_at, updated_at)
+INSERT INTO otts(id, name, english_name, subscription_fee, monthly_price, max_member_capacity, grade, created_at, updated_at)
 VALUES
-    (1, '넷플릭스', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
-    (2, '디즈니 플러스', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
-    (3, '웨이브', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
-    (4, '왓챠', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
-    (5, '티빙', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00');
+    (1, '넷플릭스', 'netflix', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
+    (2, '디즈니 플러스', 'disneyPlus', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
+    (3, '웨이브', 'wavve', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
+    (4, '왓챠', 'watcha', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
+    (5, '티빙', 'tving', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00');
 
 INSERT INTO parties(id, party_member_capacity, current_member, total_price, monthly_reimbursement, remaining_reimbursement, start_date, end_date,
                     period, must_filled, shared_id, shared_password_encrypted, status, created_at, updated_at, deleted_at, ott_id)
