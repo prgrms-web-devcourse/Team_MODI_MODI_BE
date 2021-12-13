@@ -146,7 +146,7 @@ public class PartyControllerUnitTest {
         @WithMockJwtAuthentication
         @DisplayName("파티 공유 계정 조회 - 파티 미참여 유저는 접근할 수 없다")
         public void partySharedAccountInvalidUser() throws Exception {
-            when(partyService.notPartyMember(any(Long.class), any(Long.class))).thenReturn(true);
+            when(partyService.isPartyMember(any(Long.class), any(Long.class))).thenReturn(false);
 
             mockMvc
                 .perform(get("/api/parties/1/sharedAccount"))

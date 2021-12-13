@@ -1,23 +1,25 @@
 package com.prgrms.modi.party.service;
 
-import static java.time.temporal.ChronoUnit.MONTHS;
-
-import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.history.domain.CommissionDetail;
+import com.prgrms.modi.history.domain.PointDetail;
+import com.prgrms.modi.history.service.CommissionHistoryService;
+import com.prgrms.modi.history.service.PointHistoryService;
 import com.prgrms.modi.ott.domain.OTT;
-import com.prgrms.modi.ott.service.OttService;
+import com.prgrms.modi.ott.repository.OttRepository;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
+import com.prgrms.modi.party.domain.Rule;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
-import com.prgrms.modi.party.dto.request.RuleRequest;
 import com.prgrms.modi.party.dto.response.PartyBriefResponse;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.dto.response.SharedAccountResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
+import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
-import com.prgrms.modi.user.service.MemberService;
+import com.prgrms.modi.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,90 +36,110 @@ public class PartyService {
 
     private final PartyRepository partyRepository;
 
-    private final OttService ottService;
+    private final RuleRepository ruleRepository;
 
-    private final PartyRuleService partyRuleService;
+    private final OttRepository ottRepository;
 
-    private final MemberService memberService;
+    private final UserRepository userRepository;
 
-    public PartyService(PartyRepository partyRepository, OttService ottService, PartyRuleService partyRuleService,
-        MemberService memberService) {
+    private final CommissionHistoryService commissionHistoryService;
+
+    private final PointHistoryService pointHistoryService;
+
+
+    public PartyService(
+        PartyRepository partyRepository,
+        RuleRepository ruleRepository,
+        OttRepository ottRepository,
+        UserRepository userRepository,
+        CommissionHistoryService commissionHistoryService,
+        PointHistoryService pointHistoryService) {
         this.partyRepository = partyRepository;
-        this.ottService = ottService;
-        this.partyRuleService = partyRuleService;
-        this.memberService = memberService;
+        this.ruleRepository = ruleRepository;
+        this.ottRepository = ottRepository;
+        this.userRepository = userRepository;
+        this.commissionHistoryService = commissionHistoryService;
+        this.pointHistoryService = pointHistoryService;
     }
 
     @Transactional(readOnly = true)
-    public PartyDetailResponse getParty(Long partyId) {
-        return PartyDetailResponse.from(
-            partyRepository.findById(partyId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"))
-        );
+    public PartyDetailResponse getParty(long partyId) {
+        Party party = partyRepository.getById(partyId);
+        return PartyDetailResponse.from(party);
     }
 
     @Transactional(readOnly = true)
-    public PartyListResponse getPartyList(Long ottId, Integer size) {
-        OTT ott = ottService.findOtt(ottId);
-        LocalDate minDate = LocalDate.of(0, 1, 1);
-        PageRequest page = PageRequest.of(0, size);
+    public PartyListResponse getPartyList(long ottId, int size) {
+        OTT ott = ottRepository.getById(ottId);
+        LocalDate minStartDate = LocalDate.of(0, 1, 1);
 
-        return PartyListResponse.from(
-            ott,
-            partyRepository
-                .findAllRecruitingParty(ott, PartyStatus.RECRUITING, minDate, Long.MAX_VALUE, page)
-                .stream()
-                .map(PartyBriefResponse::from)
-                .collect(Collectors.toList())
-        );
+        List<PartyBriefResponse> parties = this.getRecruitingParties(ott, minStartDate, Long.MAX_VALUE, size);
+
+        return PartyListResponse.from(ott, parties);
     }
 
     @Transactional(readOnly = true)
-    public PartyListResponse getPartyList(Long ottId, Integer size, Long lastPartyId) {
-        OTT ott = ottService.findOtt(ottId);
+    public PartyListResponse getPartyList(long ottId, int size, long lastPartyId) {
+        OTT ott = ottRepository.getById(ottId);
         Party lastParty = partyRepository.getById(lastPartyId);
-        PageRequest page = PageRequest.of(0, size);
 
-        return PartyListResponse.from(
-            ott,
-            partyRepository
-                .findAllRecruitingParty(ott, PartyStatus.RECRUITING, lastParty.getStartDate(), lastPartyId, page)
-                .stream()
-                .map(PartyBriefResponse::from)
-                .collect(Collectors.toList())
-        );
+        List<PartyBriefResponse> parties = this.getRecruitingParties(ott, lastParty.getStartDate(), lastPartyId, size);
+
+        return PartyListResponse.from(ott, parties);
     }
 
     @Transactional
-    public PartyIdResponse createParty(CreatePartyRequest request, Long userId) {
-        Party newParty = saveParty(request);
-        savePartyRule(newParty, request.getRules());
-        saveLeader(newParty, userId);
+    public PartyIdResponse createParty(CreatePartyRequest request, long userId) {
+        Party newParty = createNewParty(request, userId);
+        partyRepository.save(newParty);
 
         logger.info("created party {}", newParty);
         return PartyIdResponse.from(newParty);
     }
 
     @Transactional
-    public PartyIdResponse joinParty(Long userId, Long partyId) {
-        User user = memberService.findUser(userId);
-        Party party = this.findPartyWithOtt(partyId);
+    public PartyIdResponse joinParty(long userId, long partyId) {
+        User user = userRepository.getById(userId);
+        Party party = partyRepository.getById(partyId);
 
-        user.deductPoint(party.getTotalPrice());
-        party.increaseCurrentMemberCapacity();
-        party.increaseMonthlyReimbursement(party.getOtt().getmonthlyPrice());
-        party.increaseRemainingReimbursement(party.getTotalPrice());
-        memberService.save(party, user);
+        this.participate(user, party);
+
+        logger.info("User {} joined party {}", user, party);
         return PartyIdResponse.from(party);
     }
 
-    private Party findPartyWithOtt(Long partyId) {
-        return partyRepository.findPartyWithOtt(partyId)
-            .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다."));
+    @Transactional(readOnly = true)
+    public boolean isPartyMember(long partyId, long userId) {
+        Party party = partyRepository.getById(partyId);
+        User user = userRepository.getById(userId);
+
+        for (Member member : party.getMembers()) {
+            if (member.getUser().equals(user)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private Party saveParty(CreatePartyRequest request) {
-        OTT ott = ottService.findOtt(request.getOttId());
+    @Transactional(readOnly = true)
+    public SharedAccountResponse getSharedAccount(long partyId) {
+        Party party = partyRepository.getById(partyId);
+        return SharedAccountResponse.from(party);
+    }
+
+    private List<PartyBriefResponse> getRecruitingParties(OTT ott, LocalDate startDate, long lastPartyId, int size) {
+        PageRequest page = PageRequest.of(0, size);
+
+        return partyRepository
+            .findPartyPage(ott, PartyStatus.RECRUITING, startDate, lastPartyId, page)
+            .stream()
+            .map(PartyBriefResponse::from)
+            .collect(Collectors.toList());
+    }
+
+    private Party createNewParty(CreatePartyRequest request, long userId) {
+        OTT ott = ottRepository.getById(request.getOttId());
+
         Party newParty = new Party.Builder()
             .ott(ott)
             .partyMemberCapacity(request.getPartyMemberCapacity())
@@ -125,58 +147,34 @@ public class PartyService {
             .startDate(request.getStartDate())
             .endDate(request.getEndDate())
             .mustFilled(request.isMustFilled())
-            .totalPrice(
-                getTotalPartyPrice(
-                    ott.getmonthlyPrice(),
-                    (int) MONTHS.between(request.getStartDate(), request.getEndDate())
-                )
-            )
             .monthlyReimbursement(0)
             .remainingReimbursement(0)
             .status(PartyStatus.RECRUITING)
             .sharedId(request.getSharedId())
             .sharedPasswordEncrypted(request.getSharedPassword())
             .build();
-        partyRepository.save(newParty);
+
+        List<Rule> rules = request.getRules()
+            .stream()
+            .map(req -> ruleRepository.getById(req.getRuleId()))
+            .collect(Collectors.toList());
+        newParty.setRules(rules);
+
+        User leader = userRepository.getById(userId);
+        newParty.setLeaderMember(leader);
+
         return newParty;
     }
 
-    private int getTotalPartyPrice(int monthlyPrice, int period) {
-        return monthlyPrice * period;
-    }
+    private void participate(User user, Party party) {
+        int totalPrice = party.getTotalPrice();
+        int monthlyPrice = party.getOtt().getmonthlyPrice();
 
-    private void savePartyRule(Party newParty, List<RuleRequest> ruleRequests) {
-        for (RuleRequest ruleRequest : ruleRequests) {
-            partyRuleService.savePartyRule(newParty, ruleRequest.getRuleId());
-        }
-    }
+        party.addMember(user, monthlyPrice, totalPrice);
+        user.deductPoint(totalPrice);
 
-    private void saveLeader(Party newParty, Long userId) {
-        memberService.saveLeaderMember(newParty, userId);
-    }
-
-    @Transactional(readOnly = true)
-    public boolean notPartyMember(Long partyId, Long userId) {
-        Party party = partyRepository.findById(partyId)
-            .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"));
-
-        User user = memberService.findUser(userId);
-
-        for (Member member : party.getMembers()) {
-            if (member.getUser().equals(user)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @Transactional(readOnly = true)
-    public SharedAccountResponse getSharedAccount(Long partyId) {
-        return SharedAccountResponse.from(
-            partyRepository.findById(partyId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 파티입니다"))
-        );
+        commissionHistoryService.save(CommissionDetail.PARTICIPATE, totalPrice, user);
+        pointHistoryService.save(PointDetail.PARTICIPATE, totalPrice, user);
     }
 
 }

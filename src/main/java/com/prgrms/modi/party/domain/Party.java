@@ -2,15 +2,15 @@ package com.prgrms.modi.party.domain;
 
 import static java.time.temporal.ChronoUnit.MONTHS;
 
-import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.common.domain.DeletableEntity;
 import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.user.domain.Member;
+import com.prgrms.modi.user.domain.User;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,14 +23,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.Where;
 
 @Entity
@@ -81,10 +77,10 @@ public class Party extends DeletableEntity {
     @JoinColumn(name = "ott_id")
     private OTT ott;
 
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Member> members = new ArrayList<>();
 
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<PartyRule> partyRules = new ArrayList<>();
 
     protected Party() {
@@ -94,7 +90,6 @@ public class Party extends DeletableEntity {
         id = builder.id;
         partyMemberCapacity = builder.partyMemberCapacity;
         currentMember = builder.currentMember;
-        totalPrice = builder.totalPrice;
         monthlyReimbursement = builder.monthlyReimbursement;
         remainingReimbursement = builder.remainingReimbursement;
         startDate = builder.startDate;
@@ -105,6 +100,7 @@ public class Party extends DeletableEntity {
         sharedPasswordEncrypted = builder.sharedPasswordEncrypted;
         status = builder.status;
         ott = builder.ott;
+        totalPrice = ott.getmonthlyPrice() * period;
     }
 
     public Long getId() {
@@ -171,25 +167,53 @@ public class Party extends DeletableEntity {
         return partyRules;
     }
 
+    public void setOtt(OTT ott) {
+        this.ott = ott;
+    }
+
+    public void setRules(List<Rule> rules) {
+        if (!this.partyRules.isEmpty()) {
+            partyRules = new ArrayList<>();
+        }
+
+        for (Rule rule : rules) {
+            PartyRule partyRule = new PartyRule(this, rule);
+            this.partyRules.add(partyRule);
+        }
+    }
+
+    public void setLeaderMember(User user) {
+        Member leader = new Member(this, user, true);
+        this.members.add(leader);
+    }
+
+    public void addMember(User user, int monthlyPrice, int totalPrice) {
+        Member member = new Member(this, user, false);
+        this.members.add(member);
+        this.increaseCurrentMember();
+        this.increaseMonthlyReimbursement(monthlyPrice);
+        this.increaseRemainingReimbursement(totalPrice);
+    }
+
     public void reimburse() {
         remainingReimbursement -= monthlyReimbursement;
     }
 
-    public void increaseMonthlyReimbursement(Integer monthlyReimbursement) {
+    private void increaseMonthlyReimbursement(Integer monthlyReimbursement) {
         if (monthlyReimbursement < 0) {
             throw new IllegalArgumentException("월 상환금은 양수여야 합니다.");
         }
         this.monthlyReimbursement += monthlyReimbursement;
     }
 
-    public void increaseRemainingReimbursement(Integer reimbursement) {
+    private void increaseRemainingReimbursement(Integer reimbursement) {
         if (reimbursement < 0) {
             throw new IllegalArgumentException("상환금은 양수여야 합니다.");
         }
         this.remainingReimbursement += reimbursement;
     }
 
-    public void increaseCurrentMemberCapacity() {
+    private void increaseCurrentMember() {
         if (this.currentMember >= this.partyMemberCapacity) {
             throw new NotEnoughPartyCapacityException("파티 정원이 다 찼습니다.");
         }
@@ -213,8 +237,6 @@ public class Party extends DeletableEntity {
 
         private Integer currentMember;
 
-        private Integer totalPrice;
-
         private Integer monthlyReimbursement;
 
         private Integer remainingReimbursement;
@@ -230,8 +252,6 @@ public class Party extends DeletableEntity {
         private String sharedPasswordEncrypted;
 
         private PartyStatus status;
-
-        private LocalDateTime deletedAt;
 
         private OTT ott;
 
@@ -250,11 +270,6 @@ public class Party extends DeletableEntity {
 
         public Builder currentMember(Integer currentMember) {
             this.currentMember = currentMember;
-            return this;
-        }
-
-        public Builder totalPrice(Integer totalPrice) {
-            this.totalPrice = totalPrice;
             return this;
         }
 
@@ -295,11 +310,6 @@ public class Party extends DeletableEntity {
 
         public Builder status(PartyStatus status) {
             this.status = status;
-            return this;
-        }
-
-        public Builder deletedAt(LocalDateTime deletedAt) {
-            this.deletedAt = deletedAt;
             return this;
         }
 

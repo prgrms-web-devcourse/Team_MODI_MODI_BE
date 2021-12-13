@@ -23,7 +23,8 @@ public class RuleController {
     @Operation(summary = "전체 규칙 조회", description = "모든 규칙 태그 조회")
     @ApiResponse(responseCode = "200", description = "OK")
     public ResponseEntity<RuleListResponse> getRuleList() {
-        return ResponseEntity.ok(ruleService.getAllRule());
+        RuleListResponse resp = ruleService.getAllRule();
+        return ResponseEntity.ok(resp);
     }
 
 

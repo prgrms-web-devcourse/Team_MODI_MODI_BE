@@ -3,6 +3,7 @@ package com.prgrms.modi.utils;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 
+import com.prgrms.modi.history.domain.PointHistory;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
@@ -55,6 +56,10 @@ public class MockCreator {
         doReturn("테스트 규칙 " + id).when(rule).getName();
 
         return rule;
+    }
+
+    public static PointHistory getPointHistoryFixture(Long id) {
+        return Mockito.mock(PointHistory.class);
     }
 
 }

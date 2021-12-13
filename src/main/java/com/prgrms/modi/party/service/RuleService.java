@@ -5,6 +5,7 @@ import com.prgrms.modi.party.domain.Rule;
 import com.prgrms.modi.party.dto.response.RuleListResponse;
 import com.prgrms.modi.party.dto.response.RuleResponse;
 import com.prgrms.modi.party.repository.RuleRepository;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +18,18 @@ public class RuleService {
         this.ruleRepository = ruleRepository;
     }
 
+    public RuleListResponse getAllRule() {
+        List<RuleResponse> rules = ruleRepository.findAll()
+            .stream()
+            .map(RuleResponse::from)
+            .collect(Collectors.toList());
+
+        return RuleListResponse.from(rules);
+    }
+
     public Rule findRule(Long id) {
         return ruleRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 규칙입니다"));
-    }
-
-    public RuleListResponse getAllRule() {
-        return RuleListResponse.from(
-            ruleRepository.findAll()
-                .stream()
-                .map(RuleResponse::from)
-                .collect(Collectors.toList())
-        );
     }
 
 }

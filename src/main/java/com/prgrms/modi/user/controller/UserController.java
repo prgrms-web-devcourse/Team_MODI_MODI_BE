@@ -3,10 +3,10 @@ package com.prgrms.modi.user.controller;
 import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.error.exception.InvalidAuthorizationException;
+import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.service.PartyService;
-import com.prgrms.modi.party.domain.PartyStatus;
-import com.prgrms.modi.user.dto.PointAmountDto;
+import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.service.UserService;
@@ -53,8 +53,8 @@ public class UserController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(
-            userService.getUserDetail(authentication.userId));
+        UserResponse resp = userService.getUserDetail(authentication.userId);
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping(path = "/me/points")
@@ -63,14 +63,14 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "유저 개인 정보 조회 성공 (OK)"),
         @ApiResponse(responseCode = "401", description = "토큰이 없어 인증할 수 없는 경우 (UNAUTHORIZED)")
     })
-    public ResponseEntity<PointAmountDto> getUserPoints(
+    public ResponseEntity<PointAmountResponse> getUserPoints(
         @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
     ) {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(
-            userService.getUserPoints(authentication.userId));
+        PointAmountResponse resp = userService.getUserPoints(authentication.userId);
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/me/parties")
@@ -82,16 +82,23 @@ public class UserController {
     public ResponseEntity<UserPartyListResponse> getUserPartyList(
         @Parameter(name = "status", description = "ONGOING: 진행중인 파티 / RECRUITING: 모집중인 파티 / FINISHED: 끝난 파티 / DELETED: 삭제된 파티")
         @RequestParam(value = "status") PartyStatus partyStatus,
+
         @Parameter(name = "size", description = "불러 올 개수")
         @RequestParam @Positive Integer size,
+
         @Parameter(name = "lastPartyId", description = "마지막 파티 id, 최초 조회 시 생략 가능")
         @RequestParam(required = false) Long lastPartyId,
+
         @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
     ) {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(userService.getUserPartyList(authentication.userId, partyStatus, size, lastPartyId));
+
+        UserPartyListResponse resp = userService
+            .getUserPartyList(authentication.userId, partyStatus, size, lastPartyId);
+
+        return ResponseEntity.ok(resp);
     }
 
 
@@ -108,10 +115,11 @@ public class UserController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        if (partyService.notPartyMember(partyId, authentication.userId)) {
+        if (!partyService.isPartyMember(partyId, authentication.userId)) {
             throw new InvalidAuthorizationException("인가되지 않은 사용자입니다");
         }
-        return ResponseEntity.ok(userService.getUserPartyDetail(partyId));
+        PartyDetailResponse resp = userService.getUserPartyDetail(partyId);
+        return ResponseEntity.ok(resp);
     }
 
 }

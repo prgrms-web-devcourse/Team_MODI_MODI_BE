@@ -7,11 +7,11 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import com.prgrms.modi.party.domain.Party;
-import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.domain.PartyStatus;
+import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.User;
-import com.prgrms.modi.user.dto.PointAmountDto;
+import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
@@ -58,9 +58,9 @@ class UserServiceTest {
         User user = getUserFixture();
         given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
 
-        PointAmountDto pointAmountDto = userService.getUserPoints(1L);
+        PointAmountResponse pointAmountResponse = userService.getUserPoints(1L);
 
-        then(pointAmountDto)
+        then(pointAmountResponse)
             .hasFieldOrPropertyWithValue("points", user.getPoints());
     }
 
