@@ -22,6 +22,7 @@ import com.prgrms.modi.party.dto.request.RuleRequest;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
 import com.prgrms.modi.party.repository.PartyRepository;
+import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.utils.MockCreator;
@@ -53,6 +54,9 @@ class PartyServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RuleRepository ruleRepository;
 
     @Mock
     private CommissionHistoryService commissionHistoryService;

@@ -53,8 +53,7 @@ public class UserController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(
-            userService.getUserDetail(authentication.userId));
+        return ResponseEntity.ok(userService.getUserDetail(authentication.userId));
     }
 
     @GetMapping(path = "/me/points")
@@ -69,8 +68,7 @@ public class UserController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(
-            userService.getUserPoints(authentication.userId));
+        return ResponseEntity.ok(userService.getUserPoints(authentication.userId));
     }
 
     @GetMapping("/me/parties")
@@ -82,10 +80,13 @@ public class UserController {
     public ResponseEntity<UserPartyListResponse> getUserPartyList(
         @Parameter(name = "status", description = "ONGOING: 진행중인 파티 / RECRUITING: 모집중인 파티 / FINISHED: 끝난 파티 / DELETED: 삭제된 파티")
         @RequestParam(value = "status") PartyStatus partyStatus,
+
         @Parameter(name = "size", description = "불러 올 개수")
         @RequestParam @Positive Integer size,
+
         @Parameter(name = "lastPartyId", description = "마지막 파티 id, 최초 조회 시 생략 가능")
         @RequestParam(required = false) Long lastPartyId,
+
         @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
     ) {
         if (authentication == null) {
