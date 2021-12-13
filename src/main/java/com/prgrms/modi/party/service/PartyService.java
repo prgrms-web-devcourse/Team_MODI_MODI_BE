@@ -109,16 +109,16 @@ public class PartyService {
     }
 
     @Transactional(readOnly = true)
-    public boolean notPartyMember(Long partyId, Long userId) {
+    public boolean isPartyMember(long partyId, long userId) {
         Party party = partyRepository.getById(partyId);
         User user = userRepository.getById(userId);
 
         for (Member member : party.getMembers()) {
             if (member.getUser().equals(user)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Transactional(readOnly = true)

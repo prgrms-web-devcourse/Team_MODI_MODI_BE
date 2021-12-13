@@ -115,7 +115,7 @@ public class UserController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        if (partyService.notPartyMember(partyId, authentication.userId)) {
+        if (!partyService.isPartyMember(partyId, authentication.userId)) {
             throw new InvalidAuthorizationException("인가되지 않은 사용자입니다");
         }
         PartyDetailResponse resp = userService.getUserPartyDetail(partyId);

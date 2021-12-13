@@ -80,7 +80,7 @@ public class PartyController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        if (partyService.notPartyMember(partyId, authentication.userId)) {
+        if (!partyService.isPartyMember(partyId, authentication.userId)) {
             throw new ForbiddenException("인가되지 않은 사용자입니다");
         }
         SharedAccountResponse resp = partyService.getSharedAccount(partyId);
@@ -118,7 +118,7 @@ public class PartyController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        if (!partyService.notPartyMember(partyId, authentication.userId)) {
+        if (partyService.isPartyMember(partyId, authentication.userId)) {
             throw new AlreadyJoinedException("이미 가입된 파티에 가입할 수 없습니다");
         }
         PartyIdResponse resp = partyService.joinParty(authentication.userId, partyId);
