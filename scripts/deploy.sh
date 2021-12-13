@@ -30,6 +30,8 @@ echo "> $JAR_NAME에 실행권한 추가" >>/home/ubuntu/action/deploy.log
 
 chmod +x $JAR_NAME
 
+pwd >>/home/ubuntu/action/deploy.log
+
 echo "> $JAR_NAME 실행" >>/home/ubuntu/action/deploy.log
 
 nohup java -jar -Dspring.profiles.active=prod $JAR_NAME >/home/ubuntu/action/build/libs/nohup.out 2>&1 &
