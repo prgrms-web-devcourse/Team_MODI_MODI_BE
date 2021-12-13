@@ -30,7 +30,8 @@ public class OttController {
         @ApiResponse(responseCode = "200", description = "전체 OTT 서비스 조회")
     })
     public ResponseEntity<OttListResponse> getAll() {
-        return ResponseEntity.ok(ottService.getAll());
+        OttListResponse resp = ottService.getAll();
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/{ottId}")
@@ -42,7 +43,8 @@ public class OttController {
     public ResponseEntity<OttResponse> getOtt(
         @Parameter(description = "OTT의 ID") @PathVariable Long ottId
     ) {
-        return ResponseEntity.ok(ottService.getOtt(ottId));
+        OttResponse resp = ottService.getOtt(ottId);
+        return ResponseEntity.ok(resp);
     }
 
     @Operation(summary = "전체 캐루셀 목록 조회", description = "전체 캐루셀 목록을 조회합니다. ")
@@ -51,7 +53,8 @@ public class OttController {
     })
     @GetMapping(path = "/waitings")
     public ResponseEntity<CarouselListResponse> getAllCarousels() {
-        return ResponseEntity.ok(ottService.getCarouselList());
+        CarouselListResponse resp = ottService.getCarouselList();
+        return ResponseEntity.ok(resp);
     }
 
 }

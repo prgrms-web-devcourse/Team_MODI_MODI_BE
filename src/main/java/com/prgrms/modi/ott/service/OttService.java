@@ -38,7 +38,8 @@ public class OttService {
     }
 
     public CarouselListResponse getCarouselList() {
-        List<CarouselResponse> carouselList = ottRepository.getCarouselList().stream()
+        List<CarouselResponse> carouselList = ottRepository.getCarouselList()
+            .stream()
             .map(CarouselResponse::from)
             .collect(Collectors.toList());
 

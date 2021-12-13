@@ -53,7 +53,8 @@ public class UserController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(userService.getUserDetail(authentication.userId));
+        UserResponse resp = userService.getUserDetail(authentication.userId);
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping(path = "/me/points")
@@ -68,7 +69,8 @@ public class UserController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(userService.getUserPoints(authentication.userId));
+        PointAmountResponse resp = userService.getUserPoints(authentication.userId);
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/me/parties")
@@ -92,7 +94,11 @@ public class UserController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(userService.getUserPartyList(authentication.userId, partyStatus, size, lastPartyId));
+
+        UserPartyListResponse resp = userService
+            .getUserPartyList(authentication.userId, partyStatus, size, lastPartyId);
+
+        return ResponseEntity.ok(resp);
     }
 
 
@@ -112,7 +118,8 @@ public class UserController {
         if (partyService.notPartyMember(partyId, authentication.userId)) {
             throw new InvalidAuthorizationException("인가되지 않은 사용자입니다");
         }
-        return ResponseEntity.ok(userService.getUserPartyDetail(partyId));
+        PartyDetailResponse resp = userService.getUserPartyDetail(partyId);
+        return ResponseEntity.ok(resp);
     }
 
 }

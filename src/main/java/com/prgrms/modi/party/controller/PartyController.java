@@ -48,9 +48,11 @@ public class PartyController {
         @RequestParam(required = false) @Positive Long lastPartyId
     ) {
         if (lastPartyId == null) {
-            return ResponseEntity.ok(partyService.getPartyList(ottId, size));
+            PartyListResponse resp = partyService.getPartyList(ottId, size);
+            return ResponseEntity.ok(resp);
         }
-        return ResponseEntity.ok(partyService.getPartyList(ottId, size, lastPartyId));
+        PartyListResponse resp = partyService.getPartyList(ottId, size, lastPartyId);
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/parties/{partyId}")
@@ -60,7 +62,8 @@ public class PartyController {
         @ApiResponse(responseCode = "404", description = "NOTFOUND")
     })
     public ResponseEntity<PartyDetailResponse> getParty(@PathVariable @Positive Long partyId) {
-        return ResponseEntity.ok(partyService.getParty(partyId));
+        PartyDetailResponse resp = partyService.getParty(partyId);
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/parties/{partyId}/sharedAccount")
@@ -80,7 +83,8 @@ public class PartyController {
         if (partyService.notPartyMember(partyId, authentication.userId)) {
             throw new ForbiddenException("인가되지 않은 사용자입니다");
         }
-        return ResponseEntity.ok(partyService.getSharedAccount(partyId));
+        SharedAccountResponse resp = partyService.getSharedAccount(partyId);
+        return ResponseEntity.ok(resp);
     }
 
     @PostMapping("/parties")
@@ -96,7 +100,8 @@ public class PartyController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        return ResponseEntity.ok(partyService.createParty(request, authentication.userId));
+        PartyIdResponse resp = partyService.createParty(request, authentication.userId);
+        return ResponseEntity.ok(resp);
     }
 
     @PostMapping("/parties/{partyId}/join")
@@ -116,7 +121,8 @@ public class PartyController {
         if (!partyService.notPartyMember(partyId, authentication.userId)) {
             throw new AlreadyJoinedException("이미 가입된 파티에 가입할 수 없습니다");
         }
-        return ResponseEntity.ok(partyService.joinParty(authentication.userId, partyId));
+        PartyIdResponse resp = partyService.joinParty(authentication.userId, partyId);
+        return ResponseEntity.ok(resp);
     }
 
 }
