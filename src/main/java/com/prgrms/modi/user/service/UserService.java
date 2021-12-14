@@ -7,6 +7,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.prgrms.modi.common.oauth2.info.ProviderType;
+import com.prgrms.modi.error.exception.NotEnoughAgeException;
 import com.prgrms.modi.error.exception.NotFoundException;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
@@ -19,8 +20,6 @@ import com.prgrms.modi.user.dto.UserPartyBriefResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.repository.UserRepository;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -74,17 +73,12 @@ public class UserService {
                 ProviderType providerType = ProviderType.valueOf(provider.toUpperCase());
                 OAuth2UserInfo userInfo = OAuth2UserInfoFactory
                     .getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
-                LocalDate dateOfBirth;
-                if (userInfo.getBirthyear() == null) {
-                    dateOfBirth = getDateOfBirth("1995", userInfo.getBirthDay());
-                } else {
-                    dateOfBirth = getDateOfBirth(userInfo.getBirthyear(), userInfo.getBirthDay());
+                if (!userInfo.isAdult()) {
+                    throw new NotEnoughAgeException("MODI는 만 19세 이상부터 사용할 수 있습니다");
                 }
                 String username = createRandomName();
-
-                return userRepository.save(
-                    new User(username, Role.USER, 0, provider, providerId, dateOfBirth)
-                );
+                User newUser = new User(username, Role.USER, 0, provider, providerId);
+                return userRepository.save(newUser);
             });
     }
 
@@ -98,12 +92,6 @@ public class UserService {
             providerId = oAuth2User.getName();
         }
         return providerId;
-    }
-
-    private LocalDate getDateOfBirth(String birthyear, String birthday) {
-        log.info("birthyear : {}, birthday : {}", birthyear, birthday);
-        String dateOfBirth = birthyear + birthday.replaceAll("[^0-9]", "");
-        return LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
     @Transactional(readOnly = true)
