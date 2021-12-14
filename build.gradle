@@ -26,7 +26,7 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
     implementation group: 'com.google.guava', name: 'guava', version: '31.0-jre'
     implementation 'org.flywaydb:flyway-core:8.1.0'
-
+    implementation 'com.github.maricn:logback-slack-appender:1.4.0'
     implementation group: 'com.querydsl', name: 'querydsl-jpa', version: querydslVersion
     implementation group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion
     implementation group: 'com.querydsl', name: 'querydsl-core', version: querydslVersion
