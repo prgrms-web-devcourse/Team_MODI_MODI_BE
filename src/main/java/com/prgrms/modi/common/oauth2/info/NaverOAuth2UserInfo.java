@@ -1,38 +1,36 @@
 package com.prgrms.modi.common.oauth2.info;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.prgrms.modi.error.exception.NotEnoughUserInformationException;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class NaverOAuth2UserInfo extends OAuth2UserInfo {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final int ADULT_AGE = 19;
 
     public NaverOAuth2UserInfo(Map<String, Object> attributes) {
         super(attributes);
     }
 
     @Override
-    public String getBirthyear() {
-        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+    public boolean isAdult() {
+        String userBirthDate = getBirthDate();
+        LocalDate bod = LocalDate.parse(userBirthDate, DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        if (response == null) {
-            return null;
-        }
-
-        return (String) response.get("birthyear");
+        return Period.between(bod, LocalDate.now()).getYears() >= ADULT_AGE;
     }
 
-    @Override
-    public String getBirthDay() {
+    private String getBirthDate() {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
         if (response == null) {
-            return null;
+            throw new NotEnoughUserInformationException("유저의 필수 정보가 부족합니다");
         }
 
-        return ((String) response.get("birthday"));
+        return response.get("birthyear")
+            + ((String) response.get("birthday")).replaceAll("[^0-9]", "");
     }
 
 }
