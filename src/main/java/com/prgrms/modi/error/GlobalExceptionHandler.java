@@ -3,8 +3,10 @@ package com.prgrms.modi.error;
 import com.prgrms.modi.error.exception.AlreadyJoinedException;
 import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
+import com.prgrms.modi.error.exception.NotEnoughAgeException;
 import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.error.exception.NotEnoughPointException;
+import com.prgrms.modi.error.exception.NotEnoughUserInformationException;
 import com.prgrms.modi.error.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +35,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
         IllegalStateException.class, IllegalArgumentException.class,
         NotEnoughPointException.class, NotEnoughPartyCapacityException.class,
-        AlreadyJoinedException.class
+        AlreadyJoinedException.class, NotEnoughAgeException.class, NotEnoughUserInformationException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequestException(Exception e) {
         return ResponseEntity
