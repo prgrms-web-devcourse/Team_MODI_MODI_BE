@@ -17,7 +17,7 @@ VALUES
     (5, '티빙', 'tving', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00');
 
 INSERT
-INGORE INTO parties(id, party_member_capacity, current_member, total_price, monthly_reimbursement, remaining_reimbursement, start_date, end_date,
+IGNORE INTO parties(id, party_member_capacity, current_member, total_price, monthly_reimbursement, remaining_reimbursement, start_date, end_date,
                     period, must_filled, shared_id, shared_password_encrypted, status, created_at, updated_at, deleted_at, ott_id)
 VALUES
     (1, 4, 4, 10000, 5000, 25000, '2021-11-02', '2022-05-02', 6, 1, 'modi112@gmail.com', 'modi', 'ONGOING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
