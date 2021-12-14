@@ -3,6 +3,7 @@ package com.prgrms.modi.party.repository;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
+import com.prgrms.modi.user.domain.User;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -30,5 +31,7 @@ public interface PartyRepository extends JpaRepository<Party, Long>, PartyReposi
 
     @Query(value = "SELECT DISTINCT p FROM Party p LEFT JOIN FETCH p.ott WHERE p.id = :id")
     Optional<Party> findPartyWithOtt(Long id);
+
+    int countAllByStatusAndMembersUser(PartyStatus partyStatus, User user);
 
 }
