@@ -19,7 +19,7 @@ public interface PartyRepository extends JpaRepository<Party, Long>, PartyReposi
         + "    AND p.currentMember < p.partyMemberCapacity "
         + "    AND ((p.startDate = :startDate AND p.id < :lastPartyId) OR (p.startDate > :startDate)) "
         + "ORDER BY "
-        + "    p.startDate ASC, p.createdAt DESC")
+        + "    p.startDate ASC, p.id DESC, p.createdAt DESC")
     List<Party> findPartyPage(
         OTT ott,
         PartyStatus partyStatus,
