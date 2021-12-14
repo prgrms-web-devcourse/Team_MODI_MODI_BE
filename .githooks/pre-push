@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ -z "$BRANCHES_TO_RUN_TEST" ]; then
+  BRANCHES_TO_RUN_TEST=("main" "develop")
+fi
+
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+
+# 테스트할 브랜치가 아니면 테스트 없이 진행
+IS_TEST_BRANCH=false
+for branch in "${BRANCHES_TO_RUN_TEST[@]}"
+do
+  if [ $branch = $BRANCH_NAME ]; then
+    IS_TEST_BRANCH=true
+  fi
+done
+
+if ! $IS_TEST_BRANCH; then
+  exit 0;
+fi
+
+# gradle 테스트 실행
+./gradlew test
+
+# 테스트 실패 시 훅 오류 종료
+if ! [ $? -eq 0 ]; then
+  exit 1
+fi

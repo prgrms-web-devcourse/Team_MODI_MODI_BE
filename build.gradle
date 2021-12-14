@@ -1,0 +1,104 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.7'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'jacoco'
+    id "org.flywaydb.flyway" version "8.1.0"
+}
+
+group = 'com.prgrms'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+def querydslVersion = '4.3.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version: '2.6.0'
+    implementation group: 'com.auth0', name: 'java-jwt', version: '3.18.1'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+    implementation group: 'com.google.guava', name: 'guava', version: '31.0-jre'
+    implementation 'org.flywaydb:flyway-core:8.1.0'
+
+    implementation group: 'com.querydsl', name: 'querydsl-jpa', version: querydslVersion
+    implementation group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion
+    implementation group: 'com.querydsl', name: 'querydsl-core', version: querydslVersion
+
+    annotationProcessor group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion
+    annotationProcessor group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion, classifier: 'jpa'
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    implementation("io.springfox:springfox-boot-starter:3.0.0")
+    implementation("io.springfox:springfox-swagger-ui:3.0.0")
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
+}
+jacocoTestReport {
+    reports {
+        html.enabled true
+        html.destination file("$buildDir/jacocoHtml")
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    excludes: [
+                            '**/com/prgrms/modi/error/**',
+                            '**/com/prgrms/modi/common/**',
+                            '**/com/prgrms/modi/utils/**'
+                    ]
+            )
+        }))
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'BUNDLE'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+
+            excludes = []
+        }
+    }
+}
+
+flyway {
+    url = 'jdbc:h2:mem:~/modi;DB_CLOSE_DELAY=-1'
+    user = 'sa'
+    password = ''
+    locations = ['filesystem:./src/main/resources/db/migration', 'filesystem:./src/main/resources/db/seed']
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    enabled = false
+}
