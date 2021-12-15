@@ -8,7 +8,7 @@ public class RuleResponse {
     @ApiModelProperty(value = "규칙 ID")
     private Long ruleId;
 
-    @ApiModelProperty(value = "파티 이름")
+    @ApiModelProperty(value = "규칙 이름")
     private String ruleName;
 
     protected RuleResponse() {

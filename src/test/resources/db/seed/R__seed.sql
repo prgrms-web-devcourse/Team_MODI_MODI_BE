@@ -1,10 +1,10 @@
-INSERT INTO users(id, username, role, date_of_birth, points, created_at, updated_at, deleted_at, provider, provider_id)
-    VALUES
-       (1, '테스트 유저1', 'USER', '1997-01-13', 0, '2021-11-01 06:30:00', '2021-11-01 06:30:00', null, null, null),
-       (2, '테스트 유저2', 'USER', '1997-02-13', 0, '2021-11-02 06:30:00', '2021-11-02 06:30:00', null, null, null),
-       (3, '테스트 유저3', 'USER', '1997-03-13', 0, '2021-11-03 06:30:00', '2021-11-03 06:30:00', null, null, null),
-       (4, '테스트 유저4', 'USER', '1997-04-13', 0, '2021-11-04 06:30:00', '2021-11-04 06:30:00', null, null, null),
-       (5, '테스트 유저5', 'ADMIN', '1997-05-13', 0, '2021-11-05 06:30:00', '2021-11-05 06:30:00', null, null, null);
+INSERT INTO users(id, username, role, points, created_at, updated_at, deleted_at, provider, provider_id)
+VALUES
+    (1, '테스트 유저1', 'USER', 0, '2021-11-01 06:30:00', '2021-11-01 06:30:00', null, null, null),
+    (2, '테스트 유저2', 'USER', 0, '2021-11-02 06:30:00', '2021-11-02 06:30:00', null, null, null),
+    (3, '테스트 유저3', 'USER', 0, '2021-11-03 06:30:00', '2021-11-03 06:30:00', null, null, null),
+    (4, '테스트 유저4', 'USER', 0, '2021-11-04 06:30:00', '2021-11-04 06:30:00', null, null, null),
+    (5, '테스트 유저5', 'ADMIN', 0, '2021-11-05 06:30:00', '2021-11-05 06:30:00', null, null, null);
 
 INSERT INTO otts(id, name, english_name, subscription_fee, monthly_price, max_member_capacity, grade, created_at, updated_at)
     VALUES

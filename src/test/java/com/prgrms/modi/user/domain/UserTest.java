@@ -31,8 +31,7 @@ public class UserTest {
             "행복한 모디",
             Role.USER, 10,
             "kakao",
-            "1234",
-            LocalDate.of(1995, 6, 13)
+            "1234"
         );
         assertAll(
             () -> assertThat(user).isNotNull(),
@@ -49,8 +48,7 @@ public class UserTest {
                 "",
                 Role.USER, 10,
                 "",
-                "",
-                LocalDate.of(1995, 6, 13)
+                ""
             ));
     }
 
