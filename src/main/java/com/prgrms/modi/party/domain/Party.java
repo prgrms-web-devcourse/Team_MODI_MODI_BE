@@ -7,6 +7,7 @@ import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.CascadeType;
@@ -33,6 +34,7 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 @Entity
 @Table(name = "parties")
 @Where(clause = "deleted_at is null")
+@SQLDelete(sql = "UPDATE parties SET deleted_at = CURRENT_TIMESTAMP where id=?")
 public class Party extends DeletableEntity {
 
     @Id
@@ -180,6 +182,10 @@ public class Party extends DeletableEntity {
             PartyRule partyRule = new PartyRule(this, rule);
             this.partyRules.add(partyRule);
         }
+    }
+
+    public void changeStatus(PartyStatus status) {
+        this.status = status;
     }
 
     public void setLeaderMember(User user) {

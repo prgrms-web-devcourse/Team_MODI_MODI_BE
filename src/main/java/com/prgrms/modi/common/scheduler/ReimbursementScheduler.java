@@ -23,5 +23,6 @@ public class ReimbursementScheduler {
     public void reimburse() {
         LocalDate today = LocalDate.now();
         partyService.reimburseAll(today);
+        partyService.changeRecruitingStatus(today);
     }
 }
