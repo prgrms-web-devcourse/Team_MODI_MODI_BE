@@ -123,12 +123,20 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserPartyListResponse getUserPartyList(Long userId, PartyStatus partyStatus, Integer size,
-        Long lastPartyId) {
+    public UserPartyListResponse getUserPartyList(
+        Long userId,
+        PartyStatus partyStatus,
+        Integer size,
+        Long lastPartyId
+    ) {
         List<UserPartyBriefResponse> parties = partyRepository
             .findAllPartiesByStatusAndUserId(userId, partyStatus, size, lastPartyId);
 
-        return new UserPartyListResponse(parties);
+        User user = userRepository.getById(userId);
+        int totalSize = partyRepository
+            .countAllByStatusAndMembersUser(partyStatus, user);
+
+        return new UserPartyListResponse(parties, totalSize);
     }
 
     @Transactional(readOnly = true)
