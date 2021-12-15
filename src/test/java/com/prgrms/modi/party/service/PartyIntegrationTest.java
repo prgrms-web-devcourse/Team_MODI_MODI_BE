@@ -39,7 +39,7 @@ public class PartyIntegrationTest {
     @Transactional
     public void reimburseAll() {
         int originalRemainingReimbursementAmount = 25000;
-        List<Party> reimbursableParties = partyRepository.findOngoingParties();
+        List<Party> reimbursableParties = partyRepository.findAllReimbursableParty();
         LocalDate reimbursementDay = LocalDate.of(2021, 12, 2);
         partyService.reimburseAll(reimbursementDay);
 
@@ -60,7 +60,7 @@ public class PartyIntegrationTest {
     @DisplayName("파티 시작 날짜가 되면 파티는 Ongoing 상태가 되야한다.")
     @Transactional
     public void checkRecruitingStatus() {
-        Party partyToBeOngoing = new Party.Builder()
+        Party partyWillBeOngoing = new Party.Builder()
             .partyMemberCapacity(4)
             .currentMember(4)
             .monthlyReimbursement(5000)
@@ -74,16 +74,16 @@ public class PartyIntegrationTest {
             .ott(ottRepository.findById(1L).get())
             .build();
 
-        partyRepository.save(partyToBeOngoing);
+        partyRepository.save(partyWillBeOngoing);
         partyService.changeRecruitingStatus(LocalDate.now());
-        assertThat(partyToBeOngoing.getStatus(), equalTo(PartyStatus.ONGOING));
+        assertThat(partyWillBeOngoing.getStatus(), equalTo(PartyStatus.ONGOING));
     }
 
     @Test
     @DisplayName("파티의 isMustFilled 가 true 이며, 파티가 다 차지 않았을 상황에서 시작날짜가 됬을 경우 삭제되야한다.")
     @Transactional
     public void deletePartyWhenIsMustFilledTrue() {
-        Party partyToBeDeleted = new Party.Builder()
+        Party partyWillBeDeleted = new Party.Builder()
             .partyMemberCapacity(4)
             .currentMember(3)
             .monthlyReimbursement(5000)
@@ -97,8 +97,31 @@ public class PartyIntegrationTest {
             .ott(ottRepository.findById(1L).get())
             .build();
 
-        partyRepository.save(partyToBeDeleted);
+        partyRepository.save(partyWillBeDeleted);
         partyService.changeRecruitingStatus(LocalDate.now());
         assertThat(partyRepository.findAll().size(), equalTo(6));
+    }
+
+    @Test
+    @DisplayName("파티 기간이 끝나면 FINISH 상태가 되야한다.")
+    @Transactional
+    public void changeFinishStatus() {
+        Party partyWillBeFinished = new Party.Builder()
+            .partyMemberCapacity(4)
+            .currentMember(4)
+            .monthlyReimbursement(5000)
+            .remainingReimbursement(15000)
+            .startDate(LocalDate.now().minusMonths(1))
+            .endDate(LocalDate.now())
+            .mustFilled(true)
+            .sharedId("testSharedId")
+            .sharedPasswordEncrypted("testSharedPw")
+            .status(PartyStatus.ONGOING)
+            .ott(ottRepository.findById(1L).get())
+            .build();
+
+        partyRepository.save(partyWillBeFinished);
+        partyService.changeFinishStatus(LocalDate.now());
+        assertThat(partyWillBeFinished.getStatus(), equalTo(PartyStatus.FINISHED));
     }
 }

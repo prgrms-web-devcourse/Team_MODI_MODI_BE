@@ -146,7 +146,7 @@ public class PartyService {
             party -> party.getStartDate().getDayOfMonth() == date.getDayOfMonth()
                 || (isLastDay(party.getStartDate()) && isLastDay(date));
 
-        List<Party> parties = partyRepository.findOngoingParties().stream()
+        List<Party> parties = partyRepository.findAllReimbursableParty().stream()
             .filter(isReimburseDay)
             .collect(Collectors.toList());
 
@@ -177,6 +177,13 @@ public class PartyService {
                 party.changeStatus(PartyStatus.ONGOING);
             }
         }
+    }
+
+    @Transactional
+    public void changeFinishStatus(LocalDate today) {
+        partyRepository.findByStatus(PartyStatus.ONGOING).stream()
+            .filter(party -> Objects.equals(party.getEndDate(), today))
+            .forEach(party -> party.changeStatus(PartyStatus.FINISHED));
     }
 
     private Party createNewParty(CreatePartyRequest request, long userId) {
