@@ -31,7 +31,7 @@ public interface PartyRepository extends JpaRepository<Party, Long>, PartyReposi
 
 
     @Query("SELECT DISTINCT p FROM Party p JOIN FETCH p.members m JOIN FETCH m.user WHERE p.status = 'ONGOING'")
-    List<Party> findOngoingParty();
+    List<Party> findOngoingParties();
 
     @Query(value = "SELECT DISTINCT p FROM Party p LEFT JOIN FETCH p.ott WHERE p.id = :id")
     Optional<Party> findPartyWithOtt(Long id);

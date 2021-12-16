@@ -31,20 +31,19 @@ public class PartyIntegrationTest {
 
     @Test
     @DisplayName("매달 파티장에게 환급금을 주어야한다.")
+    @Transactional
     public void reimburseAll() {
-        List<Party> reimbursableParties = partyRepository.findOngoingParty();
+        int originalRemainingReimbursementAmount = 25000;
+        List<Party> reimbursableParties = partyRepository.findOngoingParties();
         LocalDate reimbursementDay = LocalDate.of(2021, 12, 2);
         partyService.reimburseAll(reimbursementDay);
-        List<Party> partiesAfterReimbursement = partyRepository.findOngoingParty();
 
-        for (int i = 0; i < partiesAfterReimbursement.size(); i++) {
-            Party before = reimbursableParties.get(i);
-            Party after = partiesAfterReimbursement.get(i);
+        for (Party after : reimbursableParties) {
             User user = after.getMembers().stream().filter(Member::isLeader).map(Member::getUser).findFirst().get();
-            int reimburseAmount = before.getMonthlyReimbursement() * (before.getMembers().size() - 1);
+            int reimburseAmount = after.getMonthlyReimbursement() * (after.getMembers().size() - 1);
             assertThat(
                 after.getRemainingReimbursement(),
-                equalTo(before.getRemainingReimbursement() - reimburseAmount)
+                equalTo(originalRemainingReimbursementAmount - reimburseAmount)
             );
             assertThat(user.getPoints(), equalTo(reimburseAmount * 3));
             assertThat(pointHistoryRepository.findAllByUserId(user.getId()).size(), equalTo(3));

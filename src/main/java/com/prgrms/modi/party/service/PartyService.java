@@ -185,7 +185,7 @@ public class PartyService {
             party -> party.getStartDate().getDayOfMonth() == date.getDayOfMonth()
                 || (isLastDay(party.getStartDate()) && isLastDay(date));
 
-        List<Party> parties = partyRepository.findOngoingParty().stream()
+        List<Party> parties = partyRepository.findOngoingParties().stream()
             .filter(isReimburseDay)
             .collect(Collectors.toList());
 

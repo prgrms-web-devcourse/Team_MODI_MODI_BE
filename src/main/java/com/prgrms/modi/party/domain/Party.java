@@ -54,7 +54,6 @@ public class Party extends DeletableEntity {
     @PositiveOrZero
     private Integer remainingReimbursement;
 
-    @FutureOrPresent
     private LocalDate startDate;
 
     @FutureOrPresent
