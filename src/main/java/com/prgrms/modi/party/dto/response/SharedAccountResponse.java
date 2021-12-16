@@ -1,6 +1,5 @@
 package com.prgrms.modi.party.dto.response;
 
-import com.prgrms.modi.party.domain.Party;
 import io.swagger.annotations.ApiModelProperty;
 
 public class SharedAccountResponse {
@@ -14,13 +13,9 @@ public class SharedAccountResponse {
     protected SharedAccountResponse() {
     }
 
-    private SharedAccountResponse(Party party) {
-        this.sharedId = party.getSharedId();
-        this.sharedPassword = party.getSharedPasswordEncrypted();
-    }
-
-    public static SharedAccountResponse from(Party party) {
-        return new SharedAccountResponse(party);
+    public SharedAccountResponse(String sharedId, String sharedPassword) {
+        this.sharedId = sharedId;
+        this.sharedPassword = sharedPassword;
     }
 
     public String getSharedId() {

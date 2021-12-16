@@ -27,6 +27,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgrms.modi.utils.Decryptyor;
+import com.prgrms.modi.utils.Encryptor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -100,7 +102,6 @@ public class PartyService {
         Party newParty = createNewParty(request, userId);
         partyRepository.save(newParty);
 
-        logger.info("created party {}", newParty);
         return PartyIdResponse.from(newParty);
     }
 
@@ -131,7 +132,10 @@ public class PartyService {
     @Transactional(readOnly = true)
     public SharedAccountResponse getSharedAccount(long partyId) {
         Party party = partyRepository.getById(partyId);
-        return SharedAccountResponse.from(party);
+        String sharedId = party.getSharedId();
+        String sharedPassword = Decryptyor.decrypt(party.getSharedPasswordEncrypted(), party.getOtt().getId());
+
+        return new SharedAccountResponse(sharedId, sharedPassword);
     }
 
     private List<PartyBriefResponse> getRecruitingParties(OTT ott, LocalDate startDate, long lastPartyId, int size) {
@@ -222,6 +226,8 @@ public class PartyService {
 
     private Party createNewParty(CreatePartyRequest request, long userId) {
         OTT ott = ottRepository.getById(request.getOttId());
+        String encryptedPassword = Encryptor.encrypt(
+            request.getSharedPassword(), ott.getId());
 
         Party newParty = new Party.Builder()
             .ott(ott)
@@ -234,7 +240,7 @@ public class PartyService {
             .remainingReimbursement(0)
             .status(PartyStatus.RECRUITING)
             .sharedId(request.getSharedId())
-            .sharedPasswordEncrypted(request.getSharedPassword())
+            .sharedPasswordEncrypted(encryptedPassword)
             .build();
 
         List<Rule> rules = request.getRules()
