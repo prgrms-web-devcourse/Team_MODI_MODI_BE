@@ -4,12 +4,13 @@ import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.user.domain.User;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public interface PartyRepository extends JpaRepository<Party, Long>, PartyRepositoryCustom {
 
@@ -26,15 +27,15 @@ public interface PartyRepository extends JpaRepository<Party, Long>, PartyReposi
         PartyStatus partyStatus,
         LocalDate startDate,
         long lastPartyId,
-        Pageable pageable
-    );
-
-
+        Pageable pageable);
+    
     @Query("SELECT DISTINCT p FROM Party p JOIN FETCH p.members m JOIN FETCH m.user WHERE p.status = 'ONGOING'")
-    List<Party> findOngoingParties();
+    List<Party> findAllReimbursableParty();
 
     @Query(value = "SELECT DISTINCT p FROM Party p LEFT JOIN FETCH p.ott WHERE p.id = :id")
     Optional<Party> findPartyWithOtt(Long id);
+
+    List<Party> findByStatus(PartyStatus status);
 
     int countAllByStatusAndMembersUser(PartyStatus partyStatus, User user);
 

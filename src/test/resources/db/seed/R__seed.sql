@@ -15,7 +15,7 @@ INSERT INTO otts(id, name, english_name, subscription_fee, monthly_price, max_me
         (5, '디즈니 플러스', 'disneyPlus', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
         (6, '라프텔', 'laftel', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
         (7, '쿠팡 플레이', 'coupangPlay', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
-        (8, '아마존 프라임', 'amazonPlay', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00') ;
+        (8, '아마존 프라임', 'amazonPlay', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00');
 
 INSERT INTO parties(id, party_member_capacity, current_member, total_price, monthly_reimbursement, remaining_reimbursement, start_date, end_date, period, must_filled, shared_id, shared_password_encrypted, status, created_at, updated_at, deleted_at, ott_id)
     VALUES
@@ -25,7 +25,7 @@ INSERT INTO parties(id, party_member_capacity, current_member, total_price, mont
         (4, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
         (5, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
         (6, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
-        (7, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', '2021-11-02 06:30:00', 1) ;
+        (7, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', '2021-11-02 06:30:00', 1);
 
 INSERT INTO rules(id, name, created_at, updated_at)
     VALUES
