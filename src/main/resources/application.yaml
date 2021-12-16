@@ -45,7 +45,7 @@ spring:
       hibernate.format_sql: true
   flyway:
     enabled: true
-    locations: filesystem:${MODI_ROOT:.}/src/main/resources/db/migration, filesystem:${MODI_ROOT:.}/src/main/resources/db/seed
+    locations: filesystem:${MODI_ROOT:.}/src/main/resources/db/migration, filesystem:${MODI_ROOT:.}/src/test/resources/db/seed
     baseline-on-migrate: true
   output:
     ansi.enabled: always
