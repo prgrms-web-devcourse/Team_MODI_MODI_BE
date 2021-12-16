@@ -2,6 +2,8 @@ package com.prgrms.modi.ott.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.Objects;
+
 public class CarouselResponse implements CarouselInfo{
 
     @ApiModelProperty(value = "OTT id")
@@ -10,7 +12,7 @@ public class CarouselResponse implements CarouselInfo{
     @ApiModelProperty(value = "OTT 이름")
     private final String ottName;
 
-    @ApiModelProperty(value = "Recruiting 중인 파티 수")
+    @ApiModelProperty(value = "Recruiting 중인 파티 맴버 수")
     private final Long waitingForMatch;
 
     @ApiModelProperty(value = "개월 당 요금")
@@ -19,7 +21,7 @@ public class CarouselResponse implements CarouselInfo{
     private CarouselResponse(CarouselInfo carouselInfo) {
         this.ottId = carouselInfo.getOttId();
         this.ottName = carouselInfo.getOttName();
-        this.waitingForMatch = carouselInfo.getWaitingForMatch();
+        this.waitingForMatch = convertNull(carouselInfo.getWaitingForMatch());
         this.monthlyPrice = carouselInfo.getmonthlyPrice();
     }
 
@@ -47,4 +49,10 @@ public class CarouselResponse implements CarouselInfo{
         return monthlyPrice;
     }
 
+    private Long convertNull(Long value) {
+        if(Objects.isNull(value)) {
+            return 0L;
+        }
+        return value;
+    }
 }
