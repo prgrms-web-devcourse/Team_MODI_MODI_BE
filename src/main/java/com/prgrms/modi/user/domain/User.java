@@ -1,13 +1,9 @@
 package com.prgrms.modi.user.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
-import com.prgrms.modi.common.domain.BaseEntity;
 import com.prgrms.modi.common.domain.DeletableEntity;
 import com.prgrms.modi.error.exception.NotEnoughPointException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,11 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Entity
 @Table(name = "users")
@@ -45,20 +40,16 @@ public class User extends DeletableEntity {
     @NotBlank(message = "providerId는 필수입니다")
     private String providerId;
 
-    @Past
-    private LocalDate dateOfBirth;
-
     protected User() {
     }
 
-    public User(String username, Role role, Integer points, String provider, String providerId, LocalDate dateOfBirth) {
+    public User(String username, Role role, Integer points, String provider, String providerId) {
         checkArgument(isNotEmpty(username));
         this.username = username;
         this.role = role;
         this.points = points;
         this.provider = provider;
         this.providerId = providerId;
-        this.dateOfBirth = dateOfBirth;
     }
 
     public Long getId() {
@@ -89,7 +80,6 @@ public class User extends DeletableEntity {
             .append("points", points)
             .append("provider", provider)
             .append("providerId", providerId)
-            .append("dateOfBirth", dateOfBirth)
             .toString();
     }
 

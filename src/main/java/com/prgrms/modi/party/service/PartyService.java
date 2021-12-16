@@ -20,14 +20,18 @@ import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class PartyService {
@@ -45,7 +49,6 @@ public class PartyService {
     private final CommissionHistoryService commissionHistoryService;
 
     private final PointHistoryService pointHistoryService;
-
 
     public PartyService(
         PartyRepository partyRepository,
@@ -137,6 +140,52 @@ public class PartyService {
             .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void reimburseAll(LocalDate date) {
+        Predicate<Party> isReimburseDay =
+            party -> party.getStartDate().getDayOfMonth() == date.getDayOfMonth()
+                || (isLastDay(party.getStartDate()) && isLastDay(date));
+
+        List<Party> parties = partyRepository.findAllReimbursableParty().stream()
+            .filter(isReimburseDay)
+            .collect(Collectors.toList());
+
+        for (Party party : parties) {
+            List<Member> members = party.getMembers();
+            for (Member member : members) {
+                if (member.isLeader()) {
+                    User user = member.getUser();
+                    int reimbursementAmount = party.reimburse();
+                    user.addPoints(reimbursementAmount);
+                    pointHistoryService.save(PointDetail.REIMBURSE, reimbursementAmount, user);
+                }
+            }
+        }
+    }
+
+    @Transactional
+    public void changeRecruitingStatus(LocalDate today) {
+        List<Party> recruitingParties = partyRepository.findByStatus(PartyStatus.RECRUITING)
+            .stream()
+            .filter(party -> party.getStartDate().isEqual(today))
+            .collect(Collectors.toList());
+
+        for (Party party : recruitingParties) {
+            if (party.isMustFilled() && !Objects.equals(party.getCurrentMember(), party.getPartyMemberCapacity())) {
+                partyRepository.deleteById(party.getId());
+            } else {
+                party.changeStatus(PartyStatus.ONGOING);
+            }
+        }
+    }
+
+    @Transactional
+    public void changeFinishStatus(LocalDate today) {
+        partyRepository.findByStatus(PartyStatus.ONGOING).stream()
+            .filter(party -> Objects.equals(party.getEndDate(), today))
+            .forEach(party -> party.changeStatus(PartyStatus.FINISHED));
+    }
+
     private Party createNewParty(CreatePartyRequest request, long userId) {
         OTT ott = ottRepository.getById(request.getOttId());
 
@@ -175,6 +224,10 @@ public class PartyService {
 
         commissionHistoryService.save(CommissionDetail.PARTICIPATE, totalPrice, user);
         pointHistoryService.save(PointDetail.PARTICIPATE, totalPrice, user);
+    }
+
+    private boolean isLastDay(LocalDate localDate) {
+        return localDate.getDayOfMonth() == YearMonth.from(localDate).lengthOfMonth();
     }
 
 }

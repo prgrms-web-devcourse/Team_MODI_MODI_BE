@@ -44,7 +44,7 @@ spring:
     properties:
       hibernate.format_sql: true
   flyway:
-    enabled: true
+    enabled: false
     locations: filesystem:${MODI_ROOT:.}/src/main/resources/db/migration, filesystem:${MODI_ROOT:.}/src/main/resources/db/seed
     baseline-on-migrate: true
   output:
@@ -63,3 +63,8 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
+logging:
+  slack:
+    webhook-uri: ${SLACK_WEBHOOK_URI}
+  config: ${MODI_ROOT:.}/src/main/resources/logback.xml

@@ -1,10 +1,10 @@
-INSERT INTO users(id, username, role, date_of_birth, points, created_at, updated_at, deleted_at, provider, provider_id)
-    VALUES
-       (1, '테스트 유저1', 'USER', '1997-01-13', 0, '2021-11-01 06:30:00', '2021-11-01 06:30:00', null, null, null),
-       (2, '테스트 유저2', 'USER', '1997-02-13', 0, '2021-11-02 06:30:00', '2021-11-02 06:30:00', null, null, null),
-       (3, '테스트 유저3', 'USER', '1997-03-13', 0, '2021-11-03 06:30:00', '2021-11-03 06:30:00', null, null, null),
-       (4, '테스트 유저4', 'USER', '1997-04-13', 0, '2021-11-04 06:30:00', '2021-11-04 06:30:00', null, null, null),
-       (5, '테스트 유저5', 'ADMIN', '1997-05-13', 0, '2021-11-05 06:30:00', '2021-11-05 06:30:00', null, null, null);
+INSERT INTO users(id, username, role, points, created_at, updated_at, deleted_at, provider, provider_id)
+VALUES
+    (1, '테스트 유저1', 'USER', 0, '2021-11-01 06:30:00', '2021-11-01 06:30:00', null, 'naver', 'naver_test_provider_id'),
+    (2, '테스트 유저2', 'USER', 0, '2021-11-02 06:30:00', '2021-11-02 06:30:00', null, null, null),
+    (3, '테스트 유저3', 'USER', 0, '2021-11-03 06:30:00', '2021-11-03 06:30:00', null, null, null),
+    (4, '테스트 유저4', 'USER', 0, '2021-11-04 06:30:00', '2021-11-04 06:30:00', null, null, null),
+    (5, '테스트 유저5', 'ADMIN', 0, '2021-11-05 06:30:00', '2021-11-05 06:30:00', null, null, null);
 
 INSERT INTO otts(id, name, english_name, subscription_fee, monthly_price, max_member_capacity, grade, created_at, updated_at)
     VALUES
@@ -15,7 +15,7 @@ INSERT INTO otts(id, name, english_name, subscription_fee, monthly_price, max_me
         (5, '디즈니 플러스', 'disneyPlus', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
         (6, '라프텔', 'laftel', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
         (7, '쿠팡 플레이', 'coupangPlay', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
-        (8, '아마존 프라임', 'amazonPlay', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00') ;
+        (8, '아마존 프라임', 'amazonPlay', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00');
 
 INSERT INTO parties(id, party_member_capacity, current_member, total_price, monthly_reimbursement, remaining_reimbursement, start_date, end_date, period, must_filled, shared_id, shared_password_encrypted, status, created_at, updated_at, deleted_at, ott_id)
     VALUES
@@ -25,7 +25,7 @@ INSERT INTO parties(id, party_member_capacity, current_member, total_price, mont
         (4, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
         (5, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
         (6, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
-        (7, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', '2021-11-02 06:30:00', 1) ;
+        (7, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', '2021-11-02 06:30:00', 1);
 
 INSERT INTO rules(id, name, created_at, updated_at)
     VALUES

@@ -1,15 +1,15 @@
 package com.prgrms.modi.party.domain;
 
-import static java.time.temporal.ChronoUnit.MONTHS;
-
 import com.prgrms.modi.common.domain.DeletableEntity;
 import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -25,13 +25,16 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.Where;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.time.temporal.ChronoUnit.MONTHS;
 
 @Entity
 @Table(name = "parties")
 @Where(clause = "deleted_at is null")
+@SQLDelete(sql = "UPDATE parties SET deleted_at = CURRENT_TIMESTAMP where id=?")
 public class Party extends DeletableEntity {
 
     @Id
@@ -53,7 +56,6 @@ public class Party extends DeletableEntity {
     @PositiveOrZero
     private Integer remainingReimbursement;
 
-    @FutureOrPresent
     private LocalDate startDate;
 
     @FutureOrPresent
@@ -182,6 +184,10 @@ public class Party extends DeletableEntity {
         }
     }
 
+    public void changeStatus(PartyStatus status) {
+        this.status = status;
+    }
+
     public void setLeaderMember(User user) {
         Member leader = new Member(this, user, true);
         this.members.add(leader);
@@ -195,8 +201,14 @@ public class Party extends DeletableEntity {
         this.increaseRemainingReimbursement(totalPrice);
     }
 
-    public void reimburse() {
-        remainingReimbursement -= monthlyReimbursement;
+    public int reimburse() {
+        int reimbursementAmount = this.monthlyReimbursement * (this.members.size() - 1);
+
+        if (this.remainingReimbursement < reimbursementAmount) {
+            throw new IllegalArgumentException("남아있는 파티 환급금이 없습니다");
+        }
+        this.remainingReimbursement -= reimbursementAmount;
+        return reimbursementAmount;
     }
 
     private void increaseMonthlyReimbursement(Integer monthlyReimbursement) {

@@ -14,9 +14,7 @@ public abstract class OAuth2UserInfo {
         return attributes;
     }
 
-    public abstract String getBirthyear();
-
-    public abstract String getBirthDay();
+    public abstract boolean isAdult();
 
 }
 
