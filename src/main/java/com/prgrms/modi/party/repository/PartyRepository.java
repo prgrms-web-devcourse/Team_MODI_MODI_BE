@@ -27,7 +27,7 @@ public interface PartyRepository extends JpaRepository<Party, Long>, PartyReposi
         PartyStatus partyStatus,
         LocalDate startDate,
         long lastPartyId,
-        Pageable pageable
+        Pageable pageable);
     
     @Query("SELECT DISTINCT p FROM Party p JOIN FETCH p.members m JOIN FETCH m.user WHERE p.status = 'ONGOING'")
     List<Party> findAllReimbursableParty();
