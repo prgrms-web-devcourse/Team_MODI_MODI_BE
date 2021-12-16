@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Objects;
+import java.util.Objects
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -224,6 +224,29 @@ public class PartyService {
 
         commissionHistoryService.save(CommissionDetail.PARTICIPATE, totalPrice, user);
         pointHistoryService.save(PointDetail.PARTICIPATE, totalPrice, user);
+    }
+
+    @Transactional
+    public void reimburseAll(LocalDate date) {
+        Predicate<Party> isReimburseDay =
+            party -> party.getStartDate().getDayOfMonth() == date.getDayOfMonth()
+                || (isLastDay(party.getStartDate()) && isLastDay(date));
+
+        List<Party> parties = partyRepository.findOngoingParties().stream()
+            .filter(isReimburseDay)
+            .collect(Collectors.toList());
+
+        for (Party party : parties) {
+            List<Member> members = party.getMembers();
+            for (Member member : members) {
+                if (member.isLeader()) {
+                    User user = member.getUser();
+                    int reimbursementAmount = party.reimburse();
+                    user.addPoints(reimbursementAmount);
+                    pointHistoryService.save(PointDetail.REIMBURSE, reimbursementAmount, user);
+                }
+            }
+        }
     }
 
     private boolean isLastDay(LocalDate localDate) {

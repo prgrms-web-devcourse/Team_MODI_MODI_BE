@@ -124,4 +124,5 @@ public class PartyIntegrationTest {
         partyService.changeFinishStatus(LocalDate.now());
         assertThat(partyWillBeFinished.getStatus(), equalTo(PartyStatus.FINISHED));
     }
+
 }
