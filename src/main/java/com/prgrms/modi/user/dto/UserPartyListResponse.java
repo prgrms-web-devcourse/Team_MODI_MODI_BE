@@ -11,7 +11,6 @@ public class UserPartyListResponse {
     private int totalSize;
 
     @ApiModelProperty(value = "유저 참여 파티 목록 - RECRUITING / ONGOING / FINISHED")
-
     private List<UserPartyBriefResponse> parties;
 
     public UserPartyListResponse(List<UserPartyBriefResponse> parties, int totalSize) {
