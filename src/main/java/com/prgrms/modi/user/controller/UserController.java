@@ -9,16 +9,20 @@ import com.prgrms.modi.party.service.PartyService;
 import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
+import com.prgrms.modi.user.dto.UsernameListResponse;
+import com.prgrms.modi.user.dto.UsernameResponse;
 import com.prgrms.modi.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import javax.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +32,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api/users")
+@Validated
 public class UserController {
 
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -120,6 +125,17 @@ public class UserController {
         }
         PartyDetailResponse resp = userService.getUserPartyDetail(partyId);
         return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/generate-username")
+    @Operation(summary = "랜덤 닉네임 생성", description = "랜덤 닉네임 생성 API")
+    @ApiResponse(responseCode = "200", description = "OK")
+    public ResponseEntity<UsernameListResponse> generateUsername(
+        @Parameter(name = "size", description = "생성할 닉네임 개수") @RequestParam @Positive Integer size
+    ) {
+        List<UsernameResponse> generateUsernames = userService.generateUsernames(size);
+        return ResponseEntity.ok(
+            new UsernameListResponse(generateUsernames));
     }
 
 }
