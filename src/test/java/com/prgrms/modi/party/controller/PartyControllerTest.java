@@ -3,6 +3,12 @@ package com.prgrms.modi.party.controller;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -11,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import com.prgrms.modi.error.exception.NotFoundException;
 import com.prgrms.modi.history.domain.CommissionHistory;
 import com.prgrms.modi.history.domain.PointHistory;
 import com.prgrms.modi.history.repository.CommissionHistoryRepository;
@@ -26,6 +33,7 @@ import com.prgrms.modi.user.security.WithMockJwtAuthentication;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +115,7 @@ class PartyControllerTest {
                 status().isOk(),
                 jsonPath("$.ottId").value(ottId),
                 jsonPath("$.partyList[0].partyId").value(6),
-                jsonPath("$.partyList", hasSize(3))
+                jsonPath("$.partyList", hasSize(4))
             )
             .andDo(print());
     }
@@ -251,6 +259,7 @@ class PartyControllerTest {
             .andDo(print());
     }
 
+    @Test
     @DisplayName("모든 규칙 태그를 조회할 수 있다")
     public void getAllRule() throws Exception {
         // When
@@ -262,6 +271,22 @@ class PartyControllerTest {
                 jsonPath("$.rules[0].ruleName").value("1인 1회선")
             )
             .andDo(print());
+    }
+
+    @Test
+    @DisplayName("파티를 삭제할 수 있다")
+    @WithMockJwtAuthentication
+    public void deleteParty() throws Exception {
+        long partyId = 8L;
+        assertTrue(partyRepository.findById(partyId).isPresent());
+
+        mockMvc
+            .perform(delete("/api/parties/" + partyId)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpectAll(
+                status().isNoContent()
+            );
+        assertEquals(partyRepository.findById(partyId), Optional.empty());
     }
 
 }

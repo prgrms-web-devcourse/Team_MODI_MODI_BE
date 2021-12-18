@@ -99,7 +99,7 @@ public class PartyIntegrationTest {
 
         partyRepository.save(partyWillBeDeleted);
         partyService.changeRecruitingStatus(LocalDate.now());
-        assertThat(partyRepository.findAll().size(), equalTo(6));
+        assertThat(partyRepository.findAll().size(), equalTo(7));
     }
 
     @Test
