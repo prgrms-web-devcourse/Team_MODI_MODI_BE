@@ -166,12 +166,16 @@ class UserControllerTest {
     @Test
     @DisplayName("닉네임 자동생성 API 테스트")
     public void getGeneratedUsername() throws Exception {
+        int size = 5;
+
         mockMvc
-            .perform(get("/api/users/generate-username"))
+            .perform(
+                get("/api/users/generate-username?size=" + size))
             .andExpectAll(
                 status().isOk(),
-                jsonPath("$.generatedUsername").isNotEmpty()
-            );
+                jsonPath("$.generatedUsernames", hasSize(size)))
+            .andDo(
+                print());
     }
 
 }
