@@ -19,6 +19,7 @@ import javax.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -123,6 +124,28 @@ public class PartyController {
         }
         PartyIdResponse resp = partyService.joinParty(authentication.userId, partyId);
         return ResponseEntity.ok(resp);
+    }
+
+    @DeleteMapping("/parties/{partyId}")
+    @Operation(summary = "파티 삭제", description = "파티장은 파티원이 아무도 없고 파티 시작 전일 때 파티를 삭제할 수 있습니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "파티 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "파티원이 파티장을 제외하고 한 명이라도 있거나 파티 시작일이 지난 경우"),
+        @ApiResponse(responseCode = "401", description = "토큰이 없어 인증 할 수 없는 경우"),
+        @ApiResponse(responseCode = "403", description = "파티장이 아닌 유저인 경우")
+    })
+    public ResponseEntity<Void> deleteParty(
+        @AuthenticationPrincipal @ApiIgnore JwtAuthentication authentication,
+        @Parameter(description = "파티의 ID") @PathVariable @Positive Long partyId
+    ) {
+        if (authentication == null) {
+            throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
+        }
+        if (!partyService.isPartyLeader(partyId, authentication.userId)) {
+            throw new ForbiddenException("인가되지 않은 사용자입니다");
+        }
+        partyService.deleteParty(partyId);
+        return ResponseEntity.noContent().build();
     }
 
 }

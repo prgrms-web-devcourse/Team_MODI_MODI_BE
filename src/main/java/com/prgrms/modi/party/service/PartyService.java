@@ -20,18 +20,17 @@ import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PartyService {
@@ -186,6 +185,28 @@ public class PartyService {
         partyRepository.findByStatus(PartyStatus.ONGOING).stream()
             .filter(party -> Objects.equals(party.getEndDate(), today))
             .forEach(party -> party.changeStatus(PartyStatus.FINISHED));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isPartyLeader(Long partyId, Long userId) {
+        Party party = partyRepository.getById(partyId);
+        User user = userRepository.getById(userId);
+        for (Member member : party.getMembers()) {
+            if (member.isLeader() && member.getUser().equals(user)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Transactional
+    public void deleteParty(Long partyId) {
+        Party party = partyRepository.getById(partyId);
+
+        if (!(party.getMembers().size() == 1 && party.getStartDate().isAfter(LocalDate.now()))) {
+            throw new IllegalStateException("삭제할 수 없는 파티입니다");
+        }
+        partyRepository.deleteById(partyId);
     }
 
     private Party createNewParty(CreatePartyRequest request, long userId) {

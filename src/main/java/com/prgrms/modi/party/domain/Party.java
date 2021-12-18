@@ -239,6 +239,7 @@ public class Party extends DeletableEntity {
             .append("id", id)
             .append("startDate", startDate)
             .append("endDate", endDate)
+            .append("deletedAt", deletedAt)
             .toString();
     }
 
