@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -18,6 +19,7 @@ import com.prgrms.modi.history.repository.PointHistoryRepository;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.request.RuleRequest;
+import com.prgrms.modi.party.dto.request.UpdateSharedAccountRequest;
 import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.MemberRepository;
@@ -185,7 +187,7 @@ class PartyControllerTest {
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.partyId").value(partyId)
@@ -212,7 +214,7 @@ class PartyControllerTest {
         Long partyId = 6L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
 
@@ -226,7 +228,7 @@ class PartyControllerTest {
         Long partyId = 1L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
     }
@@ -243,7 +245,7 @@ class PartyControllerTest {
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isBadRequest(),
                 jsonPath("$.errorMessage").value("이미 가입된 파티에 가입할 수 없습니다")
@@ -262,6 +264,26 @@ class PartyControllerTest {
                 jsonPath("$.rules[0].ruleName").value("1인 1회선")
             )
             .andDo(print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("파티의 공유 계정을 수정할 수 있다.")
+    public void updateSharedAccount() throws Exception {
+        long partyId = 2L;
+        String updatedSharedPassword = "newmodi";
+        UpdateSharedAccountRequest request = new UpdateSharedAccountRequest(updatedSharedPassword);
+
+        mockMvc
+            .perform(patch("/api/parties/" + partyId + "/sharedAccount/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+            )
+            .andExpectAll(
+                status().isOk()
+            );
+        Party party = partyRepository.findById(partyId).orElseThrow();
+        assertThat(party.getSharedPasswordEncrypted(), equalTo(updatedSharedPassword));
     }
 
 }
