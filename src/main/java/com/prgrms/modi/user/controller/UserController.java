@@ -9,7 +9,9 @@ import com.prgrms.modi.party.service.PartyService;
 import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
+import com.prgrms.modi.user.dto.UsernameResponse;
 import com.prgrms.modi.user.service.UserService;
+import com.prgrms.modi.utils.UsernameGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -120,6 +122,14 @@ public class UserController {
         }
         PartyDetailResponse resp = userService.getUserPartyDetail(partyId);
         return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/generate-username")
+    @Operation(summary = "랜덤 닉네임 생성", description = "랜덤 닉네임 생성 API")
+    @ApiResponse(responseCode = "200", description = "OK")
+    public ResponseEntity<UsernameResponse> generateUsername() {
+        return ResponseEntity.ok(
+            new UsernameResponse(UsernameGenerator.createRandomName()));
     }
 
 }
