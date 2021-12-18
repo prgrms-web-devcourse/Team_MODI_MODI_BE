@@ -2,11 +2,13 @@ package com.prgrms.modi.user.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.prgrms.modi.utils.UsernameGenerator.createRandomName;
+import static com.prgrms.modi.utils.UsernameGenerator.isInvalidUsername;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfoFactory;
 import com.prgrms.modi.common.oauth2.info.ProviderType;
+import com.prgrms.modi.error.exception.InvalidUsernameException;
 import com.prgrms.modi.error.exception.NotEnoughAgeException;
 import com.prgrms.modi.error.exception.NotFoundException;
 import com.prgrms.modi.party.domain.Party;
@@ -19,7 +21,11 @@ import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyBriefResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
+import com.prgrms.modi.user.dto.UsernameListResponse;
+import com.prgrms.modi.user.dto.UsernameResponse;
 import com.prgrms.modi.user.repository.UserRepository;
+import com.prgrms.modi.utils.UsernameGenerator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -131,6 +137,28 @@ public class UserService {
     public User findUser(Long id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
+    }
+
+    public List<UsernameResponse> generateUsernames(int size) {
+        List<UsernameResponse> usernames = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            String generatedUsername = UsernameGenerator.createRandomName();
+            usernames.add(new UsernameResponse(generatedUsername));
+        }
+
+        return usernames;
+    }
+
+    @Transactional
+    public void changeUsername(long userId, String username) {
+        if (UsernameGenerator.isInvalidUsername(username)) {
+            throw new InvalidUsernameException("올바르지 않은 닉네임 형식입니다");
+        }
+
+        User user = userRepository.getById(userId);
+        user.changeUsername(username);
+        userRepository.save(user);
     }
 
 }

@@ -1,7 +1,12 @@
 package com.prgrms.modi.user.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.modi.party.domain.PartyStatus;
+import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.dto.UsernameRequest;
+import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
+import com.prgrms.modi.utils.UsernameGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -12,9 +17,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.MessageFormat;
+import org.springframework.transaction.annotation.Transactional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -29,6 +39,12 @@ class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     @WithMockJwtAuthentication
@@ -161,6 +177,47 @@ class UserControllerTest {
                 jsonPath("$.parties").isEmpty()
             )
             .andDo(print());
+    }
+
+    @Test
+    @DisplayName("닉네임 자동생성 API 테스트")
+    public void getGeneratedUsername() throws Exception {
+        int size = 5;
+
+        mockMvc
+            .perform(
+                get("/api/users/generate-username?size=" + size))
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$.generatedUsernames", hasSize(size)))
+            .andDo(
+                print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("유저 닉네임 변경 API 테스트")
+    @Transactional
+    public void changeUsername() throws Exception {
+        // Given
+        long userId = 1L;
+        User user = userRepository.getById(userId);
+        String newUsername = UsernameGenerator.createRandomName();
+        UsernameRequest request = new UsernameRequest(newUsername);
+
+        // When
+        mockMvc
+            .perform(
+                patch("/api/users/me/username")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
+            )
+            .andExpectAll(
+                status().isOk()
+            );
+
+        // Then
+        assertThat(user.getUsername(), equalTo(newUsername));
     }
 
 }

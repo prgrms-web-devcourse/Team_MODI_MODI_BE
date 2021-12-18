@@ -47,4 +47,25 @@ public class UsernameGenerator {
         return adjective + " " + noun;
     }
 
+    public static boolean isInvalidUsername(String username) {
+        String[] splitName = username.split(" ");
+
+        int WORDS_IN_USERNAME = 2;
+        if (splitName.length != WORDS_IN_USERNAME) {
+            return true;
+        }
+
+        String adjective = splitName[0];
+        if (!adjectives.contains(adjective)) {
+            return true;
+        }
+
+        String noun = splitName[1];
+        if (!nouns.contains(noun)) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
