@@ -136,7 +136,7 @@ class PartyControllerTest {
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.ottId").value(ottId),
-                jsonPath("$.totalSize").value(3),
+                jsonPath("$.totalSize").value(4),
                 jsonPath("$.partyList[0].partyId").value(4)
             );
     }
@@ -278,6 +278,7 @@ class PartyControllerTest {
     @Test
     @DisplayName("파티를 삭제할 수 있다")
     @WithMockJwtAuthentication
+    @Transactional
     public void deleteParty() throws Exception {
         long partyId = 8L;
         assertTrue(partyRepository.findById(partyId).isPresent());
