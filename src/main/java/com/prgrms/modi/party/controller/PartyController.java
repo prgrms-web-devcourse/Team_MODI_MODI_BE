@@ -5,6 +5,7 @@ import com.prgrms.modi.error.exception.AlreadyJoinedException;
 import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
+import com.prgrms.modi.party.dto.request.UpdateSharedAccountRequest;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
 import com.prgrms.modi.party.dto.response.PartyListResponse;
@@ -21,6 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -146,6 +148,28 @@ public class PartyController {
         }
         partyService.deleteParty(partyId);
         return ResponseEntity.noContent().build();
+  }
+  
+    @PatchMapping("parties/{partyId}/sharedAccount/update")
+    @Operation(summary = "파티 공유 계정 수정", description = "파티장이 파티 공유 계정을 수정합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "파티 공유 계정 수정 후, 수정된 파티 ID를 응답으로 보내줍니다."),
+        @ApiResponse(responseCode = "401", description = "토큰이 없어 인증 할 수 경우"),
+        @ApiResponse(responseCode = "403", description = "파티장이 아닌 유저인 경우 FORBIDDEN")
+    })
+    public ResponseEntity<PartyIdResponse> updateSharedAccount(
+        @AuthenticationPrincipal @ApiIgnore JwtAuthentication authentication,
+        @Parameter(description = "파티의 ID") @PathVariable Long partyId,
+        @RequestBody @Valid final UpdateSharedAccountRequest request
+    ) {
+        if (authentication == null) {
+            throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
+        }
+        if (!partyService.isPartyLeader(partyId, authentication.userId)) {
+            throw new ForbiddenException("인가되지 않은 사용자입니다");
+        }
+        PartyIdResponse resp = partyService.updateSharedAccount(partyId, request);
+        return ResponseEntity.ok(resp);
     }
 
 }

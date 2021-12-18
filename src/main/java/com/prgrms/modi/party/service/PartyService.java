@@ -10,6 +10,7 @@ import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.domain.Rule;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
+import com.prgrms.modi.party.dto.request.UpdateSharedAccountRequest;
 import com.prgrms.modi.party.dto.response.PartyBriefResponse;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
 import com.prgrms.modi.party.dto.response.PartyIdResponse;
@@ -76,7 +77,7 @@ public class PartyService {
         LocalDate minStartDate = LocalDate.of(0, 1, 1);
 
         List<PartyBriefResponse> parties = this.getRecruitingParties(ott, minStartDate, Long.MAX_VALUE, size);
-        Integer partyTotalSize = partyRepository.countAllByStatusAndOtt(PartyStatus.RECRUITING, ott);
+        long partyTotalSize = partyRepository.countAvailablePartyByOtt(PartyStatus.RECRUITING, ott);
 
         return PartyListResponse.from(ott, partyTotalSize, parties);
     }
@@ -87,7 +88,7 @@ public class PartyService {
         Party lastParty = partyRepository.getById(lastPartyId);
 
         List<PartyBriefResponse> parties = this.getRecruitingParties(ott, lastParty.getStartDate(), lastPartyId, size);
-        Integer partyTotalSize = partyRepository.countAllByStatusAndOtt(PartyStatus.RECRUITING, ott);
+        long partyTotalSize = partyRepository.countAvailablePartyByOtt(PartyStatus.RECRUITING, ott);
 
         return PartyListResponse.from(ott, partyTotalSize, parties);
     }
@@ -185,6 +186,14 @@ public class PartyService {
         partyRepository.findByStatus(PartyStatus.ONGOING).stream()
             .filter(party -> Objects.equals(party.getEndDate(), today))
             .forEach(party -> party.changeStatus(PartyStatus.FINISHED));
+    }
+
+    @Transactional
+    public PartyIdResponse updateSharedAccount(Long partyId, UpdateSharedAccountRequest request) {
+        Party party = partyRepository.getById(partyId);
+        party.changeSharedAccount(request.getSharedPassword());
+        partyRepository.save(party);
+        return PartyIdResponse.from(party);
     }
 
     @Transactional(readOnly = true)

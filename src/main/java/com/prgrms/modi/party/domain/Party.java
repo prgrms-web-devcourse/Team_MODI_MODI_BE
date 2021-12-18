@@ -189,6 +189,10 @@ public class Party extends DeletableEntity {
         this.status = status;
     }
 
+    public void changeSharedAccount(String sharedPassword) {
+        this.sharedPasswordEncrypted = sharedPassword;
+    }
+
     public void setLeaderMember(User user) {
         Member leader = new Member(this, user, true);
         this.members.add(leader);
