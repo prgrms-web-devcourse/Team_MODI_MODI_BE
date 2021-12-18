@@ -24,7 +24,7 @@ public class CreatePartyRequest {
     private Integer partyMemberCapacity;
 
     @NotNull
-    @Future
+    @FutureOrPresent
     private LocalDate startDate;
 
     @NotNull
