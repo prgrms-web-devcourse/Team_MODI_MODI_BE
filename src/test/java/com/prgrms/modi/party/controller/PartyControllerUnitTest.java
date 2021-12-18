@@ -4,6 +4,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.request.RuleRequest;
+import com.prgrms.modi.party.dto.request.UpdateSharedAccountRequest;
 import com.prgrms.modi.party.service.PartyService;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
 import java.text.MessageFormat;
@@ -39,6 +41,26 @@ public class PartyControllerUnitTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Test
+    @DisplayName("파티 상세 조회 - 파티 ID는 양수이다")
+    public void partyDetailInvalidId() throws Exception {
+        int positivePartyId = 1;
+        int zeroPartyId = 0;
+        int negativePartyId = -1;
+
+        mockMvc
+            .perform(get(MessageFormat.format("/api//parties/{0}", positivePartyId)))
+            .andExpect(status().isOk());
+
+        mockMvc
+            .perform(get(MessageFormat.format("/api//parties/{0}", zeroPartyId)))
+            .andExpect(status().isBadRequest());
+
+        mockMvc
+            .perform(get(MessageFormat.format("/api//parties/{0}", negativePartyId)))
+            .andExpect(status().isBadRequest());
+    }
 
     @Nested
     @DisplayName("파티 목록 조회")
@@ -107,27 +129,6 @@ public class PartyControllerUnitTest {
                 .andExpect(status().isBadRequest());
         }
 
-    }
-
-
-    @Test
-    @DisplayName("파티 상세 조회 - 파티 ID는 양수이다")
-    public void partyDetailInvalidId() throws Exception {
-        int positivePartyId = 1;
-        int zeroPartyId = 0;
-        int negativePartyId = -1;
-
-        mockMvc
-            .perform(get(MessageFormat.format("/api//parties/{0}", positivePartyId)))
-            .andExpect(status().isOk());
-
-        mockMvc
-            .perform(get(MessageFormat.format("/api//parties/{0}", zeroPartyId)))
-            .andExpect(status().isBadRequest());
-
-        mockMvc
-            .perform(get(MessageFormat.format("/api//parties/{0}", negativePartyId)))
-            .andExpect(status().isBadRequest());
     }
 
     @Nested
@@ -226,6 +227,60 @@ public class PartyControllerUnitTest {
                         .content(objectMapper.writeValueAsString(req))
                 )
                 .andExpect(status().isUnauthorized());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("파티 공유 계정 수정")
+    public class PartySharedAccountUpdateTest {
+
+        @Test
+        @DisplayName("파티 공유 계정 수정 - 토큰 없이 접근할 수 없다")
+        public void partySharedAccountInvalidToken() throws Exception {
+            var req = new UpdateSharedAccountRequest("modi");
+
+            mockMvc
+                .perform(patch("/api/parties/1/sharedAccount/update")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+                )
+                .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @WithMockJwtAuthentication
+        @DisplayName("파티 공유 계정 수정 - 파티장 외의 유저는 접근할 수 없다")
+        public void partySharedAccountInvalidUser() throws Exception {
+            var req = new UpdateSharedAccountRequest("modi");
+
+            when(partyService.isPartyLeader(any(Long.class), any(Long.class))).thenReturn(false);
+
+            mockMvc
+                .perform(patch("/api/parties/1/sharedAccount/update")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req))
+                )
+                .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithMockJwtAuthentication
+        @DisplayName("파티 공유 계정 수정 - 수정 요청에는 빈 값이 들어올 수 없다")
+        public void updateWithMissingBody() throws Exception {
+            final int REQUIRED_REQ_BODY_FIELDS = 1;
+            var req = new UpdateSharedAccountRequest("");
+
+            mockMvc
+                .perform(
+                    patch("/api/parties/1/sharedAccount/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req))
+                )
+                .andExpectAll(
+                    status().isBadRequest(),
+                    jsonPath("$.*", hasSize(REQUIRED_REQ_BODY_FIELDS))
+                );
         }
 
     }
