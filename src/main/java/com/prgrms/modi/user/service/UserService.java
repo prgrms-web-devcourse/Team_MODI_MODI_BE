@@ -19,7 +19,11 @@ import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyBriefResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
+import com.prgrms.modi.user.dto.UsernameListResponse;
+import com.prgrms.modi.user.dto.UsernameResponse;
 import com.prgrms.modi.user.repository.UserRepository;
+import com.prgrms.modi.utils.UsernameGenerator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -131,6 +135,17 @@ public class UserService {
     public User findUser(Long id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
+    }
+
+    public List<UsernameResponse> generateUsernames(int size) {
+        List<UsernameResponse> usernames = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            String generatedUsername = UsernameGenerator.createRandomName();
+            usernames.add(new UsernameResponse(generatedUsername));
+        }
+
+        return usernames;
     }
 
 }
