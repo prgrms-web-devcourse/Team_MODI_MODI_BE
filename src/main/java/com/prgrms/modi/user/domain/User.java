@@ -90,4 +90,8 @@ public class User extends DeletableEntity {
         this.points -= points;
     }
 
+    public void changeUsername(String username) {
+        this.username = username;
+    }
+
 }
