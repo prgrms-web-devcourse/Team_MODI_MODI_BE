@@ -13,12 +13,12 @@ public class PartyListResponse {
     private String ottName;
 
     @ApiModelProperty(value = "OTT 파티목록 전체 size")
-    private Integer totalSize;
+    private long totalSize;
 
     @ApiModelProperty(value = "간략한 파티 정보")
     private List<PartyBriefResponse> partyList;
 
-    public PartyListResponse(Long ottId, String ottName, Integer totalSize, List<PartyBriefResponse> partyList) {
+    public PartyListResponse(Long ottId, String ottName, long totalSize, List<PartyBriefResponse> partyList) {
         this.ottId = ottId;
         this.ottName = ottName;
         this.totalSize = totalSize;
@@ -33,7 +33,7 @@ public class PartyListResponse {
         return ottName;
     }
 
-    public Integer getTotalSize() {
+    public long getTotalSize() {
         return totalSize;
     }
 
@@ -41,7 +41,7 @@ public class PartyListResponse {
         return partyList;
     }
 
-    public static PartyListResponse from(OTT ott, Integer totalSize, List<PartyBriefResponse> parties) {
+    public static PartyListResponse from(OTT ott, long totalSize, List<PartyBriefResponse> parties) {
         return new PartyListResponse(
             ott.getId(),
             ott.getName(),
