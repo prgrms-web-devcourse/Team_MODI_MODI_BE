@@ -208,6 +208,16 @@ public class PartyService {
         return false;
     }
 
+    @Transactional
+    public void deleteParty(Long partyId) {
+        Party party = partyRepository.getById(partyId);
+
+        if (!(party.getMembers().size() == 1 && party.getStartDate().isAfter(LocalDate.now()))) {
+            throw new IllegalStateException("삭제할 수 없는 파티입니다");
+        }
+        partyRepository.deleteById(partyId);
+    }
+
     private Party createNewParty(CreatePartyRequest request, long userId) {
         OTT ott = ottRepository.getById(request.getOttId());
 
