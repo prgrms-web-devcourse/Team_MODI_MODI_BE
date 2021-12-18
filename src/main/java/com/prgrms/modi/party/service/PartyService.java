@@ -77,7 +77,7 @@ public class PartyService {
         LocalDate minStartDate = LocalDate.of(0, 1, 1);
 
         List<PartyBriefResponse> parties = this.getRecruitingParties(ott, minStartDate, Long.MAX_VALUE, size);
-        Integer partyTotalSize = partyRepository.countAllByStatusAndOtt(PartyStatus.RECRUITING, ott);
+        long partyTotalSize = partyRepository.countAvailablePartyByOtt(PartyStatus.RECRUITING, ott);
 
         return PartyListResponse.from(ott, partyTotalSize, parties);
     }
@@ -88,7 +88,7 @@ public class PartyService {
         Party lastParty = partyRepository.getById(lastPartyId);
 
         List<PartyBriefResponse> parties = this.getRecruitingParties(ott, lastParty.getStartDate(), lastPartyId, size);
-        Integer partyTotalSize = partyRepository.countAllByStatusAndOtt(PartyStatus.RECRUITING, ott);
+        long partyTotalSize = partyRepository.countAvailablePartyByOtt(PartyStatus.RECRUITING, ott);
 
         return PartyListResponse.from(ott, partyTotalSize, parties);
     }

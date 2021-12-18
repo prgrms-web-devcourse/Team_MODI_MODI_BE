@@ -36,5 +36,10 @@ public interface PartyRepository extends JpaRepository<Party, Long>, PartyReposi
 
     int countAllByStatusAndMembersUser(PartyStatus partyStatus, User user);
 
-    int countAllByStatusAndOtt(PartyStatus partyStatus, OTT ott);
+    @Query("SELECT COUNT(p) "
+        + "FROM Party p "
+        + "WHERE p.status = :partyStatus "
+        + "    AND p.ott = :ott "
+        + "    AND (p.currentMember < p.partyMemberCapacity)")
+    long countAvailablePartyByOtt(PartyStatus partyStatus, OTT ott);
 }
