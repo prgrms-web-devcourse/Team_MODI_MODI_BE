@@ -10,12 +10,14 @@ import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
 import com.prgrms.modi.user.dto.UsernameListResponse;
+import com.prgrms.modi.user.dto.UsernameRequest;
 import com.prgrms.modi.user.dto.UsernameResponse;
 import com.prgrms.modi.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.Valid;
 import java.util.List;
 import javax.validation.constraints.Positive;
 import org.slf4j.Logger;
@@ -24,7 +26,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,6 +65,21 @@ public class UserController {
         }
         UserResponse resp = userService.getUserDetail(authentication.userId);
         return ResponseEntity.ok(resp);
+    }
+
+    @PatchMapping("/me/username")
+    @Operation(summary = "유저 닉네임 수정", description = "자동 생성된 닉네임으로만 수정 가능")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "올바르지 않은 닉네임"),
+        @ApiResponse(responseCode = "401", description = "토큰이 없어 인증할 수 없는 경우 (UNAUTHORIZED)")
+    })
+    public ResponseEntity<Void> changeUsername(
+        @RequestBody @Valid final UsernameRequest request,
+        @ApiIgnore @AuthenticationPrincipal JwtAuthentication auth
+    ) {
+        userService.changeUsername(auth.userId, request.getUsername());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(path = "/me/points")
