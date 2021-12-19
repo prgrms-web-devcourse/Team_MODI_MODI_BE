@@ -5,10 +5,14 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NaverOAuth2UserInfo extends OAuth2UserInfo {
 
     private static final int ADULT_AGE = 19;
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public NaverOAuth2UserInfo(Map<String, Object> attributes) {
         super(attributes);
@@ -25,7 +29,9 @@ public class NaverOAuth2UserInfo extends OAuth2UserInfo {
     private String getBirthDate() {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
-        if (response == null) {
+        log.info("[*] response: {}", response);
+
+        if (response.get("birthyear") == null) {
             throw new NotEnoughUserInformationException("유저의 필수 정보가 부족합니다");
         }
 
