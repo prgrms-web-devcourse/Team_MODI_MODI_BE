@@ -25,7 +25,7 @@ INSERT INTO parties(id, party_member_capacity, current_member, total_price, mont
         (4, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'ATEz+3cGsXUFDlpstFXUOb1UO0UL+xVXx29/DVeY0nfcosxzrg==', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
         (5, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'ATEz+3fEwPVvr3MkcxjwPPdVwlMSX01oK4CEp07ZCZePRfyFiA==', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
         (6, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'ATEz+3cGsXUFDlpstFXUOb1UO0UL+xVXx29/DVeY0nfcosxzrg==', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
-        (7, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'ATEz+3fEwPVvr3MkcxjwPPdVwlMSX01oK4CEp07ZCZePRfyFiA==', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', '2021-11-02 06:30:00', 1);
+        (7, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'ATEz+3fEwPVvr3MkcxjwPPdVwlMSX01oK4CEp07ZCZePRfyFiA==', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', '2021-11-02 06:30:00', 1),
         (8, 4, 1, 100000, 0, 0, '2022-02-12', '2022-05-22', 3, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1);
 
 INSERT INTO rules(id, name, created_at, updated_at)

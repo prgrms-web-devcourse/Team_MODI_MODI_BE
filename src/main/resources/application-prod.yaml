@@ -70,3 +70,8 @@ logging:
   slack:
     webhook-uri: ${SLACK_WEBHOOK_URI}
   config: ${MODI_ROOT:.}/src/main/resources/logback.xml
+
+tink:
+  kms-arn: ${KMS_ARN}
+  aws-kms-access-key-id: ${AWS_KMS_ACCESS_KEY_ID}
+  aws-kms-secret-access-key: ${AWS_KMS_SECRET_ACCESS_KEY}

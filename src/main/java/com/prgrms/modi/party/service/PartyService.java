@@ -21,13 +21,6 @@ import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.prgrms.modi.utils.Decryptyor;
 import com.prgrms.modi.utils.Encryptor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,6 +29,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PartyService {
@@ -133,7 +131,7 @@ public class PartyService {
     public SharedAccountResponse getSharedAccount(long partyId) {
         Party party = partyRepository.getById(partyId);
         String sharedId = party.getSharedId();
-        String sharedPassword = Decryptyor.decrypt(party.getSharedPasswordEncrypted(), party.getOtt().getId());
+        String sharedPassword = Encryptor.decrypt(party.getSharedPasswordEncrypted(), party.getOtt().getId());
 
         return new SharedAccountResponse(sharedId, sharedPassword);
     }
@@ -189,10 +187,12 @@ public class PartyService {
     }
 
     @Transactional
-    public PartyIdResponse updateSharedAccount(Long partyId, UpdateSharedAccountRequest request) {
+    public PartyIdResponse updateSharedAccount(long partyId, UpdateSharedAccountRequest request) {
+        String encrypedPassword = Encryptor.encrypt(request.getSharedPassword(), partyId);
         Party party = partyRepository.getById(partyId);
-        party.changeSharedAccount(request.getSharedPassword());
+        party.changeSharedAccount(encrypedPassword);
         partyRepository.save(party);
+
         return PartyIdResponse.from(party);
     }
 

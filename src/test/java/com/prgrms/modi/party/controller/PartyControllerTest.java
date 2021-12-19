@@ -3,10 +3,7 @@ package com.prgrms.modi.party.controller;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.prgrms.modi.error.exception.NotFoundException;
 import com.prgrms.modi.history.domain.CommissionHistory;
 import com.prgrms.modi.history.domain.PointHistory;
 import com.prgrms.modi.history.repository.CommissionHistoryRepository;
@@ -32,6 +28,7 @@ import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.MemberRepository;
 import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
+import com.prgrms.modi.utils.Encryptor;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -195,7 +192,7 @@ class PartyControllerTest {
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.partyId").value(partyId)
@@ -222,7 +219,7 @@ class PartyControllerTest {
         Long partyId = 6L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
 
@@ -236,7 +233,7 @@ class PartyControllerTest {
         Long partyId = 1L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
     }
@@ -253,7 +250,7 @@ class PartyControllerTest {
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isBadRequest(),
                 jsonPath("$.errorMessage").value("이미 가입된 파티에 가입할 수 없습니다")
@@ -309,7 +306,8 @@ class PartyControllerTest {
                 status().isOk()
             );
         Party party = partyRepository.findById(partyId).orElseThrow();
-        assertThat(party.getSharedPasswordEncrypted(), equalTo(updatedSharedPassword));
+        String maybeUpdatedPassword = Encryptor.decrypt(party.getSharedPasswordEncrypted(), partyId);
+        assertThat(maybeUpdatedPassword, equalTo(updatedSharedPassword));
     }
 
 }
