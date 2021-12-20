@@ -119,10 +119,10 @@ public class UserService {
         Long userId,
         PartyStatus partyStatus,
         Integer size,
-        Long lastPartyId
+        Long lastSortingId
     ) {
         List<UserPartyBriefResponse> parties = partyRepository
-            .findAllPartiesByStatusAndUserId(userId, partyStatus, size, lastPartyId);
+            .findAllPartiesByStatusAndUserId(userId, partyStatus, size, lastSortingId);
 
         User user = userRepository.getById(userId);
         int totalSize = partyRepository
