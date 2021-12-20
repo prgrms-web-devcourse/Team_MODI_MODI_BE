@@ -27,6 +27,7 @@ dependencies {
     implementation group: 'com.google.guava', name: 'guava', version: '31.0-jre'
     implementation 'org.flywaydb:flyway-core:8.1.0'
     implementation 'com.github.maricn:logback-slack-appender:1.4.0'
+
     implementation group: 'com.querydsl', name: 'querydsl-jpa', version: querydslVersion
     implementation group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion
     implementation group: 'com.querydsl', name: 'querydsl-core', version: querydslVersion
@@ -54,6 +55,12 @@ jacocoTestReport {
         html.enabled true
         html.destination file("$buildDir/jacocoHtml")
     }
+
+    def QEntities = []
+
+    for (qPattern in '**/QA'..'**/QZ') {
+        QEntities.add(qPattern + '*')
+    }
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it,
@@ -61,7 +68,7 @@ jacocoTestReport {
                             '**/com/prgrms/modi/error/**',
                             '**/com/prgrms/modi/common/**',
                             '**/com/prgrms/modi/utils/**'
-                    ]
+                    ] + QEntities
             )
         }))
     }
@@ -78,7 +85,7 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.00
+                minimum = 0.70
             }
 
             excludes = []
