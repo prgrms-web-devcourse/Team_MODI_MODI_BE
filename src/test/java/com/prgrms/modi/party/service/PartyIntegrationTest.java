@@ -13,11 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.not;
 
 @SpringBootTest
 public class PartyIntegrationTest {
@@ -26,13 +32,16 @@ public class PartyIntegrationTest {
     private PartyRepository partyRepository;
 
     @Autowired
+    private PartyService partyService;
+
+    @Autowired
     private PointHistoryRepository pointHistoryRepository;
 
     @Autowired
     private OttRepository ottRepository;
 
     @Autowired
-    private PartyService partyService;
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("매달 파티장에게 환급금을 주어야한다.")
@@ -123,6 +132,23 @@ public class PartyIntegrationTest {
         partyRepository.save(partyWillBeFinished);
         partyService.changeFinishStatus(LocalDate.now());
         assertThat(partyWillBeFinished.getStatus(), equalTo(PartyStatus.FINISHED));
+    }
+
+    @Test
+    @DisplayName("삭제 한 달 뒤에는 물리적으로도 삭제 되야한다.")
+    @Transactional
+    public void deleteExpiredParties() {
+        Long hardDeletedPartyId = 7L;
+        LocalDateTime deleteBasePeriod = LocalDate.now().minusMonths(1).atStartOfDay();
+        partyService.deleteExpiredParties(deleteBasePeriod);
+
+        Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM parties", Party.class);
+        List<Party> resultList = nativeQuery.getResultList();
+        assertThat(resultList.size(), equalTo(7));
+        assertThat(
+            resultList,
+            hasItems(hasProperty("id", not(hardDeletedPartyId)))
+        );
     }
 
 }

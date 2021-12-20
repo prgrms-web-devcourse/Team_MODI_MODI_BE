@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 public class ReimbursementScheduler {
@@ -25,5 +26,8 @@ public class ReimbursementScheduler {
         partyService.reimburseAll(today);
         partyService.changeRecruitingStatus(today);
         partyService.changeFinishStatus(today);
+
+        LocalDateTime deleteBasePeriod = today.minusMonths(1).atStartOfDay();
+        partyService.deleteExpiredParties(deleteBasePeriod);
     }
 }

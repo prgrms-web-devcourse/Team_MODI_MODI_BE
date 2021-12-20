@@ -21,17 +21,19 @@ import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class PartyService {
@@ -163,6 +165,7 @@ public class PartyService {
                 }
             }
         }
+        logger.info("Reimbursement is over");
     }
 
     @Transactional
@@ -179,6 +182,7 @@ public class PartyService {
                 party.changeStatus(PartyStatus.ONGOING);
             }
         }
+        logger.info("The status of the party that starts today has changed");
     }
 
     @Transactional
@@ -186,6 +190,8 @@ public class PartyService {
         partyRepository.findByStatus(PartyStatus.ONGOING).stream()
             .filter(party -> Objects.equals(party.getEndDate(), today))
             .forEach(party -> party.changeStatus(PartyStatus.FINISHED));
+
+        logger.info("The status of the party that ends today has changed");
     }
 
     @Transactional
@@ -216,6 +222,12 @@ public class PartyService {
             throw new IllegalStateException("삭제할 수 없는 파티입니다");
         }
         partyRepository.deleteById(partyId);
+    }
+
+    @Transactional
+    public void deleteExpiredParties(LocalDateTime dateTime) {
+        partyRepository.deleteExpiredParties(dateTime);
+        logger.info("Hard delete has completed");
     }
 
     private Party createNewParty(CreatePartyRequest request, long userId) {
