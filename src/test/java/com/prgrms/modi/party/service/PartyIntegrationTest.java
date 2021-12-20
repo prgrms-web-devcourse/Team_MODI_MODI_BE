@@ -91,7 +91,7 @@ public class PartyIntegrationTest {
     @Test
     @DisplayName("파티의 isMustFilled 가 true 이며, 파티가 다 차지 않았을 상황에서 시작날짜가 됬을 경우 삭제되야한다.")
     @Transactional
-    public void deletePartyWhenIsMustFilledTrue() {
+    public void deleteNotGatherParties() {
         Party partyWillBeDeleted = new Party.Builder()
             .partyMemberCapacity(4)
             .currentMember(3)
@@ -107,7 +107,7 @@ public class PartyIntegrationTest {
             .build();
 
         partyRepository.save(partyWillBeDeleted);
-        partyService.changeToOngoing(LocalDate.now());
+        partyService.deleteNotGatherParties(LocalDate.now());
         assertThat(partyRepository.findAll().size(), equalTo(7));
     }
 

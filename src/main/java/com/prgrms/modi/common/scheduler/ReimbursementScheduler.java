@@ -23,6 +23,7 @@ public class ReimbursementScheduler {
     @Scheduled(cron = "0 0 00 * * ?")
     public void changeStatus() {
         LocalDate today = LocalDate.now();
+        partyService.deleteNotGatherParties(today);
         partyService.changeToOngoing(today);
         partyService.changeToFinish(today);
     }

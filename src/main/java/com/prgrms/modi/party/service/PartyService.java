@@ -161,18 +161,17 @@ public class PartyService {
     }
 
     @Transactional
-    public void changeToOngoing(LocalDate today) {
-        List<Party> recruitingParties = partyRepository.findByStatus(PartyStatus.RECRUITING).stream()
-            .filter(party -> party.getStartDate().isEqual(today))
-            .collect(Collectors.toList());
+    public void deleteNotGatherParties(LocalDate today) {
+        partyRepository.deleteNotGatherParties(today);
+        logger.info("Deleted the party that wasn't enough member");
+    }
 
-        for (Party party : recruitingParties) {
-            if (party.isMustFilled() && !Objects.equals(party.getCurrentMember(), party.getPartyMemberCapacity())) {
-                partyRepository.deleteById(party.getId());
-            } else {
-                party.changeStatus(PartyStatus.ONGOING);
-            }
-        }
+    @Transactional
+    public void changeToOngoing(LocalDate today) {
+        partyRepository.findByStatus(PartyStatus.RECRUITING).stream()
+            .filter(party -> party.getStartDate().isEqual(today))
+            .forEach(party -> party.changeStatus(PartyStatus.ONGOING));
+
         logger.info("The status of the party that starts today has changed");
     }
 
