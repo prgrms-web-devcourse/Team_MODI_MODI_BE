@@ -20,12 +20,17 @@ public class ReimbursementScheduler {
         this.partyService = partyService;
     }
 
+    @Scheduled(cron = "0 0 00 * * ?")
+    public void changeStatus() {
+        LocalDate today = LocalDate.now();
+        partyService.changeToOngoingOrDelete(today);
+        partyService.changeToFinish(today);
+    }
+
     @Scheduled(cron = "0 0 05 * * ?")
-    public void reimburse() {
+    public void reimburseAndHardDelete() {
         LocalDate today = LocalDate.now();
         partyService.reimburseAll(today);
-        partyService.changeRecruitingStatus(today);
-        partyService.changeFinishStatus(today);
 
         LocalDateTime deleteBasePeriod = today.minusMonths(1).atStartOfDay();
         partyService.hardDeleteExpiredParties(deleteBasePeriod);

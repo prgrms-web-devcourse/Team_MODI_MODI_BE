@@ -161,20 +161,20 @@ public class PartyService {
     }
 
     @Transactional
-    public void changeRecruitingStatus(LocalDate today) {
+    public void changeToOngoingOrDelete(LocalDate today) {
         List<Party> recruitingParties = partyRepository.findByStatus(PartyStatus.RECRUITING)
             .stream()
             .filter(party -> party.getStartDate().isEqual(today))
             .collect(Collectors.toList());
 
         for (Party party : recruitingParties) {
-            changeOngoingOrDelete(party);
+            changeToOngoingOrDelete(party);
         }
         logger.info("The status of the party that starts today has changed");
     }
 
     @Transactional
-    public void changeFinishStatus(LocalDate today) {
+    public void changeToFinish(LocalDate today) {
         partyRepository.findByStatus(PartyStatus.ONGOING).stream()
             .filter(party -> Objects.equals(party.getEndDate(), today))
             .forEach(party -> party.changeStatus(PartyStatus.FINISHED));
@@ -270,7 +270,7 @@ public class PartyService {
         }
     }
 
-    private void changeOngoingOrDelete(Party party) {
+    private void changeToOngoingOrDelete(Party party) {
         if (party.isMustFilled() && !Objects.equals(party.getCurrentMember(), party.getPartyMemberCapacity())) {
             partyRepository.deleteById(party.getId());
         } else {
