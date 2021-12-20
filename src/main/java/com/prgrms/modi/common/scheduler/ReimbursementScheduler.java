@@ -28,10 +28,14 @@ public class ReimbursementScheduler {
     }
 
     @Scheduled(cron = "0 0 05 * * ?")
-    public void reimburseAndHardDelete() {
+    public void reimburse() {
         LocalDate today = LocalDate.now();
         partyService.reimburseAll(today);
+    }
 
+    @Scheduled(cron = "0 0 05 * * ?")
+    public void hardDelete() {
+        LocalDate today = LocalDate.now();
         LocalDateTime deleteBasePeriod = today.minusMonths(1).atStartOfDay();
         partyService.hardDeleteExpiredParties(deleteBasePeriod);
     }
