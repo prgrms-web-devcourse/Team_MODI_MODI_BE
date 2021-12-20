@@ -292,6 +292,7 @@ class PartyControllerTest {
         assertEquals(partyRepository.findById(partyId), Optional.empty());
     }
 
+    @Test
     @WithMockJwtAuthentication
     @DisplayName("파티의 공유 계정을 수정할 수 있다.")
     public void updateSharedAccount() throws Exception {
