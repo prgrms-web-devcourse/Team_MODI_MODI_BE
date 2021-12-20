@@ -155,15 +155,7 @@ public class PartyService {
             .collect(Collectors.toList());
 
         for (Party party : parties) {
-            List<Member> members = party.getMembers();
-            for (Member member : members) {
-                if (member.isLeader()) {
-                    User user = member.getUser();
-                    int reimbursementAmount = party.reimburse();
-                    user.addPoints(reimbursementAmount);
-                    pointHistoryService.save(PointDetail.REIMBURSE, reimbursementAmount, user);
-                }
-            }
+            reimburse(party);
         }
         logger.info("Reimbursement is over");
     }
@@ -176,11 +168,7 @@ public class PartyService {
             .collect(Collectors.toList());
 
         for (Party party : recruitingParties) {
-            if (party.isMustFilled() && !Objects.equals(party.getCurrentMember(), party.getPartyMemberCapacity())) {
-                partyRepository.deleteById(party.getId());
-            } else {
-                party.changeStatus(PartyStatus.ONGOING);
-            }
+            changeOngoingOrDelete(party);
         }
         logger.info("The status of the party that starts today has changed");
     }
@@ -225,7 +213,7 @@ public class PartyService {
     }
 
     @Transactional
-    public void deleteExpiredParties(LocalDateTime dateTime) {
+    public void hardDeleteExpiredParties(LocalDateTime dateTime) {
         partyRepository.deleteExpiredParties(dateTime);
         logger.info("Hard delete has completed");
     }
@@ -268,6 +256,26 @@ public class PartyService {
 
         commissionHistoryService.save(CommissionDetail.PARTICIPATE, totalPrice, user);
         pointHistoryService.save(PointDetail.PARTICIPATE, totalPrice, user);
+    }
+
+    private void reimburse(Party party) {
+        List<Member> members = party.getMembers();
+        for (Member member : members) {
+            if (member.isLeader()) {
+                User user = member.getUser();
+                int reimbursementAmount = party.reimburse();
+                user.addPoints(reimbursementAmount);
+                pointHistoryService.save(PointDetail.REIMBURSE, reimbursementAmount, user);
+            }
+        }
+    }
+
+    private void changeOngoingOrDelete(Party party) {
+        if (party.isMustFilled() && !Objects.equals(party.getCurrentMember(), party.getPartyMemberCapacity())) {
+            partyRepository.deleteById(party.getId());
+        } else {
+            party.changeStatus(PartyStatus.ONGOING);
+        }
     }
 
     private boolean isLastDay(LocalDate localDate) {

@@ -137,10 +137,10 @@ public class PartyIntegrationTest {
     @Test
     @DisplayName("삭제 한 달 뒤에는 물리적으로도 삭제 되야한다.")
     @Transactional
-    public void deleteExpiredParties() {
+    public void hardDeleteExpiredParties() {
         Long hardDeletedPartyId = 7L;
         LocalDateTime deleteBasePeriod = LocalDate.now().minusMonths(1).atStartOfDay();
-        partyService.deleteExpiredParties(deleteBasePeriod);
+        partyService.hardDeleteExpiredParties(deleteBasePeriod);
 
         Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM parties", Party.class);
         List<Party> resultList = nativeQuery.getResultList();

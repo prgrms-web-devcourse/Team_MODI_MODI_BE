@@ -28,6 +28,6 @@ public class ReimbursementScheduler {
         partyService.changeFinishStatus(today);
 
         LocalDateTime deleteBasePeriod = today.minusMonths(1).atStartOfDay();
-        partyService.deleteExpiredParties(deleteBasePeriod);
+        partyService.hardDeleteExpiredParties(deleteBasePeriod);
     }
 }
