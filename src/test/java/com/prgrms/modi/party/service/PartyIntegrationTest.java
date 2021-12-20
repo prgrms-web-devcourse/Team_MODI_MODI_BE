@@ -84,7 +84,7 @@ public class PartyIntegrationTest {
             .build();
 
         partyRepository.save(partyWillBeOngoing);
-        partyService.changeToOngoingOrDelete(LocalDate.now());
+        partyService.changeToOngoing(LocalDate.now());
         assertThat(partyWillBeOngoing.getStatus(), equalTo(PartyStatus.ONGOING));
     }
 
@@ -107,7 +107,7 @@ public class PartyIntegrationTest {
             .build();
 
         partyRepository.save(partyWillBeDeleted);
-        partyService.changeToOngoingOrDelete(LocalDate.now());
+        partyService.changeToOngoing(LocalDate.now());
         assertThat(partyRepository.findAll().size(), equalTo(7));
     }
 

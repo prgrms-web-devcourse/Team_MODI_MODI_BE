@@ -161,14 +161,17 @@ public class PartyService {
     }
 
     @Transactional
-    public void changeToOngoingOrDelete(LocalDate today) {
-        List<Party> recruitingParties = partyRepository.findByStatus(PartyStatus.RECRUITING)
-            .stream()
+    public void changeToOngoing(LocalDate today) {
+        List<Party> recruitingParties = partyRepository.findByStatus(PartyStatus.RECRUITING).stream()
             .filter(party -> party.getStartDate().isEqual(today))
             .collect(Collectors.toList());
 
         for (Party party : recruitingParties) {
-            changeToOngoingOrDelete(party);
+            if (party.isMustFilled() && !Objects.equals(party.getCurrentMember(), party.getPartyMemberCapacity())) {
+                partyRepository.deleteById(party.getId());
+            } else {
+                party.changeStatus(PartyStatus.ONGOING);
+            }
         }
         logger.info("The status of the party that starts today has changed");
     }
@@ -267,14 +270,6 @@ public class PartyService {
                 user.addPoints(reimbursementAmount);
                 pointHistoryService.save(PointDetail.REIMBURSE, reimbursementAmount, user);
             }
-        }
-    }
-
-    private void changeToOngoingOrDelete(Party party) {
-        if (party.isMustFilled() && !Objects.equals(party.getCurrentMember(), party.getPartyMemberCapacity())) {
-            partyRepository.deleteById(party.getId());
-        } else {
-            party.changeStatus(PartyStatus.ONGOING);
         }
     }
 
