@@ -111,12 +111,12 @@ class UserControllerTest {
     void getUserRecruitingPartiesTest() throws Exception {
         PartyStatus partyStatus = PartyStatus.RECRUITING;
         int size = 5;
-        long lastPartyId = 5;
+        int lastSortingId = 17;
         mockMvc
             .perform(
                 get(MessageFormat
-                    .format("/api/users/me/parties?status={0}&size={1}&lastPartyId={2}", partyStatus, size,
-                        lastPartyId
+                    .format("/api/users/me/parties?status={0}&size={1}&lastSortingId={2}", partyStatus, size,
+                        lastSortingId
                     )
                 )
                     .accept(MediaType.APPLICATION_JSON)
@@ -125,7 +125,8 @@ class UserControllerTest {
                 status().isOk(),
                 handler().handlerType(UserController.class),
                 handler().methodName("getUserPartyList"),
-                jsonPath("$.parties[0].partyId").value(lastPartyId - 1),
+                jsonPath("$.parties[0].sortingId").value(15),
+                jsonPath("$.parties[1].sortingId").value(13),
                 jsonPath("$.parties[0].startDate").value("2021-12-26")
             )
             .andDo(print());
@@ -137,12 +138,10 @@ class UserControllerTest {
     void getUserOnGoingPartiesTest() throws Exception {
         PartyStatus partyStatus = PartyStatus.ONGOING;
         int size = 5;
-        long lastPartyId = 5;
         mockMvc
             .perform(
                 get(MessageFormat
-                    .format("/api/users/me/parties?status={0}&size={1}&lastPartyId={2}", partyStatus, size,
-                        lastPartyId
+                    .format("/api/users/me/parties?status={0}&size={1}", partyStatus, size
                     )
                 )
                     .accept(MediaType.APPLICATION_JSON)
@@ -151,7 +150,7 @@ class UserControllerTest {
                 status().isOk(),
                 handler().handlerType(UserController.class),
                 handler().methodName("getUserPartyList"),
-                jsonPath("$.parties[0].partyId").value(lastPartyId - 2),
+                jsonPath("$.parties[0].sortingId").value(9),
                 jsonPath("$.parties[0].startDate").value("2021-11-02")
             )
             .andDo(print());
@@ -189,7 +188,8 @@ class UserControllerTest {
                 get("/api/users/generate-username?size=" + size))
             .andExpectAll(
                 status().isOk(),
-                jsonPath("$.generatedUsernames", hasSize(size)))
+                jsonPath("$.generatedUsernames", hasSize(size))
+            )
             .andDo(
                 print());
     }

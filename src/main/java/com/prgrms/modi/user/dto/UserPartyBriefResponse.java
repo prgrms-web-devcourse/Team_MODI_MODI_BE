@@ -42,10 +42,13 @@ public class UserPartyBriefResponse {
     @ApiModelProperty(value = "총 파티 참여 가격")
     private Integer totalPrice;
 
+    @ApiModelProperty(value = "정렬용 아이디")
+    private Long sortingId;
+
     @QueryProjection
     public UserPartyBriefResponse(Long partyId, PartyStatus status, Long ottId, String ottName,
         LocalDate startDate, LocalDate endDate, boolean isLeader, Integer monthlyReimbursement,
-        Integer remainingReimbursement, Integer monthlyPrice, Integer totalPrice) {
+        Integer remainingReimbursement, Integer monthlyPrice, Integer totalPrice, Long sortingId) {
         this.partyId = partyId;
         this.status = status;
         this.ottId = ottId;
@@ -57,6 +60,7 @@ public class UserPartyBriefResponse {
         this.remainingReimbursement = remainingReimbursement;
         this.monthlyPrice = monthlyPrice;
         this.totalPrice = totalPrice;
+        this.sortingId = sortingId;
     }
 
 }
