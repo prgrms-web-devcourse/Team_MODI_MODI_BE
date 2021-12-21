@@ -17,8 +17,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import javax.validation.Valid;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,11 +39,11 @@ import springfox.documentation.annotations.ApiIgnore;
 @Validated
 public class UserController {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
-
     private final UserService userService;
 
     private final PartyService partyService;
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     public UserController(UserService userService, PartyService partyService) {
         this.userService = userService;
@@ -111,8 +110,8 @@ public class UserController {
         @Parameter(name = "size", description = "불러 올 개수")
         @RequestParam @Positive Integer size,
 
-        @Parameter(name = "lastPartyId", description = "마지막 파티 id, 최초 조회 시 생략 가능")
-        @RequestParam(required = false) Long lastPartyId,
+        @Parameter(name = "lastSortingId", description = "마지막 정렬용 id, 최초 조회 시 생략 가능")
+        @RequestParam(required = false) Long lastSortingId,
 
         @ApiIgnore @AuthenticationPrincipal JwtAuthentication authentication
     ) {
@@ -121,7 +120,7 @@ public class UserController {
         }
 
         UserPartyListResponse resp = userService
-            .getUserPartyList(authentication.userId, partyStatus, size, lastPartyId);
+            .getUserPartyList(authentication.userId, partyStatus, size, lastSortingId);
 
         return ResponseEntity.ok(resp);
     }

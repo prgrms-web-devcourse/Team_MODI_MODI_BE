@@ -20,29 +20,30 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
 
     @Override
     public List<UserPartyBriefResponse> findAllPartiesByStatusAndUserId(Long userId, PartyStatus status, Integer size,
-        Long lastPartyId) {
+        Long sortingId) {
         return queryFactory
             .select(new QUserPartyBriefResponse(party.id, party.status, party.ott.id, party.ott.name, party.startDate,
                 party.endDate, member.isLeader, party.monthlyReimbursement, party.remainingReimbursement,
-                (party.totalPrice.castToNum(Integer.class).divide(party.period.castToNum(Integer.class))), party.totalPrice
+                (party.totalPrice.castToNum(Integer.class).divide(party.period.castToNum(Integer.class))),
+                party.totalPrice, member.id
             ))
             .from(member)
             .leftJoin(party).on(party.id.eq(member.party.id))
             .where(member.user.id.eq(userId)
                 .and(party.status.eq(status)))
             .where(
-                ltPartyId(lastPartyId)
+                ltSortingId(sortingId)
             )
-            .orderBy(member.createdAt.desc())
+            .orderBy(member.id.desc())
             .limit(size)
             .fetch();
     }
 
-    private BooleanExpression ltPartyId(Long lastPartyId) {
-        if (lastPartyId == null) {
+    private BooleanExpression ltSortingId(Long lastSortingId) {
+        if (lastSortingId == null) {
             return null;
         }
-        return party.id.lt(lastPartyId);
+        return member.id.lt(lastSortingId);
     }
 
 }
