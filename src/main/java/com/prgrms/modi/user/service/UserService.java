@@ -2,7 +2,6 @@ package com.prgrms.modi.user.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.prgrms.modi.utils.UsernameGenerator.createRandomName;
-import static com.prgrms.modi.utils.UsernameGenerator.isInvalidUsername;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.prgrms.modi.common.oauth2.info.OAuth2UserInfo;
@@ -21,7 +20,6 @@ import com.prgrms.modi.user.dto.PointAmountResponse;
 import com.prgrms.modi.user.dto.UserPartyBriefResponse;
 import com.prgrms.modi.user.dto.UserPartyListResponse;
 import com.prgrms.modi.user.dto.UserResponse;
-import com.prgrms.modi.user.dto.UsernameListResponse;
 import com.prgrms.modi.user.dto.UsernameResponse;
 import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.utils.UsernameGenerator;
@@ -79,12 +77,12 @@ public class UserService {
                 ProviderType providerType = ProviderType.valueOf(provider.toUpperCase());
                 OAuth2UserInfo userInfo = OAuth2UserInfoFactory
                     .getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
-                if (!userInfo.isAdult()) {
-                    throw new NotEnoughAgeException("MODI는 만 19세 이상부터 사용할 수 있습니다");
+                if (userInfo.isAdult()) {
+                    String username = createRandomName();
+                    User newUser = new User(username, Role.USER, 0, provider, providerId);
+                    return userRepository.save(newUser);
                 }
-                String username = createRandomName();
-                User newUser = new User(username, Role.USER, 0, provider, providerId);
-                return userRepository.save(newUser);
+                throw new NotEnoughAgeException("MODI는 만 19세 이상부터 사용할 수 있습니다");
             });
     }
 
