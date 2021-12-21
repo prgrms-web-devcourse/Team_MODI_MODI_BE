@@ -203,10 +203,11 @@ class PartyControllerTest {
             .andDo(print());
 
         Party party = partyRepository.findById(partyId).get();
+        int commission = (int) (party.getTotalPrice() * 0.05);
         List<PointHistory> pointHistoryList = pointHistoryRepository.findAllByUserId(userId);
         List<CommissionHistory> commissionHistoryList = commissionHistoryRepository.findAllByUserId(userId);
 
-        assertThat(user.getPoints(), equalTo(userPoint - party.getTotalPrice()));
+        assertThat(user.getPoints(), equalTo(userPoint - (party.getTotalPrice() + commission)));
         assertThat(party.getCurrentMember(), equalTo(3));
         assertThat(party.getMonthlyReimbursement(), equalTo(2500));
         assertThat(party.getRemainingReimbursement(), equalTo(party.getTotalPrice()));
