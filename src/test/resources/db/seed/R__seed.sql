@@ -17,16 +17,16 @@ INSERT INTO otts(id, name, english_name, subscription_fee, monthly_price, max_me
         (7, '쿠팡 플레이', 'coupangPlay', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00'),
         (8, '아마존 프라임', 'amazonPlay', 10000, 2500, 4, '프리미엄', '2021-11-01 06:30:00', '2021-11-01 06:30:00');
 
-INSERT INTO parties(id, party_member_capacity, current_member, total_price, monthly_reimbursement, remaining_reimbursement, start_date, end_date, period, must_filled, shared_id, shared_password_encrypted, status, created_at, updated_at, deleted_at, ott_id)
+INSERT INTO parties(id, party_member_capacity, current_member, total_price, monthly_reimbursement, remaining_reimbursement, start_date, end_date, period, must_filled, shared_id, shared_password_encrypted, status, created_at, updated_at, deleted_at, version, ott_id)
     VALUES
-        (1, 4, 4, 10000, 5000, 25000, '2021-11-02', '2022-05-02', 6, 1, 'modi112@gmail.com', 'modi', 'ONGOING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
-        (2, 4, 4, 10000, 5000, 25000, '2021-11-02', '2022-05-02', 6, 1, 'modi112@gmail.com', 'modi', 'ONGOING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
-        (3, 4, 4, 10000, 5000, 25000, '2021-11-02', '2022-05-02', 6, 1, 'modi112@gmail.com', 'modi', 'ONGOING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
-        (4, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
-        (5, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
-        (6, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1),
-        (7, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', '2021-11-02 06:30:00', 1),
-        (8, 4, 1, 100000, 0, 0, '2022-02-12', '2022-05-22', 3, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1);
+        (1, 4, 4, 10000, 5000, 25000, '2021-11-02', '2022-05-02', 6, 1, 'modi112@gmail.com', 'modi', 'ONGOING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1, 1),
+        (2, 4, 4, 10000, 5000, 25000, '2021-11-02', '2022-05-02', 6, 1, 'modi112@gmail.com', 'modi', 'ONGOING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1, 1),
+        (3, 4, 4, 10000, 5000, 25000, '2021-11-02', '2022-05-02', 6, 1, 'modi112@gmail.com', 'modi', 'ONGOING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1, 1),
+        (4, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1, 1),
+        (5, 4, 2, 10000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1, 1),
+        (6, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1, 1),
+        (7, 4, 2, 100000, 0, 0, '2021-12-26', '2022-05-02', 5, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', '2021-11-02 06:30:00', 1, 1),
+        (8, 4, 1, 100000, 0, 0, '2022-02-12', '2022-05-22', 3, 1, 'modi112@gmail.com', 'modi', 'RECRUITING', '2021-11-02 06:30:00', '2021-11-01 06:30:00', null, 1, 1);
 
 INSERT INTO rules(id, name, created_at, updated_at)
     VALUES

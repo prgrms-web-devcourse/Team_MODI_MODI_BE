@@ -4,6 +4,7 @@ import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.AlreadyJoinedException;
 import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
+import com.prgrms.modi.error.exception.RequestAgainException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.request.UpdateSharedAccountRequest;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
@@ -17,7 +18,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,6 +41,8 @@ import springfox.documentation.annotations.ApiIgnore;
 public class PartyController {
 
     private final PartyService partyService;
+
+    private final int MAX_ATTEMPT_COUNT = 2;
 
     public PartyController(PartyService partyService) {
         this.partyService = partyService;
@@ -121,11 +127,18 @@ public class PartyController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
-        if (partyService.isPartyMember(partyId, authentication.userId)) {
-            throw new AlreadyJoinedException("이미 가입된 파티에 가입할 수 없습니다");
+        int requestCount = 0;
+        while(requestCount < MAX_ATTEMPT_COUNT) {
+            try {
+                PartyIdResponse resp = partyService.joinParty(authentication.userId, partyId);
+                return ResponseEntity.ok(resp);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                requestCount++;
+            } catch (DataIntegrityViolationException e) {
+                throw new AlreadyJoinedException("이미 가입된 파티에 가입할 수 없습니다");
+            }
         }
-        PartyIdResponse resp = partyService.joinParty(authentication.userId, partyId);
-        return ResponseEntity.ok(resp);
+        throw new RequestAgainException("잠시 후에 다시 시도해주세요.");
     }
 
     @DeleteMapping("/parties/{partyId}")

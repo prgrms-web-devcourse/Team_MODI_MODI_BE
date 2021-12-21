@@ -8,6 +8,7 @@ import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.error.exception.NotEnoughPointException;
 import com.prgrms.modi.error.exception.NotEnoughUserInformationException;
 import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.error.exception.RequestAgainException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -24,7 +25,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({Exception.class, RequestAgainException.class})
     public ResponseEntity<ErrorResponse> internalServerErrorHandler(Exception e) {
         return ResponseEntity
             .internalServerError()
