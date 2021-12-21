@@ -188,7 +188,7 @@ class PartyControllerTest {
     @DisplayName("파티를 참여할 수 있다.")
     @Transactional(readOnly = true)
     public void joinParty() throws Exception {
-        int userPoint = 100_000;
+        int userPoint = 150_000;
         Long userId = 1L;
         Long partyId = 6L;
         User user = userRepository.findById(userId).get();
