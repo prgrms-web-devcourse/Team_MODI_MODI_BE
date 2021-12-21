@@ -13,11 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.not;
 
 @SpringBootTest
 public class PartyIntegrationTest {
@@ -26,13 +32,16 @@ public class PartyIntegrationTest {
     private PartyRepository partyRepository;
 
     @Autowired
+    private PartyService partyService;
+
+    @Autowired
     private PointHistoryRepository pointHistoryRepository;
 
     @Autowired
     private OttRepository ottRepository;
 
     @Autowired
-    private PartyService partyService;
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("매달 파티장에게 환급금을 주어야한다.")
@@ -75,14 +84,14 @@ public class PartyIntegrationTest {
             .build();
 
         partyRepository.save(partyWillBeOngoing);
-        partyService.changeRecruitingStatus(LocalDate.now());
+        partyService.changeToOngoing(LocalDate.now());
         assertThat(partyWillBeOngoing.getStatus(), equalTo(PartyStatus.ONGOING));
     }
 
     @Test
     @DisplayName("파티의 isMustFilled 가 true 이며, 파티가 다 차지 않았을 상황에서 시작날짜가 됬을 경우 삭제되야한다.")
     @Transactional
-    public void deletePartyWhenIsMustFilledTrue() {
+    public void deleteNotGatherParties() {
         Party partyWillBeDeleted = new Party.Builder()
             .partyMemberCapacity(4)
             .currentMember(3)
@@ -98,7 +107,7 @@ public class PartyIntegrationTest {
             .build();
 
         partyRepository.save(partyWillBeDeleted);
-        partyService.changeRecruitingStatus(LocalDate.now());
+        partyService.deleteNotGatherParties(LocalDate.now());
         assertThat(partyRepository.findAll().size(), equalTo(7));
     }
 
@@ -121,8 +130,25 @@ public class PartyIntegrationTest {
             .build();
 
         partyRepository.save(partyWillBeFinished);
-        partyService.changeFinishStatus(LocalDate.now());
+        partyService.changeToFinish(LocalDate.now());
         assertThat(partyWillBeFinished.getStatus(), equalTo(PartyStatus.FINISHED));
+    }
+
+    @Test
+    @DisplayName("삭제 한 달 뒤에는 물리적으로도 삭제 되야한다.")
+    @Transactional
+    public void hardDeleteExpiredParties() {
+        Long hardDeletedPartyId = 7L;
+        LocalDateTime deleteBasePeriod = LocalDate.now().minusMonths(1).atStartOfDay();
+        partyService.hardDeleteExpiredParties(deleteBasePeriod);
+
+        Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM parties", Party.class);
+        List<Party> resultList = nativeQuery.getResultList();
+        assertThat(resultList.size(), equalTo(7));
+        assertThat(
+            resultList,
+            hasItems(hasProperty("id", not(hardDeletedPartyId)))
+        );
     }
 
 }
