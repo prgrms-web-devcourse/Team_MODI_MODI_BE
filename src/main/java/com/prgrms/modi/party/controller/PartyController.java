@@ -137,6 +137,7 @@ public class PartyController {
             } catch (DataIntegrityViolationException e) {
                 throw new AlreadyJoinedException("이미 가입된 파티에 가입할 수 없습니다");
             }
+            requestCount++;
         }
         throw new RequestAgainException("잠시 후에 다시 시도해주세요.");
     }
