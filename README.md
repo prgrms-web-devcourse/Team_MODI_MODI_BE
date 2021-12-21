@@ -19,8 +19,7 @@
 
 ![last commit](https://img.shields.io/github/last-commit/prgrms-web-devcourse/Team_MODI_MODI_BE?color=5833C1)
 ![most language](https://img.shields.io/github/languages/top/prgrms-web-devcourse/Team_MODI_MODI_BE)
-[![Release](https://img.shields.io/badge/release-v1.0.5-skyblue)](https://github.com/prgrms-web-devcourse/Team_MODI_MODI_BE/pull/64)
-
+[![Release](https://img.shields.io/github/v/release/prgrms-web-devcourse/Team_MODI_MODI_BE?color=skyblue)](https://github.com/prgrms-web-devcourse/Team_MODI_MODI_BE/releases/tag/v1.0.6)
 </div>
 <br/>
 
