@@ -16,9 +16,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -34,6 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api")
@@ -127,6 +127,9 @@ public class PartyController {
         if (authentication == null) {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
+        if (partyService.isPartyMember(partyId, authentication.userId)) {
+            throw new AlreadyJoinedException("이미 가입한 파티입니다");
+        }
         int requestCount = 0;
         while(requestCount < MAX_ATTEMPT_COUNT) {
             try {
@@ -135,11 +138,10 @@ public class PartyController {
             } catch (ObjectOptimisticLockingFailureException e) {
                 requestCount++;
             } catch (DataIntegrityViolationException e) {
-                throw new AlreadyJoinedException("이미 가입된 파티에 가입할 수 없습니다");
+                throw new AlreadyJoinedException("이미 가입한 파티입니다");
             }
-            requestCount++;
         }
-        throw new RequestAgainException("잠시 후에 다시 시도해주세요.");
+        throw new RequestAgainException("잠시 후에 다시 시도해주세요");
     }
 
     @DeleteMapping("/parties/{partyId}")

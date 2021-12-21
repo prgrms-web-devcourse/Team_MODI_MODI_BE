@@ -246,7 +246,7 @@ class PartyControllerTest {
     @DisplayName("파티에 중복 가입을 할 수 없다.")
     @Transactional
     public void alreadyJoinedExceptionTest() throws Exception {
-        Long partyId = 1L;
+        Long partyId = 5L;
         Long userId = 1L;
         User user = userRepository.findById(userId).get();
         int userPoint = 100_000;
@@ -256,7 +256,7 @@ class PartyControllerTest {
             .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isBadRequest(),
-                jsonPath("$.errorMessage").value("이미 가입된 파티에 가입할 수 없습니다")
+                jsonPath("$.errorMessage").value("이미 가입한 파티입니다")
             )
             .andDo(print());
     }

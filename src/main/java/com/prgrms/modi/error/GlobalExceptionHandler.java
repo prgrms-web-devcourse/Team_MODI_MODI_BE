@@ -25,11 +25,19 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({Exception.class, RequestAgainException.class})
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> internalServerErrorHandler(Exception e) {
         return ResponseEntity
             .internalServerError()
             .body(new ErrorResponse(e.getMessage(), "", HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(RequestAgainException.class)
+    public ResponseEntity<ErrorResponse> requestConflictHandler(RequestAgainException e) {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(new ErrorResponse(e.getMessage(), "", HttpStatus.CONFLICT));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
