@@ -42,8 +42,6 @@ public class PartyController {
 
     private final PartyService partyService;
 
-    private final int MAX_ATTEMPT_COUNT = 2;
-
     public PartyController(PartyService partyService) {
         this.partyService = partyService;
     }
@@ -130,13 +128,14 @@ public class PartyController {
         if (partyService.isPartyMember(partyId, authentication.userId)) {
             throw new AlreadyJoinedException("이미 가입한 파티입니다");
         }
-        int requestCount = 0;
-        while(requestCount < MAX_ATTEMPT_COUNT) {
+        int attemptCount = 0;
+        int maxAttemptCount = 2;
+        while(attemptCount < maxAttemptCount) {
             try {
                 PartyIdResponse resp = partyService.joinParty(authentication.userId, partyId);
                 return ResponseEntity.ok(resp);
             } catch (ObjectOptimisticLockingFailureException e) {
-                requestCount++;
+                attemptCount++;
             } catch (DataIntegrityViolationException e) {
                 throw new AlreadyJoinedException("이미 가입한 파티입니다");
             }
