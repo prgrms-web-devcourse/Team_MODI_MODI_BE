@@ -4,6 +4,7 @@ import com.prgrms.modi.common.jwt.JwtAuthentication;
 import com.prgrms.modi.error.exception.AlreadyJoinedException;
 import com.prgrms.modi.error.exception.ForbiddenException;
 import com.prgrms.modi.error.exception.InvalidAuthenticationException;
+import com.prgrms.modi.error.exception.RequestAgainException;
 import com.prgrms.modi.party.dto.request.CreatePartyRequest;
 import com.prgrms.modi.party.dto.request.UpdateSharedAccountRequest;
 import com.prgrms.modi.party.dto.response.PartyDetailResponse;
@@ -15,9 +16,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api")
@@ -122,10 +126,21 @@ public class PartyController {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
         if (partyService.isPartyMember(partyId, authentication.userId)) {
-            throw new AlreadyJoinedException("이미 가입된 파티에 가입할 수 없습니다");
+            throw new AlreadyJoinedException("이미 가입한 파티입니다");
         }
-        PartyIdResponse resp = partyService.joinParty(authentication.userId, partyId);
-        return ResponseEntity.ok(resp);
+        int attemptCount = 0;
+        int maxAttemptCount = 2;
+        while(attemptCount < maxAttemptCount) {
+            try {
+                PartyIdResponse resp = partyService.joinParty(authentication.userId, partyId);
+                return ResponseEntity.ok(resp);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                attemptCount++;
+            } catch (DataIntegrityViolationException e) {
+                throw new AlreadyJoinedException("이미 가입한 파티입니다");
+            }
+        }
+        throw new RequestAgainException("잠시 후에 다시 시도해주세요");
     }
 
     @DeleteMapping("/parties/{partyId}")
