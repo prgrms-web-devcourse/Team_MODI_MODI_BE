@@ -35,6 +35,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.prgrms.modi.history.service.CommissionHistoryService.COMMISSION_PERCENTAGE;
+
 @Service
 public class PartyService {
 
@@ -251,13 +253,14 @@ public class PartyService {
 
     private void participate(User user, Party party) {
         int totalPrice = party.getTotalPrice();
+        int commission = (int) (totalPrice * COMMISSION_PERCENTAGE);
         int monthlyPrice = party.getOtt().getMonthlyPrice();
 
         party.addMember(user, monthlyPrice, totalPrice);
-        user.deductPoint(totalPrice);
+        user.deductPoint(totalPrice + commission);
 
         commissionHistoryService.save(CommissionDetail.PARTICIPATE, totalPrice, user);
-        pointHistoryService.save(PointDetail.PARTICIPATE, totalPrice, user);
+        pointHistoryService.save(PointDetail.PARTICIPATE, totalPrice + commission, user);
     }
 
     private void reimburse(Party party) {
