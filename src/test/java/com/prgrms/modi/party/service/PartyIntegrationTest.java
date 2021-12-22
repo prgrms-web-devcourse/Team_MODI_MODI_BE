@@ -1,29 +1,30 @@
 package com.prgrms.modi.party.service;
 
-import com.prgrms.modi.history.repository.PointHistoryRepository;
-import com.prgrms.modi.ott.repository.OttRepository;
-import com.prgrms.modi.party.domain.Party;
-import com.prgrms.modi.party.domain.PartyStatus;
-import com.prgrms.modi.party.repository.PartyRepository;
-import com.prgrms.modi.user.domain.Member;
-import com.prgrms.modi.user.domain.User;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import com.prgrms.modi.history.repository.PointHistoryRepository;
+import com.prgrms.modi.ott.repository.OttRepository;
+import com.prgrms.modi.party.domain.Party;
+import com.prgrms.modi.party.domain.PartyStatus;
+import com.prgrms.modi.party.domain.QParty;
+import com.prgrms.modi.party.repository.PartyRepository;
+import com.prgrms.modi.user.domain.Member;
+import com.prgrms.modi.user.domain.User;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.persistence.EntityManager;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 public class PartyIntegrationTest {
@@ -44,7 +45,7 @@ public class PartyIntegrationTest {
     private EntityManager entityManager;
 
     @Test
-    @DisplayName("매달 파티장에게 환급금을 주어야한다.")
+    @DisplayName("매달 파티장에게 환급금을 주어야 한다.")
     @Transactional
     public void reimburseAll() {
         int originalRemainingReimbursementAmount = 25000;
@@ -66,7 +67,7 @@ public class PartyIntegrationTest {
     }
 
     @Test
-    @DisplayName("파티 시작 날짜가 되면 파티는 Ongoing 상태가 되야한다.")
+    @DisplayName("파티 시작 날짜가 되면 파티는 Ongoing 상태가 되어야 한다.")
     @Transactional
     public void checkRecruitingStatus() {
         Party partyWillBeOngoing = new Party.Builder()
@@ -89,7 +90,7 @@ public class PartyIntegrationTest {
     }
 
     @Test
-    @DisplayName("파티의 isMustFilled 가 true 이며, 파티가 다 차지 않았을 상황에서 시작날짜가 됬을 경우 삭제되야한다.")
+    @DisplayName("파티의 isMustFilled가 true이며, 파티가 다 차지 않았을 상황에서 시작 날짜가 됐을 경우 삭제되어야 한다.")
     @Transactional
     public void deleteNotGatherParties() {
         Party partyWillBeDeleted = new Party.Builder()
@@ -112,7 +113,7 @@ public class PartyIntegrationTest {
     }
 
     @Test
-    @DisplayName("파티 기간이 끝나면 FINISH 상태가 되야한다.")
+    @DisplayName("파티 기간이 끝나면 FINISH 상태가 되어야 한다.")
     @Transactional
     public void changeFinishStatus() {
         Party partyWillBeFinished = new Party.Builder()
@@ -135,19 +136,21 @@ public class PartyIntegrationTest {
     }
 
     @Test
-    @DisplayName("삭제 한 달 뒤에는 물리적으로도 삭제 되야한다.")
+    @DisplayName("삭제 한 달 뒤에는 물리적으로도 삭제되어야 한다.")
     @Transactional
     public void hardDeleteExpiredParties() {
         Long hardDeletedPartyId = 7L;
         LocalDateTime deleteBasePeriod = LocalDate.now().minusMonths(1).atStartOfDay();
         partyService.hardDeleteExpiredParties(deleteBasePeriod);
-
-        Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM parties", Party.class);
-        List<Party> resultList = nativeQuery.getResultList();
-        assertThat(resultList.size(), equalTo(7));
-        assertThat(
-            resultList,
-            hasItems(hasProperty("id", not(hardDeletedPartyId)))
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        QParty qParty = QParty.party;
+        List<Party> resultList = queryFactory.selectFrom(qParty).fetch();
+        assertAll(
+            () -> assertThat(resultList.size(), equalTo(7)),
+            () -> assertThat(
+                resultList,
+                hasItems(hasProperty("id", not(hardDeletedPartyId)))
+            )
         );
     }
 
