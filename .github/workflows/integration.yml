@@ -29,11 +29,18 @@
         KAKAO_CLIENT_ID : ${{ secrets.KAKAO_CLIENT_ID }}
         KAKAO_CLIENT_SECRET : ${{ secrets.KAKAO_CLIENT_SECRET }}
         JWT_SECRET : ${{ secrets.JWT_SECRET }}
+        AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        KMS_ARN: ${{ secrets.KMS_ARN }}
+
 
       # Steps represent a sequence of tasks that will be executed as part of the job
       steps:
         # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         - uses: actions/checkout@v2
+          with:
+            token: ${{secrets.SUBMODULE_TOKEN}}
+            submodules: true
 
         - name: Set up JDK 1.11
           uses: actions/setup-java@v1
