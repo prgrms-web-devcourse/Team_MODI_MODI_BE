@@ -32,6 +32,9 @@ dependencies {
     implementation group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion
     implementation group: 'com.querydsl', name: 'querydsl-core', version: querydslVersion
     implementation 'com.google.crypto.tink:tink:1.6.1'
+    implementation 'com.google.crypto.tink:tink-awskms:1.6.1'
+    implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.15'
 
     annotationProcessor group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion
     annotationProcessor group: 'com.querydsl', name: 'querydsl-apt', version: querydslVersion, classifier: 'jpa'

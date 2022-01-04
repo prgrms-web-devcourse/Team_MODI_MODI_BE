@@ -16,6 +16,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -39,6 +43,8 @@ import javax.validation.constraints.Positive;
 @RequestMapping("/api")
 @Validated
 public class PartyController {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final PartyService partyService;
 
@@ -108,6 +114,8 @@ public class PartyController {
             throw new InvalidAuthenticationException("인증되지 않는 사용자입니다");
         }
         PartyIdResponse resp = partyService.createParty(request, authentication.userId);
+        logger.info("created party {}", resp.getPartyId());
+
         return ResponseEntity.ok(resp);
     }
 
