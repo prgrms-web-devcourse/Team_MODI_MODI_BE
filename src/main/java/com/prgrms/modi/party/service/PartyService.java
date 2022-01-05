@@ -1,5 +1,7 @@
 package com.prgrms.modi.party.service;
 
+import static com.prgrms.modi.history.service.CommissionHistoryService.COMMISSION_PERCENTAGE;
+
 import com.prgrms.modi.history.domain.CommissionDetail;
 import com.prgrms.modi.history.domain.PointDetail;
 import com.prgrms.modi.history.service.CommissionHistoryService;
@@ -35,8 +37,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.prgrms.modi.history.service.CommissionHistoryService.COMMISSION_PERCENTAGE;
-
 @Service
 public class PartyService {
 
@@ -54,19 +54,22 @@ public class PartyService {
 
     private final PointHistoryService pointHistoryService;
 
+    private final Encryptor encryptor;
+
     public PartyService(
         PartyRepository partyRepository,
         RuleRepository ruleRepository,
         OttRepository ottRepository,
         UserRepository userRepository,
         CommissionHistoryService commissionHistoryService,
-        PointHistoryService pointHistoryService) {
+        PointHistoryService pointHistoryService, Encryptor encryptor) {
         this.partyRepository = partyRepository;
         this.ruleRepository = ruleRepository;
         this.ottRepository = ottRepository;
         this.userRepository = userRepository;
         this.commissionHistoryService = commissionHistoryService;
         this.pointHistoryService = pointHistoryService;
+        this.encryptor = encryptor;
     }
 
     @Transactional(readOnly = true)
@@ -133,7 +136,7 @@ public class PartyService {
     public SharedAccountResponse getSharedAccount(long partyId) {
         Party party = partyRepository.getById(partyId);
         String sharedId = party.getSharedId();
-        String sharedPassword = Encryptor.decrypt(party.getSharedPasswordEncrypted(), party.getOtt().getId());
+        String sharedPassword = encryptor.decrypt(party.getSharedPasswordEncrypted(), party.getOtt().getId());
 
         return new SharedAccountResponse(sharedId, sharedPassword);
     }
@@ -190,7 +193,7 @@ public class PartyService {
 
     @Transactional
     public PartyIdResponse updateSharedAccount(long partyId, UpdateSharedAccountRequest request) {
-        String encrypedPassword = Encryptor.encrypt(request.getSharedPassword(), partyId);
+        String encrypedPassword = encryptor.encrypt(request.getSharedPassword(), partyId);
         Party party = partyRepository.getById(partyId);
         party.changeSharedAccount(encrypedPassword);
         partyRepository.save(party);
@@ -228,7 +231,7 @@ public class PartyService {
 
     private Party createNewParty(CreatePartyRequest request, long userId) {
         OTT ott = ottRepository.getById(request.getOttId());
-        String encryptedPassword = Encryptor.encrypt(
+        String encryptedPassword = encryptor.encrypt(
             request.getSharedPassword(), ott.getId());
 
         Party newParty = new Party.Builder()

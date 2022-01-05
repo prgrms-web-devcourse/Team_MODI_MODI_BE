@@ -67,6 +67,9 @@ class PartyControllerTest {
     @Autowired
     PointHistoryRepository pointHistoryRepository;
 
+    @Autowired
+    Encryptor encryptor;
+
     @Test
     @DisplayName("특정 파티를 조회할 수 있다")
     public void getParty() throws Exception {
@@ -307,7 +310,7 @@ class PartyControllerTest {
                 status().isOk()
             );
         Party party = partyRepository.findById(partyId).orElseThrow();
-        String maybeUpdatedPassword = Encryptor.decrypt(party.getSharedPasswordEncrypted(), partyId);
+        String maybeUpdatedPassword = encryptor.decrypt(party.getSharedPasswordEncrypted(), partyId);
         assertThat(maybeUpdatedPassword, equalTo(updatedSharedPassword));
     }
 

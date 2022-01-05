@@ -12,22 +12,23 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Encryptor {
 
-    private static final String KEYSET_PATH = "Team_MODI_MODI_BE_KEYSET/encrypted-keyset.json";
-
-    private static String arn;
+    private final String KEYSET_PATH = "classpath:Team_MODI_MODI_BE_KEYSET/encrypted-keyset.json";
 
     @Value("${tink.kms-arn}")
-    public void setArn(String arn) {
-        Encryptor.arn = arn;
-    }
+    private String arn;
 
-    public static String encrypt(String plaintext, Long associatedData) {
+    @Autowired
+    public ResourceLoader resourceLoader;
+
+    public String encrypt(String plaintext, Long associatedData) {
         try {
             KeysetHandle keysetHandle = readKeysetFromFile();
             Aead aead = keysetHandle.getPrimitive(Aead.class);
@@ -41,7 +42,7 @@ public class Encryptor {
         }
     }
 
-    public static String decrypt(String cipherBase64, Long associatedData) {
+    public String decrypt(String cipherBase64, Long associatedData) {
         try {
             KeysetHandle keysetHandle = readKeysetFromFile();
             Aead aead = keysetHandle.getPrimitive(Aead.class);
@@ -55,16 +56,16 @@ public class Encryptor {
         }
     }
 
-    private static KeysetHandle readKeysetFromFile() throws IOException, GeneralSecurityException {
+    private KeysetHandle readKeysetFromFile() throws IOException, GeneralSecurityException {
         AwsKmsClient.register(Optional.of(arn), Optional.empty());
         KeysetHandle handle = KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(arn));
         Aead kekAead = handle.getPrimitive(Aead.class);
-        InputStream keysetStream = ClassLoader.getSystemClassLoader().getResourceAsStream(KEYSET_PATH);
+        InputStream keysetStream = resourceLoader.getResource(KEYSET_PATH).getInputStream();
 
         return KeysetHandle.read(JsonKeysetReader.withInputStream(keysetStream), kekAead);
     }
 
-    private static String getCipherBase64(Aead aead, String plaintext, Long associatedData)
+    private String getCipherBase64(Aead aead, String plaintext, Long associatedData)
         throws GeneralSecurityException {
         byte[] plaintextBytes = plaintext.getBytes(StandardCharsets.UTF_8);
         byte[] associatedDataBytes = Longs.toByteArray(associatedData);
@@ -73,7 +74,7 @@ public class Encryptor {
         return Base64.getEncoder().encodeToString(cipher);
     }
 
-    private static String getOriginalText(Aead aead, String cipherBase64, Long associatedData)
+    private String getOriginalText(Aead aead, String cipherBase64, Long associatedData)
         throws GeneralSecurityException {
         byte[] cipher = com.google.crypto.tink.subtle.Base64.decode(cipherBase64);
         byte[] associatedDataBytes = Longs.toByteArray(associatedData);
