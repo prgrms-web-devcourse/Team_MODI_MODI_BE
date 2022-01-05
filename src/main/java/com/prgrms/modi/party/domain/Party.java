@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -85,6 +86,9 @@ public class Party extends DeletableEntity {
 
     @OneToMany(mappedBy = "party", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<PartyRule> partyRules = new ArrayList<>();
+
+    @Version
+    private Integer version;
 
     protected Party() {
     }

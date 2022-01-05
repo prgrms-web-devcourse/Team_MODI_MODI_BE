@@ -1,5 +1,7 @@
 package com.prgrms.modi.party.service;
 
+import static com.prgrms.modi.history.service.CommissionHistoryService.COMMISSION_PERCENTAGE;
+
 import com.prgrms.modi.history.domain.CommissionDetail;
 import com.prgrms.modi.history.domain.PointDetail;
 import com.prgrms.modi.history.service.CommissionHistoryService;
@@ -21,12 +23,7 @@ import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.prgrms.modi.utils.Encryptor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -34,6 +31,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PartyService {
@@ -52,19 +54,22 @@ public class PartyService {
 
     private final PointHistoryService pointHistoryService;
 
+    private final Encryptor encryptor;
+
     public PartyService(
         PartyRepository partyRepository,
         RuleRepository ruleRepository,
         OttRepository ottRepository,
         UserRepository userRepository,
         CommissionHistoryService commissionHistoryService,
-        PointHistoryService pointHistoryService) {
+        PointHistoryService pointHistoryService, Encryptor encryptor) {
         this.partyRepository = partyRepository;
         this.ruleRepository = ruleRepository;
         this.ottRepository = ottRepository;
         this.userRepository = userRepository;
         this.commissionHistoryService = commissionHistoryService;
         this.pointHistoryService = pointHistoryService;
+        this.encryptor = encryptor;
     }
 
     @Transactional(readOnly = true)
@@ -100,7 +105,6 @@ public class PartyService {
         Party newParty = createNewParty(request, userId);
         partyRepository.save(newParty);
 
-        logger.info("created party {}", newParty);
         return PartyIdResponse.from(newParty);
     }
 
@@ -131,7 +135,10 @@ public class PartyService {
     @Transactional(readOnly = true)
     public SharedAccountResponse getSharedAccount(long partyId) {
         Party party = partyRepository.getById(partyId);
-        return SharedAccountResponse.from(party);
+        String sharedId = party.getSharedId();
+        String sharedPassword = encryptor.decrypt(party.getSharedPasswordEncrypted(), party.getOtt().getId());
+
+        return new SharedAccountResponse(sharedId, sharedPassword);
     }
 
     private List<PartyBriefResponse> getRecruitingParties(OTT ott, LocalDate startDate, long lastPartyId, int size) {
@@ -185,10 +192,12 @@ public class PartyService {
     }
 
     @Transactional
-    public PartyIdResponse updateSharedAccount(Long partyId, UpdateSharedAccountRequest request) {
+    public PartyIdResponse updateSharedAccount(long partyId, UpdateSharedAccountRequest request) {
+        String encrypedPassword = encryptor.encrypt(request.getSharedPassword(), partyId);
         Party party = partyRepository.getById(partyId);
-        party.changeSharedAccount(request.getSharedPassword());
+        party.changeSharedAccount(encrypedPassword);
         partyRepository.save(party);
+
         return PartyIdResponse.from(party);
     }
 
@@ -222,6 +231,8 @@ public class PartyService {
 
     private Party createNewParty(CreatePartyRequest request, long userId) {
         OTT ott = ottRepository.getById(request.getOttId());
+        String encryptedPassword = encryptor.encrypt(
+            request.getSharedPassword(), ott.getId());
 
         Party newParty = new Party.Builder()
             .ott(ott)
@@ -234,7 +245,7 @@ public class PartyService {
             .remainingReimbursement(0)
             .status(PartyStatus.RECRUITING)
             .sharedId(request.getSharedId())
-            .sharedPasswordEncrypted(request.getSharedPassword())
+            .sharedPasswordEncrypted(encryptedPassword)
             .build();
 
         List<Rule> rules = request.getRules()
@@ -251,13 +262,14 @@ public class PartyService {
 
     private void participate(User user, Party party) {
         int totalPrice = party.getTotalPrice();
+        int commission = (int) (totalPrice * COMMISSION_PERCENTAGE);
         int monthlyPrice = party.getOtt().getMonthlyPrice();
 
         party.addMember(user, monthlyPrice, totalPrice);
-        user.deductPoint(totalPrice);
+        user.deductPoint(totalPrice + commission);
 
         commissionHistoryService.save(CommissionDetail.PARTICIPATE, totalPrice, user);
-        pointHistoryService.save(PointDetail.PARTICIPATE, totalPrice, user);
+        pointHistoryService.save(PointDetail.PARTICIPATE, totalPrice + commission, user);
     }
 
     private void reimburse(Party party) {

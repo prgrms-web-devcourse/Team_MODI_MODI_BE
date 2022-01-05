@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommissionHistoryService {
 
-    private final Double COMMISSION_PERCENTAGE = 0.05;
+    public static final Double COMMISSION_PERCENTAGE = 0.05;
 
     private final CommissionHistoryRepository commissionHistoryRepository;
 

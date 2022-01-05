@@ -8,6 +8,7 @@ import com.prgrms.modi.error.exception.NotEnoughPartyCapacityException;
 import com.prgrms.modi.error.exception.NotEnoughPointException;
 import com.prgrms.modi.error.exception.NotEnoughUserInformationException;
 import com.prgrms.modi.error.exception.NotFoundException;
+import com.prgrms.modi.error.exception.RequestAgainException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -29,6 +30,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
             .internalServerError()
             .body(new ErrorResponse(e.getMessage(), "", HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(RequestAgainException.class)
+    public ResponseEntity<ErrorResponse> requestConflictHandler(RequestAgainException e) {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(new ErrorResponse(e.getMessage(), "", HttpStatus.CONFLICT));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -3,10 +3,7 @@ package com.prgrms.modi.party.controller;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.prgrms.modi.error.exception.NotFoundException;
 import com.prgrms.modi.history.domain.CommissionHistory;
 import com.prgrms.modi.history.domain.PointHistory;
 import com.prgrms.modi.history.repository.CommissionHistoryRepository;
@@ -32,6 +28,7 @@ import com.prgrms.modi.user.domain.User;
 import com.prgrms.modi.user.repository.MemberRepository;
 import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.user.security.WithMockJwtAuthentication;
+import com.prgrms.modi.utils.Encryptor;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -69,6 +66,9 @@ class PartyControllerTest {
 
     @Autowired
     PointHistoryRepository pointHistoryRepository;
+
+    @Autowired
+    Encryptor encryptor;
 
     @Test
     @DisplayName("특정 파티를 조회할 수 있다")
@@ -155,8 +155,8 @@ class PartyControllerTest {
             .ottName("넷플릭스")
             .grade("프리미엄")
             .partyMemberCapacity(4)
-            .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(6))
+            .startDate(LocalDate.now().plusDays(1))
+            .endDate(LocalDate.now().plusDays(1).plusMonths(6))
             .mustFilled(true)
             .rules(List.of(ruleRequest1, ruleRequest2))
             .sharedId("modi@gmail.com")
@@ -188,14 +188,14 @@ class PartyControllerTest {
     @DisplayName("파티를 참여할 수 있다.")
     @Transactional(readOnly = true)
     public void joinParty() throws Exception {
-        int userPoint = 100_000;
+        int userPoint = 150_000;
         Long userId = 1L;
         Long partyId = 6L;
         User user = userRepository.findById(userId).get();
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.partyId").value(partyId)
@@ -203,10 +203,11 @@ class PartyControllerTest {
             .andDo(print());
 
         Party party = partyRepository.findById(partyId).get();
+        int commission = (int) (party.getTotalPrice() * 0.05);
         List<PointHistory> pointHistoryList = pointHistoryRepository.findAllByUserId(userId);
         List<CommissionHistory> commissionHistoryList = commissionHistoryRepository.findAllByUserId(userId);
 
-        assertThat(user.getPoints(), equalTo(userPoint - party.getTotalPrice()));
+        assertThat(user.getPoints(), equalTo(userPoint - (party.getTotalPrice() + commission)));
         assertThat(party.getCurrentMember(), equalTo(3));
         assertThat(party.getMonthlyReimbursement(), equalTo(2500));
         assertThat(party.getRemainingReimbursement(), equalTo(party.getTotalPrice()));
@@ -222,7 +223,7 @@ class PartyControllerTest {
         Long partyId = 6L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
 
@@ -236,7 +237,7 @@ class PartyControllerTest {
         Long partyId = 1L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
     }
@@ -246,17 +247,17 @@ class PartyControllerTest {
     @DisplayName("파티에 중복 가입을 할 수 없다.")
     @Transactional
     public void alreadyJoinedExceptionTest() throws Exception {
-        Long partyId = 1L;
+        Long partyId = 5L;
         Long userId = 1L;
         User user = userRepository.findById(userId).get();
         int userPoint = 100_000;
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isBadRequest(),
-                jsonPath("$.errorMessage").value("이미 가입된 파티에 가입할 수 없습니다")
+                jsonPath("$.errorMessage").value("이미 가입한 파티입니다")
             )
             .andDo(print());
     }
@@ -309,7 +310,8 @@ class PartyControllerTest {
                 status().isOk()
             );
         Party party = partyRepository.findById(partyId).orElseThrow();
-        assertThat(party.getSharedPasswordEncrypted(), equalTo(updatedSharedPassword));
+        String maybeUpdatedPassword = encryptor.decrypt(party.getSharedPasswordEncrypted(), partyId);
+        assertThat(maybeUpdatedPassword, equalTo(updatedSharedPassword));
     }
 
 }

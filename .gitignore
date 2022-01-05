@@ -274,4 +274,6 @@ gradle-app.setting
 .env
 # logFile
 log/
+# tink keyset
+encrypted-keyset.json
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij,windows,macos,linux,java
