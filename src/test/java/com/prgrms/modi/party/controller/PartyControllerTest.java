@@ -195,7 +195,7 @@ class PartyControllerTest {
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.partyId").value(partyId)
@@ -223,7 +223,7 @@ class PartyControllerTest {
         Long partyId = 6L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
 
@@ -237,7 +237,7 @@ class PartyControllerTest {
         Long partyId = 1L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
     }
@@ -254,7 +254,7 @@ class PartyControllerTest {
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isBadRequest(),
                 jsonPath("$.errorMessage").value("이미 가입한 파티입니다")
