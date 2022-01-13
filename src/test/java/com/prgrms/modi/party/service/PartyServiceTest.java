@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 
 import com.prgrms.modi.history.service.CommissionHistoryService;
 import com.prgrms.modi.history.service.PointHistoryService;
+import com.prgrms.modi.notification.service.NotificationService;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.repository.OttRepository;
 import com.prgrms.modi.party.domain.Party;
@@ -64,6 +65,8 @@ class PartyServiceTest {
     @Mock
     private PointHistoryService pointHistoryService;
 
+    @Mock
+    private NotificationService notificationService;
 
     @Test
     @DisplayName("파티 목록 커서 기반 페이지로 가져올 수 있다")
