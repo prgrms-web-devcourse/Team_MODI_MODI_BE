@@ -6,6 +6,7 @@ import com.prgrms.modi.history.domain.CommissionDetail;
 import com.prgrms.modi.history.domain.PointDetail;
 import com.prgrms.modi.history.service.CommissionHistoryService;
 import com.prgrms.modi.history.service.PointHistoryService;
+import com.prgrms.modi.notification.service.NotificationService;
 import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.ott.repository.OttRepository;
 import com.prgrms.modi.party.domain.Party;
@@ -54,6 +55,8 @@ public class PartyService {
 
     private final PointHistoryService pointHistoryService;
 
+    private final NotificationService notificationService;
+
     private final Encryptor encryptor;
 
     public PartyService(
@@ -62,13 +65,15 @@ public class PartyService {
         OttRepository ottRepository,
         UserRepository userRepository,
         CommissionHistoryService commissionHistoryService,
-        PointHistoryService pointHistoryService, Encryptor encryptor) {
+        PointHistoryService pointHistoryService,
+        NotificationService notificationService, Encryptor encryptor) {
         this.partyRepository = partyRepository;
         this.ruleRepository = ruleRepository;
         this.ottRepository = ottRepository;
         this.userRepository = userRepository;
         this.commissionHistoryService = commissionHistoryService;
         this.pointHistoryService = pointHistoryService;
+        this.notificationService = notificationService;
         this.encryptor = encryptor;
     }
 
@@ -114,9 +119,23 @@ public class PartyService {
         Party party = partyRepository.getById(partyId);
 
         this.participate(user, party);
+        Member leader = getPartyLeader(party);
+        String participantNickName = user.getUsername();
+        notificationService.send(leader, participantNickName + "님이 파티원으로 참여했습니다.", party);
 
         logger.info("User {} joined party {}", user, party);
         return PartyIdResponse.from(party);
+    }
+
+    private Member getPartyLeader(Party party) {
+        Member leader = null;
+        List<Member> members = party.getMembers();
+        for (Member member : members) {
+            if (member.isLeader()) {
+                leader = member;
+            }
+        }
+        return leader;
     }
 
     @Transactional(readOnly = true)
@@ -193,10 +212,17 @@ public class PartyService {
 
     @Transactional
     public PartyIdResponse updateSharedAccount(long partyId, UpdateSharedAccountRequest request) {
-        String encrypedPassword = encryptor.encrypt(request.getSharedPassword(), partyId);
+        String encryptedPassword = encryptor.encrypt(request.getSharedPassword(), partyId);
         Party party = partyRepository.getById(partyId);
-        party.changeSharedAccount(encrypedPassword);
+        party.changeSharedAccount(encryptedPassword);
         partyRepository.save(party);
+
+        List<Member> members = party.getMembers();
+        for (Member member : members) {
+            if (!member.isLeader()) {
+                notificationService.send(member, "공유계정 정보가 변경되었습니다.", party);
+            }
+        }
 
         return PartyIdResponse.from(party);
     }
