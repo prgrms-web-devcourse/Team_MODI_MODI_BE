@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.prgrms.modi.user.security.WithMockJwtAuthentication;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +21,12 @@ class NotificationControllerTest {
     MockMvc mockMvc;
 
     @Test
-    @DisplayName("sse 연결")
-    @WithMockJwtAuthentication
-    void sse() throws Exception {
+    @DisplayName("sse 연결 테스트")
+    void sseConnectionTest() throws Exception {
+        Long userId = 1L;
         var result = mockMvc
             .perform(
-                get("/api/notifications/subscribe")
+                get("/api/notifications/subscribe/{userId}", userId)
                     .accept(MediaType.TEXT_EVENT_STREAM_VALUE));
 
         result.andExpectAll(
