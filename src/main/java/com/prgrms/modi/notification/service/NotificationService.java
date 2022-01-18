@@ -2,11 +2,16 @@ package com.prgrms.modi.notification.service;
 
 import com.prgrms.modi.notification.domain.Notification;
 import com.prgrms.modi.notification.dto.NotificationResponse;
+import com.prgrms.modi.notification.dto.NotificationsResponse;
 import com.prgrms.modi.notification.repository.EmitterRepository;
 import com.prgrms.modi.notification.repository.NotificationRepository;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.user.domain.Member;
+import com.prgrms.modi.user.repository.MemberRepository;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -26,11 +31,14 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
 
+    private final MemberRepository memberRepository;
 
     public NotificationService(EmitterRepository emitterRepository,
-        NotificationRepository notificationRepository) {
+        NotificationRepository notificationRepository,
+        MemberRepository memberRepository) {
         this.emitterRepository = emitterRepository;
         this.notificationRepository = notificationRepository;
+        this.memberRepository = memberRepository;
     }
 
     public SseEmitter subscribe(Long userId, String lastEventId) {
@@ -47,7 +55,6 @@ public class NotificationService {
         emitter.onCompletion(() -> emitterRepository.deleteById(id));
         emitter.onTimeout(() -> emitterRepository.deleteById(id));
 
-        log.info("[*] emitter: {}", emitter);
         //503 에러 방지를 위해 더미데이터 전송
         sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
 
@@ -61,9 +68,9 @@ public class NotificationService {
         return emitter;
     }
 
-    public void send(Member receiver, String content, Party party) {
-        Notification notification = createNotification(receiver, content, party);
-        String id = String.valueOf(receiver.getId());
+    public void send(Member member, String content, Party party) {
+        Notification notification = createNotification(member, content, party);
+        String id = String.valueOf(member.getUser().getId());
         notificationRepository.save(notification);
 
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(id);
@@ -97,5 +104,25 @@ public class NotificationService {
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 알람입니다"));
         notification.read();
     }
+
+    @Transactional
+    public NotificationsResponse findAllById(Long userId) {
+        List<Member> memberList = memberRepository.findMembersByUserId(userId);
+        long unreadCount = 0L;
+        List<NotificationResponse> notificationResponseList = new ArrayList<>();
+        for (Member member : memberList) {
+            List<Notification> notificationList = notificationRepository
+                .findByMemberIdAndReadCheckFalse(member.getId());
+            for (Notification notification : notificationList) {
+                NotificationResponse from = NotificationResponse.from(notification);
+                notificationResponseList.add(from);
+            }
+        }
+        Collections.sort(notificationResponseList);
+        unreadCount += notificationResponseList.size();
+
+        return NotificationsResponse.of(notificationResponseList, unreadCount);
+    }
+
 
 }
