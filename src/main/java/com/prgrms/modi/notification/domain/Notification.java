@@ -5,7 +5,6 @@ import com.prgrms.modi.user.domain.Member;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,21 +28,21 @@ public class Notification {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, foreignKey = @ForeignKey(name = "fk_notification_to_receiver"))
-    private Member receiver;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, foreignKey = @ForeignKey(name = "fk_notification_to_party"))
+    @JoinColumn(name = "party_id")
     private Party party;
 
     protected Notification() {
     }
 
-    public Notification(String content, boolean isRead, Member receiver, Party party) {
+    public Notification(String content, boolean isRead, Member member, Party party) {
         this.content = content;
         this.readCheck = isRead;
         this.createdAt = LocalDateTime.now();
-        this.receiver = receiver;
+        this.member = member;
         this.party = party;
     }
 
@@ -67,8 +66,8 @@ public class Notification {
         return readCheck;
     }
 
-    public Member getReceiver() {
-        return receiver;
+    public Member getMember() {
+        return member;
     }
 
     public Party getParty() {
@@ -82,7 +81,7 @@ public class Notification {
             .append("content", content)
             .append("readCheck", readCheck)
             .append("createdAt", createdAt)
-            .append("member", receiver)
+            .append("member", member)
             .toString();
     }
 

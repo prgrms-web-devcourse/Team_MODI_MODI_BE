@@ -117,7 +117,7 @@ class PartyControllerTest {
                 status().isOk(),
                 jsonPath("$.ottId").value(ottId),
                 jsonPath("$.partyList[0].partyId").value(6),
-                jsonPath("$.partyList", hasSize(4))
+                jsonPath("$.partyList", hasSize(5))
             )
             .andDo(print());
     }
@@ -136,7 +136,7 @@ class PartyControllerTest {
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.ottId").value(ottId),
-                jsonPath("$.totalSize").value(4),
+                jsonPath("$.totalSize").value(5),
                 jsonPath("$.partyList[0].partyId").value(4)
             );
     }

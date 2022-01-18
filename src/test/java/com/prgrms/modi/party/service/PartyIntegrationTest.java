@@ -109,7 +109,7 @@ public class PartyIntegrationTest {
 
         partyRepository.save(partyWillBeDeleted);
         partyService.deleteNotGatherParties(LocalDate.now());
-        assertThat(partyRepository.findAll().size(), equalTo(7));
+        assertThat(partyRepository.findAll().size(), equalTo(8));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class PartyIntegrationTest {
         QParty qParty = QParty.party;
         List<Party> resultList = queryFactory.selectFrom(qParty).fetch();
         assertAll(
-            () -> assertThat(resultList.size(), equalTo(7)),
+            () -> assertThat(resultList.size(), equalTo(8)),
             () -> assertThat(
                 resultList,
                 hasItems(hasProperty("id", not(hardDeletedPartyId)))
