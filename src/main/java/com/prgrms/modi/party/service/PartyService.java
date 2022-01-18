@@ -216,11 +216,12 @@ public class PartyService {
         Party party = partyRepository.getById(partyId);
         party.changeSharedAccount(encryptedPassword);
         partyRepository.save(party);
-
-        List<Member> members = party.getMembers();
-        for (Member member : members) {
-            if (!member.isLeader()) {
-                notificationService.send(member, "공유계정 정보가 변경되었습니다.", party);
+        if (party.getStartDate().isBefore(LocalDate.now())) {
+            List<Member> members = party.getMembers();
+            for (Member member : members) {
+                if (!member.isLeader()) {
+                    notificationService.send(member, "공유계정 정보가 변경되었습니다.", party);
+                }
             }
         }
 
