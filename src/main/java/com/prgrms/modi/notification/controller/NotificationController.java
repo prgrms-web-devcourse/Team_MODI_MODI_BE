@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    @GetMapping(path = "/subscribe/{userId}", produces = "text/event-stream")
+    @GetMapping(path = "/subscribe/{userId}", produces = "text/event-stream;charset=UTF-8")
     @Operation(summary = "로그인한 유저 sse 연결")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "유저 sse 연결 성공 (OK)")
