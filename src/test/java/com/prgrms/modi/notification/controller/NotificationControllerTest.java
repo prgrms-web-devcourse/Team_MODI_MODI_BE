@@ -1,6 +1,7 @@
 package com.prgrms.modi.notification.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
@@ -58,6 +59,24 @@ class NotificationControllerTest {
                 jsonPath("$.notificationResponseList[0].createdAt").exists(),
                 jsonPath("$.notificationResponseList[0].partyId").value(9),
                 jsonPath("$.unreadCount").value(3)
+            )
+            .andDo(print());
+    }
+
+    @Test
+    @WithMockJwtAuthentication
+    @DisplayName("알림 읽음(삭제) 테스트")
+    void readNotification() throws Exception {
+        long id = 3L;
+        // When
+        mockMvc
+            .perform(patch("/api/notifications/" + id)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpectAll(
+                status().isNoContent(),
+                handler().handlerType(NotificationController.class),
+                handler().methodName("readNotification")
             )
             .andDo(print());
     }
