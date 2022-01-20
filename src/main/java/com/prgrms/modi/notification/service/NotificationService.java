@@ -46,26 +46,40 @@ public class NotificationService {
         String id = userId + "_" + System.currentTimeMillis();
         log.info("[*] emitter id: {}", id);
 
-        //SseEmitter DEFAULT_TIMEOUT 만큼 연결 유지
-        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
+        SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
+        log.info("[*] emitter test - emitter: {}", emitter.toString());
+        log.info("[*] emitter test - emitter TIMEOUT: {}", emitter.getTimeout());
 
-        log.info("[*] emitter: {}", emitter);
+        //SseEmitter DEFAULT_TIMEOUT 만큼 연결 유지
+        SseEmitter savedEmitter = emitterRepository.save(id, emitter);
+        log.info("[*] emitter test - savedEmitter: {}", savedEmitter.toString());
+        log.info("[*] emitter test - savedEmitter TIMEOUT: {}", savedEmitter.getTimeout());
 
         //모든 오류로 비동기 비정상 동작 시 SseEmitter 삭제
-        emitter.onCompletion(() -> emitterRepository.deleteById(id));
-        emitter.onTimeout(() -> emitterRepository.deleteById(id));
+        savedEmitter.onCompletion(() -> emitterRepository.deleteById(id));
+        savedEmitter.onTimeout(() -> emitterRepository.deleteById(id));
 
         //503 에러 방지를 위해 더미데이터 전송
-        sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
+        sendToClient(savedEmitter, id, "EventStream Created. [userId=" + userId + "]");
+
+        log.info("[*] timeout: {}", savedEmitter.getTimeout());
 
         //클라이언트가 못 받은 event 있을 때는 전송(유실예방)
         if (!lastEventId.isEmpty()) {
             Map<String, Object> events = emitterRepository.findAllEventCacheStartWithId(String.valueOf(userId));
             events.entrySet().stream()
                 .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-                .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
+                .forEach(entry -> sendToClient(savedEmitter, entry.getKey(), entry.getValue()));
         }
-        return emitter;
+
+        log.info("[*] emitter test - 2: {}", savedEmitter.toString());
+        log.info("[*] emitter timeout - 2: {}", savedEmitter.getTimeout());
+
+        SseEmitter testEmitter = new SseEmitter(DEFAULT_TIMEOUT);
+        log.info("[*] testEmitter: {}", testEmitter.getTimeout());
+        log.info("[*] testEmitter: {}", testEmitter.toString());
+
+        return savedEmitter;
     }
 
     public void send(Member member, String content, Party party) {
