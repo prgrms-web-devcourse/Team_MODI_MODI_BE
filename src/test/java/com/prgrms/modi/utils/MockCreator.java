@@ -8,6 +8,7 @@ import com.prgrms.modi.ott.domain.OTT;
 import com.prgrms.modi.party.domain.Party;
 import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.domain.Rule;
+import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
 import java.time.LocalDate;
 import org.mockito.Mockito;
@@ -61,6 +62,17 @@ public class MockCreator {
 
     public static PointHistory getPointHistoryFixture(Long id) {
         return Mockito.mock(PointHistory.class);
+    }
+
+    public static Member getMemberFixture(Long id) {
+        Member member = Mockito.mock(Member.class);
+        User user = getUserFixture(1L, 100000);
+        Party party = getPartyFixture(1L);
+        given(member.getId()).willReturn(id);
+        given(member.getUser()).willReturn(user);
+        given(member.isLeader()).willReturn(true);
+        given(member.getParty()).willReturn(party);
+        return member;
     }
 
 }
