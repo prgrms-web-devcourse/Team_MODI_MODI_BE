@@ -34,7 +34,7 @@ class OttControllerTest {
     @DisplayName("OTT 전체 조회 테스트")
     void getAllTest() throws Exception {
         mockMvc.perform(get(BASE_URL)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andExpectAll(
                 status().isOk(),
@@ -66,7 +66,7 @@ class OttControllerTest {
         ott = ottRepository.save(ott);
 
         mockMvc.perform(get(BASE_URL + "/{id}", ott.getId())
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andExpectAll(
                 status().isOk(),
@@ -84,7 +84,7 @@ class OttControllerTest {
     @DisplayName("OTT 단건 조회 테스트 - 실패")
     void getOttTestToFail() throws Exception {
         mockMvc.perform(get(BASE_URL + "/{id}", NOT_EXIST_ID)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andExpectAll(
                 status().isNotFound(),
@@ -96,7 +96,7 @@ class OttControllerTest {
     @DisplayName("캐루셀 전체 조회 테스트")
     void getAllCarousels() throws Exception {
         mockMvc.perform(get(BASE_URL + "/waitings")
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.waitingOtts[0].ottName").value("넷플릭스"),
@@ -104,7 +104,7 @@ class OttControllerTest {
                 jsonPath("$.waitingOtts[2].ottName").value("웨이브"),
                 jsonPath("$.waitingOtts[3].ottName").value("티빙"),
                 jsonPath("$.waitingOtts[4].ottName").value("디즈니 플러스"),
-                jsonPath("$.waitingOtts[0].waitingForMatch").value(7L),
+                jsonPath("$.waitingOtts[0].waitingForMatch").value(9L),
                 jsonPath("$.waitingOtts[1].waitingForMatch").value(0L),
                 jsonPath("$.waitingOtts[2].waitingForMatch").value(0L),
                 jsonPath("$.waitingOtts[3].waitingForMatch").value(0L),

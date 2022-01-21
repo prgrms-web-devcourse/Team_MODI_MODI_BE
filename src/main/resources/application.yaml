@@ -51,6 +51,9 @@ spring:
     ansi.enabled: always
   h2:
     console.enabled: true
+  mvc:
+    async:
+      request-timeout: 3600000
 
 jwt:
   issuer: modi

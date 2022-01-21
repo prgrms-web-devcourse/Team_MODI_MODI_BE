@@ -117,7 +117,7 @@ class PartyControllerTest {
                 status().isOk(),
                 jsonPath("$.ottId").value(ottId),
                 jsonPath("$.partyList[0].partyId").value(6),
-                jsonPath("$.partyList", hasSize(4))
+                jsonPath("$.partyList", hasSize(5))
             )
             .andDo(print());
     }
@@ -136,7 +136,7 @@ class PartyControllerTest {
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.ottId").value(ottId),
-                jsonPath("$.totalSize").value(4),
+                jsonPath("$.totalSize").value(5),
                 jsonPath("$.partyList[0].partyId").value(4)
             );
     }
@@ -195,7 +195,7 @@ class PartyControllerTest {
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isOk(),
                 jsonPath("$.partyId").value(partyId)
@@ -223,7 +223,7 @@ class PartyControllerTest {
         Long partyId = 6L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
 
@@ -237,7 +237,7 @@ class PartyControllerTest {
         Long partyId = 1L;
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andDo(print());
     }
@@ -254,7 +254,7 @@ class PartyControllerTest {
         user.addPoints(userPoint);
 
         mockMvc.perform(post("/api/parties/{partyId}/join", partyId)
-                .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isBadRequest(),
                 jsonPath("$.errorMessage").value("이미 가입한 파티입니다")

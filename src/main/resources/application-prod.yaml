@@ -44,13 +44,16 @@ spring:
     properties:
       hibernate.format_sql: true
   flyway:
-    enabled: false
+    enabled: true
     locations: filesystem:${MODI_ROOT:.}/src/main/resources/db/migration, filesystem:${MODI_ROOT:.}/src/main/resources/db/seed
     baseline-on-migrate: true
   output:
     ansi.enabled: always
   h2:
     console.enabled: true
+  mvc:
+    async:
+      request-timeout: 3600000
 
 jwt:
   issuer: modi

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notification Test Page</title>
+</head>
+<body>
+<label for="id"></label><input type="text" id="id"/>
+<button type="button" onclick="login()">sse연결</button>
+</body>
+</html>
+<script type="text/javaScript">
+  function login() {
+    const id = document.getElementById('id').value;
+
+    const eventSource = new EventSource(`http://localhost:8080/api/notifications/subscribe/` + id);
+
+    eventSource.addEventListener("sse", function (event) {
+      console.log(event.data);
+
+      (async () => {
+        // 브라우저 알림
+        const showNotification = () => {
+
+          const notification = new Notification('MODI알림', {
+            body: 'content'
+          });
+
+          setTimeout(() => {
+            notification.close();
+          }, 10 * 1000);
+        }
+
+        // 브라우저 알림 허용 권한
+        let granted = false;
+
+        if (Notification.permission === 'granted') {
+          granted = true;
+        } else if (Notification.permission !== 'denied') {
+          let permission = await Notification.requestPermission();
+          granted = permission === 'granted';
+        }
+
+        // 알림 보여주기
+        if (granted) {
+          showNotification();
+        }
+      })();
+    })
+
+    //연결 상태 확인 1: 연결됨, 2: 연결 실패
+    setInterval(() => {
+      console.log(eventSource.readyState);
+    }, 1000);
+
+  }
+</script>
