@@ -212,8 +212,8 @@ public class PartyService {
 
     @Transactional
     public PartyIdResponse updateSharedAccount(long partyId, UpdateSharedAccountRequest request) {
-        String encryptedPassword = encryptor.encrypt(request.getSharedPassword(), partyId);
         Party party = partyRepository.getById(partyId);
+        String encryptedPassword = encryptor.encrypt(request.getSharedPassword(), party.getOtt().getId());
         party.changeSharedAccount(encryptedPassword);
         partyRepository.save(party);
         if (party.getStartDate().isBefore(LocalDate.now())) {
