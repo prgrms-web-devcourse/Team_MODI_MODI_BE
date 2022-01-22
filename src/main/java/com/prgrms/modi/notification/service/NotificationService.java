@@ -111,7 +111,7 @@ public class NotificationService {
 
     @Transactional
     public NotificationsResponse findAllById(Long userId) {
-        List<Member> memberList = memberRepository.findMembersByUserId(userId);
+        List<Member> memberList = memberRepository.findMembersByUserIdAndDeletedAtIsNull(userId);
         long unreadCount = 0L;
         List<NotificationResponse> notificationResponseList = new ArrayList<>();
         for (Member member : memberList) {

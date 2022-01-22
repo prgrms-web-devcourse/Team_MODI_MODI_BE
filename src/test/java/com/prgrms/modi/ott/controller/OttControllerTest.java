@@ -104,7 +104,7 @@ class OttControllerTest {
                 jsonPath("$.waitingOtts[2].ottName").value("웨이브"),
                 jsonPath("$.waitingOtts[3].ottName").value("티빙"),
                 jsonPath("$.waitingOtts[4].ottName").value("디즈니 플러스"),
-                jsonPath("$.waitingOtts[0].waitingForMatch").value(9L),
+                jsonPath("$.waitingOtts[0].waitingForMatch").value(11L),
                 jsonPath("$.waitingOtts[1].waitingForMatch").value(0L),
                 jsonPath("$.waitingOtts[2].waitingForMatch").value(0L),
                 jsonPath("$.waitingOtts[3].waitingForMatch").value(0L),
