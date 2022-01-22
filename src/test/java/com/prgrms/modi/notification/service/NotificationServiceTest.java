@@ -26,8 +26,8 @@ public class NotificationServiceTest {
     public void getUnreadNotificationsTest() {
         NotificationsResponse notificationsResponse = notificationService.findAllById(1L);
         assertAll(
-            () -> assertThat(notificationsResponse.getNotificationResponseList().size()).isEqualTo(3),
-            () -> assertThat(notificationsResponse.getUnreadCount()).isEqualTo(3L)
+            () -> assertThat(notificationsResponse).hasFieldOrProperty("notificationResponseList"),
+            () -> assertThat(notificationsResponse).hasFieldOrProperty("unreadCount")
         );
     }
 
