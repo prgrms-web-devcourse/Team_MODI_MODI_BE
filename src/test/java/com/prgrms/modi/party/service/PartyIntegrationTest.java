@@ -1,9 +1,12 @@
 package com.prgrms.modi.party.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -14,7 +17,10 @@ import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.domain.QParty;
 import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.Member;
+import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.repository.MemberRepository;
+import com.prgrms.modi.user.repository.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,13 +39,19 @@ public class PartyIntegrationTest {
     private PartyRepository partyRepository;
 
     @Autowired
-    private PartyService partyService;
+    private UserRepository userRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Autowired
     private PointHistoryRepository pointHistoryRepository;
 
     @Autowired
     private OttRepository ottRepository;
+
+    @Autowired
+    private PartyService partyService;
 
     @Autowired
     private EntityManager entityManager;
@@ -107,9 +119,21 @@ public class PartyIntegrationTest {
             .ott(ottRepository.findById(1L).get())
             .build();
 
-        partyRepository.save(partyWillBeDeleted);
+        User user = new User(
+            "testUsername",
+            Role.USER,
+            100000,
+            "testProvider",
+            "testProviderId"
+        );
+        Member member = new Member(partyWillBeDeleted, user, true);
+        Long partyId = partyRepository.save(partyWillBeDeleted).getId();
+        userRepository.save(user);
+        Long memberId = memberRepository.save(member).getId();
+
         partyService.deleteNotGatherParties(LocalDate.now());
-        assertThat(partyRepository.findAll().size(), equalTo(9));
+        assertThat(partyRepository.findAll(), hasItems(hasProperty("id"), not(partyId)));
+        assertThat(memberRepository.findAll(), hasItems(hasProperty("id"), not(memberId)));
     }
 
     @Test

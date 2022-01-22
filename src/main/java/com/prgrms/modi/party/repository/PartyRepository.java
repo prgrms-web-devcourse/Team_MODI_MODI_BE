@@ -50,16 +50,21 @@ public interface PartyRepository extends JpaRepository<Party, Long>, PartyReposi
         + "    AND (p.currentMember < p.partyMemberCapacity)")
     long countAvailablePartyByOtt(PartyStatus partyStatus, OTT ott);
 
-    @Modifying
     @Transactional
-    @Query("UPDATE "
+    @Query("SELECT "
+        + "     p "
+        + " FROM "
         + "     Party p "
-        + " SET p.deletedAt = CURRENT_TIMESTAMP "
         + " WHERE "
         + "     p.startDate = :date AND "
         + "     p.mustFilled = TRUE AND "
-        + "     p.currentMember < p.partyMemberCapacity and "
-        + "     p.deletedAt IS NULL")
-    void deleteNotGatherParties(LocalDate date);
+        + "     p.currentMember < p.partyMemberCapacity "
+        + "     AND p.deletedAt IS NULL ")
+    List<Party> findNotGatherParties(LocalDate date);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Party p SET p.deletedAt = CURRENT_TIMESTAMP WHERE p.id = :id")
+    void softDelete(Long id);
 
 }
