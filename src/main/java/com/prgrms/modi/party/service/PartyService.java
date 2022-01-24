@@ -192,9 +192,9 @@ public class PartyService {
     }
 
     @Transactional
-    public void deleteNotGatherParties(LocalDate today) {
-        List<Party> willDeletedParties = partyRepository.findNotGatherParties(today);
-        willDeletedParties.forEach(
+    public void deleteNotGatheredParties(LocalDate today) {
+        List<Party> deletableParty = partyRepository.findNotGatheredParties(today);
+        deletableParty.forEach(
             (p) -> {
                 memberRepository.softDeleteByPartyId(p.getId());
                 partyRepository.softDelete(p.getId());

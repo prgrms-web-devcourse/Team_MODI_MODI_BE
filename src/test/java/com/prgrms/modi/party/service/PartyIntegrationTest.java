@@ -131,7 +131,7 @@ public class PartyIntegrationTest {
         userRepository.save(user);
         Long memberId = memberRepository.save(member).getId();
 
-        partyService.deleteNotGatherParties(LocalDate.now());
+        partyService.deleteNotGatheredParties(LocalDate.now());
         assertThat(partyRepository.findAll(), hasItems(hasProperty("id"), not(partyId)));
         assertThat(memberRepository.findAll(), hasItems(hasProperty("id"), not(memberId)));
     }

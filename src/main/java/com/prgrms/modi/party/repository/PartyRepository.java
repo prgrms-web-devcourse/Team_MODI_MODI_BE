@@ -60,7 +60,7 @@ public interface PartyRepository extends JpaRepository<Party, Long>, PartyReposi
         + "     p.mustFilled = TRUE AND "
         + "     p.currentMember < p.partyMemberCapacity "
         + "     AND p.deletedAt IS NULL ")
-    List<Party> findNotGatherParties(LocalDate date);
+    List<Party> findNotGatheredParties(LocalDate date);
 
     @Modifying
     @Transactional
