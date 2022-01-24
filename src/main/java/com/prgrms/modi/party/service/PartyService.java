@@ -23,6 +23,7 @@ import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.party.repository.RuleRepository;
 import com.prgrms.modi.user.domain.Member;
 import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.repository.MemberRepository;
 import com.prgrms.modi.user.repository.UserRepository;
 import com.prgrms.modi.utils.Encryptor;
 import java.time.LocalDate;
@@ -51,6 +52,8 @@ public class PartyService {
 
     private final UserRepository userRepository;
 
+    private final MemberRepository memberRepository;
+
     private final CommissionHistoryService commissionHistoryService;
 
     private final PointHistoryService pointHistoryService;
@@ -64,6 +67,7 @@ public class PartyService {
         RuleRepository ruleRepository,
         OttRepository ottRepository,
         UserRepository userRepository,
+        MemberRepository memberRepository,
         CommissionHistoryService commissionHistoryService,
         PointHistoryService pointHistoryService,
         NotificationService notificationService, Encryptor encryptor) {
@@ -71,6 +75,7 @@ public class PartyService {
         this.ruleRepository = ruleRepository;
         this.ottRepository = ottRepository;
         this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
         this.commissionHistoryService = commissionHistoryService;
         this.pointHistoryService = pointHistoryService;
         this.notificationService = notificationService;
@@ -187,8 +192,14 @@ public class PartyService {
     }
 
     @Transactional
-    public void deleteNotGatherParties(LocalDate today) {
-        partyRepository.deleteNotGatherParties(today);
+    public void deleteNotGatheredParties(LocalDate today) {
+        List<Party> deletableParty = partyRepository.findNotGatheredParties(today);
+        deletableParty.forEach(
+            (p) -> {
+                memberRepository.softDeleteByPartyId(p.getId());
+                partyRepository.softDelete(p.getId());
+            }
+        );
         logger.info("Deleted the party that wasn't enough member");
     }
 
