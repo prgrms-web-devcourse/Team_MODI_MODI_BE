@@ -1,12 +1,9 @@
 package com.prgrms.modi.party.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -88,7 +85,7 @@ public class PartyIntegrationTest {
             .monthlyReimbursement(5000)
             .remainingReimbursement(15000)
             .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(1))
+            .endDate(LocalDate.now().plusMonths(2))
             .mustFilled(true)
             .sharedId("testSharedId")
             .sharedPasswordEncrypted("testSharedPw")
@@ -111,7 +108,7 @@ public class PartyIntegrationTest {
             .monthlyReimbursement(5000)
             .remainingReimbursement(15000)
             .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(1))
+            .endDate(LocalDate.now().plusMonths(2))
             .mustFilled(true)
             .sharedId("testSharedId")
             .sharedPasswordEncrypted("testSharedPw")
@@ -132,12 +129,15 @@ public class PartyIntegrationTest {
         Long memberId = memberRepository.save(member).getId();
 
         partyService.deleteNotGatheredParties(LocalDate.now());
-        assertThat(partyRepository.findAll(), hasItems(hasProperty("id"), not(partyId)));
-        assertThat(memberRepository.findAll(), hasItems(hasProperty("id"), not(memberId)));
+
+        assertAll(
+            () -> assertThat(partyRepository.findAll(), hasItems(hasProperty("id"), not(partyId))),
+            () -> assertThat(memberRepository.findAll(), hasItems(hasProperty("id"), not(memberId)))
+        );
     }
 
     @Test
-    @DisplayName("파티 기간이 끝나면 FINISH 상태가 되어야 한다.")
+    @DisplayName("파티 기간이 끝나면 FINISHED 상태가 되어야 한다.")
     @Transactional
     public void changeFinishStatus() {
         Party partyWillBeFinished = new Party.Builder()
