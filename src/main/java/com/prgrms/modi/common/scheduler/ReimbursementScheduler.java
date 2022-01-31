@@ -28,6 +28,12 @@ public class ReimbursementScheduler {
         partyService.changeToFinish(today);
     }
 
+    @Scheduled(cron = "0 0 00 * * ?")
+    public void alertParties() {
+        LocalDate today = LocalDate.now();
+        partyService.alertFinishingParty(today);
+    }
+
     @Scheduled(cron = "0 0 05 * * ?")
     public void reimburse() {
         LocalDate today = LocalDate.now();
