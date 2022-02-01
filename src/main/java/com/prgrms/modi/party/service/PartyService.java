@@ -30,7 +30,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -193,9 +192,9 @@ public class PartyService {
 
     @Transactional
     public void deleteNotGatheredParties(LocalDate today) {
-        List<Party> deletableParty = partyRepository.findNotGatheredParties(today);
+        List<Party> deletablePartyList = partyRepository.findNotGatheredParties(today);
 
-        deletableParty.forEach(
+        deletablePartyList.forEach(
             (p) -> {
                 List<Member> members = p.getMembers();
                 for (Member member : members) {
@@ -210,38 +209,41 @@ public class PartyService {
 
     @Transactional
     public void changeToOngoing(LocalDate today) {
-        partyRepository.findByStatus(PartyStatus.RECRUITING).stream()
+        List<Party> startingPartyList = partyRepository.findByStatus(PartyStatus.RECRUITING)
+            .stream()
             .filter(party -> party.getStartDate().isEqual(today))
-            .forEach(
-                (p) -> {
-                    for (Member member : p.getMembers()) {
-                        notificationService.send(member, "파티가 오늘부터 시작됩니다.", p);
-                    }
-                    p.changeStatus(PartyStatus.ONGOING);
-                }
-            );
+            .collect(Collectors.toList());
+        startingPartyList.forEach(party -> party.changeStatus(PartyStatus.ONGOING));
+
+        for (Party party : startingPartyList) {
+            for (Member member : party.getMembers()) {
+                notificationService.send(member, "파티가 오늘부터 시작됩니다.", party);
+            }
+        }
         logger.info("The status of the party that starts today has changed");
     }
 
     @Transactional
     public void changeToFinish(LocalDate today) {
-        partyRepository.findByStatus(PartyStatus.ONGOING).stream()
-            .filter(party -> Objects.equals(party.getEndDate(), today))
-            .forEach(
-                (p) -> {
-                    for (Member member : p.getMembers()) {
-                        notificationService.send(member, "파티가 만료되었습니다.", p);
-                    }
-                    p.changeStatus(PartyStatus.FINISHED);
-                }
-            );
+        List<Party> finishingPartyList = partyRepository.findByStatus(PartyStatus.ONGOING)
+            .stream()
+            .filter(party -> party.getEndDate().isEqual(today))
+            .collect(Collectors.toList());
+        finishingPartyList.forEach(party -> party.changeStatus(PartyStatus.FINISHED));
+
+        for (Party party : finishingPartyList) {
+            for (Member member : party.getMembers()) {
+                notificationService.send(member, "파티가 만료되었습니다.", party);
+            }
+        }
+
         logger.info("The status of the party that ends today has changed");
     }
 
     @Transactional
     public void alertFinishingParty(LocalDate today) {
         partyRepository.findByStatus(PartyStatus.ONGOING).stream()
-            .filter(party -> party.getEndDate().minusDays(1L).isEqual(today))
+            .filter(party -> party.getEndDate().plusDays(1L).isEqual(today))
             .forEach(
                 (p) -> {
                     for (Member member : p.getMembers()) {
