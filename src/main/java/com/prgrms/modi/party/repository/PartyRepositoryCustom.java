@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PartyRepositoryCustom {
 
-    List<UserPartyBriefResponse> findAllPartiesByStatusAndUserId(Long userId, PartyStatus status, Integer size,
+    List<UserPartyBriefResponse> findAllPartiesByStatusAndUserIdAndDeletedAtIsNull(Long userId, PartyStatus status, Integer size,
         Long lastPartyId);
 
 }
