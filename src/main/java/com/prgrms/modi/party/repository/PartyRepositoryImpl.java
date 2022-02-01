@@ -19,7 +19,8 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
     }
 
     @Override
-    public List<UserPartyBriefResponse> findAllPartiesByStatusAndUserId(Long userId, PartyStatus status, Integer size,
+    public List<UserPartyBriefResponse> findAllPartiesByStatusAndUserIdAndDeletedAtIsNull(Long userId,
+        PartyStatus status, Integer size,
         Long sortingId) {
         return queryFactory
             .select(new QUserPartyBriefResponse(party.id, party.status, party.ott.id, party.ott.name, party.startDate,
@@ -30,7 +31,8 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
             .from(member)
             .leftJoin(party).on(party.id.eq(member.party.id))
             .where(member.user.id.eq(userId)
-                .and(party.status.eq(status)))
+                .and(party.status.eq(status))
+                .and(party.deletedAt.isNull()))
             .where(
                 ltSortingId(sortingId)
             )

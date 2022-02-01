@@ -14,7 +14,10 @@ import com.prgrms.modi.party.domain.PartyStatus;
 import com.prgrms.modi.party.domain.QParty;
 import com.prgrms.modi.party.repository.PartyRepository;
 import com.prgrms.modi.user.domain.Member;
+import com.prgrms.modi.user.domain.Role;
 import com.prgrms.modi.user.domain.User;
+import com.prgrms.modi.user.repository.MemberRepository;
+import com.prgrms.modi.user.repository.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,13 +36,19 @@ public class PartyIntegrationTest {
     private PartyRepository partyRepository;
 
     @Autowired
-    private PartyService partyService;
+    private UserRepository userRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Autowired
     private PointHistoryRepository pointHistoryRepository;
 
     @Autowired
     private OttRepository ottRepository;
+
+    @Autowired
+    private PartyService partyService;
 
     @Autowired
     private EntityManager entityManager;
@@ -76,7 +85,7 @@ public class PartyIntegrationTest {
             .monthlyReimbursement(5000)
             .remainingReimbursement(15000)
             .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(1))
+            .endDate(LocalDate.now().plusMonths(2))
             .mustFilled(true)
             .sharedId("testSharedId")
             .sharedPasswordEncrypted("testSharedPw")
@@ -99,7 +108,7 @@ public class PartyIntegrationTest {
             .monthlyReimbursement(5000)
             .remainingReimbursement(15000)
             .startDate(LocalDate.now())
-            .endDate(LocalDate.now().plusMonths(1))
+            .endDate(LocalDate.now().plusMonths(2))
             .mustFilled(true)
             .sharedId("testSharedId")
             .sharedPasswordEncrypted("testSharedPw")
@@ -107,13 +116,28 @@ public class PartyIntegrationTest {
             .ott(ottRepository.findById(1L).get())
             .build();
 
-        partyRepository.save(partyWillBeDeleted);
-        partyService.deleteNotGatherParties(LocalDate.now());
-        assertThat(partyRepository.findAll().size(), equalTo(8));
+        User user = new User(
+            "testUsername",
+            Role.USER,
+            100000,
+            "testProvider",
+            "testProviderId"
+        );
+        Member member = new Member(partyWillBeDeleted, user, true);
+        Long partyId = partyRepository.save(partyWillBeDeleted).getId();
+        userRepository.save(user);
+        Long memberId = memberRepository.save(member).getId();
+
+        partyService.deleteNotGatheredParties(LocalDate.now());
+
+        assertAll(
+            () -> assertThat(partyRepository.findAll(), hasItems(hasProperty("id"), not(partyId))),
+            () -> assertThat(memberRepository.findAll(), hasItems(hasProperty("id"), not(memberId)))
+        );
     }
 
     @Test
-    @DisplayName("파티 기간이 끝나면 FINISH 상태가 되어야 한다.")
+    @DisplayName("파티 기간이 끝나면 FINISHED 상태가 되어야 한다.")
     @Transactional
     public void changeFinishStatus() {
         Party partyWillBeFinished = new Party.Builder()
@@ -146,7 +170,7 @@ public class PartyIntegrationTest {
         QParty qParty = QParty.party;
         List<Party> resultList = queryFactory.selectFrom(qParty).fetch();
         assertAll(
-            () -> assertThat(resultList.size(), equalTo(8)),
+            () -> assertThat(resultList.size(), equalTo(9)),
             () -> assertThat(
                 resultList,
                 hasItems(hasProperty("id", not(hardDeletedPartyId)))

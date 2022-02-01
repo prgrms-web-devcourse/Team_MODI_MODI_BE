@@ -51,6 +51,10 @@ public class Member extends DeletableEntity {
         return user;
     }
 
+    public Party getParty() {
+        return party;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
